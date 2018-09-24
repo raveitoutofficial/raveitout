@@ -1,0 +1,3 @@
+Rave It Out! The Infusion, this is a placeholder message
+This loads from simfile's folder
+coded by NeobeatIKK
