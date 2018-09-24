@@ -1,0 +1,15 @@
+#MSG1: Perfectionist Mode is best used for obtaining SS scores without wasting time. You won't regret it. Heh.;
+#MSG2: Some modifiers will not affect certain charts. Use this to your advantage in 2 player head to head. Or just to be a dick in general. Fuck you.;
+#MSG3: Report any bugs to "http://facebook.com/raveitoutgame". Make sure you report them in a very aggresive manner. Memes are appreciated but not mandatory.;
+#MSG4: Make sure to hit hold heads accurately or you will be punished with worse judgements on following holds. Yea it is bullshit but who cares? Screw you.;
+#MSG5: Check the options list for the Screen Filter feature. It will allow a BGA to be viewed without affecting any gameplay. Loser.;
+#MSG6: Enjoying arcade mode? Give "Mixtapes" a try and blow your stamina away. That's if that feature doesn't crash during gameplay.;
+#MSG7: If you already played for awhile, give "Pro mode" a whirl and test your timing skills. Also helps determine what is on and off sync.;
+#MSG8: The cuter the song, the harder the charts will be. We guarantee it.;
+#MSG9: Rave It Out is basically "Pitbull: The Game". Dale.;
+#MSG10: Play a song that is by Kanye West by himself. Trust me.;
+#MSG11: Playing Rave It Out during certain times of the year can cause weather changes in game.;
+#MSG12: Quad and Quint arrow combinations are a norm in Rave It Out. Learning how to hit them will be to your benefit.;
+#ORIGINAL:Rave It Out! The Infusion, this is a placeholder message
+This loads from simfile's folder
+coded by NeobeatIKK;
