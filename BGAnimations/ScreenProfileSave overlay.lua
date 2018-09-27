@@ -22,13 +22,13 @@ local delay_time = {
 
 local NextStageSleepTime = delay_time[curstage];
 local WallpaperSleepTime = 5;
-local bg = "/Backgrounds/nextstage_"..curstage;
+local bg = THEME:GetPathG("","_BGMovies/nextstage_"..curstage);
 local sound = THEME:GetPathS("","nextstage_"..curstage)
 
 if curstage == 'Stage_Event' then
 	ran_nst = {"Stage_2nd","Stage_3rd","Stage_4th"};
 	random_name = ran_nst[math.random(1,#ran_nst)]
-	bg = "/Backgrounds/nextstage_"..random_name;
+	bg = THEME:GetPathG("","_BGMovies/nextstage_"..random_name);
 	sound = THEME:GetPathS("","nextstage_"..random_name)
 	NextStageSleepTime = delay_time[random_name];
 end;

@@ -12,8 +12,9 @@ return Def.ActorFrame{
 
 Def.ActorFrame{
 
-	LoadActor("/Backgrounds/selplaymode")..{
-		InitCommand=cmd(Center;zoomto,default_width,SCREEN_HEIGHT)
+	LoadActor(THEME:GetPathG("","_BGMovies/selplaymode"))..{
+		InitCommand=cmd(Cover);
+		--InitCommand=cmd(Center;zoomto,default_width,SCREEN_HEIGHT)
 	};
 	
 	LoadActor("fade")..{
@@ -257,7 +258,7 @@ Def.ActorFrame{
 			};
 			
 			--VIDEO
-			LoadActor("/Backgrounds/PlayModeIcons/Arcade")..{
+			LoadActor(THEME:GetPathG("","_BGMovies/PlayModeIcons/Arcade"))..{
 				InitCommand=cmd(MaskDest;zoom,0.45;x,distance;y,0);
 				OffCommand=cmd(bouncebegin,0.4;zoom,0);
 				

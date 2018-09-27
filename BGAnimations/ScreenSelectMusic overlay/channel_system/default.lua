@@ -10,7 +10,7 @@ local spacing = 210;
 local numplayers = GAMESTATE:GetHumanPlayers();
 
 -- Snap Songs
-if hearts >= 1*GAMESTATE:GetNumSidesJoined() then 	
+if hearts >= 1*GAMESTATE:GetNumSidesJoined() then
 	groups[#groups+1] = "00 Rave It Out (Snap Tracks)";
 	if GAMESTATE:GetCurrentSong():GetGroupName() == "00 Rave It Out (Snap Tracks)" then selection = 1; end;
 end;

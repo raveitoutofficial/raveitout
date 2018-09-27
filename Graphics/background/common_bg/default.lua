@@ -1,7 +1,7 @@
 return Def.ActorFrame{
 
-	LoadActor("/BACKGROUNDS/Arcade")..{
-	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoomto,SCREEN_WIDTH+20,SCREEN_HEIGHT);
+	LoadActor(THEME:GetPathG("","_BGMovies"),"Arcade")..{
+	--InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoomto,SCREEN_WIDTH+20,SCREEN_HEIGHT);
 	OnCommand=function(self)
 		mode = getenv("PlayMode")
 		--self:Load("/BACKGROUNDS/"..mode..".mpg");

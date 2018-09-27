@@ -200,7 +200,8 @@ return Def.ActorFrame{
 			InitCommand=cmd(visible,IsP1On;x,P1BarPosX;y,BarsPosY;MaskDest;horizalign,left;rotationz,-90;zoom,bzom;);};
 		--Def.Quad{						--meter tip indicator
 		LoadActor("tip")..{
-			InitCommand=cmd(visible,IsP1On;x,P1BarPosX-25;y,BarsPosY-10;horizalign,left;zoomx,1.3);
+			--We IIDX now
+			InitCommand=cmd(visible,IsP1On;x,P1BarPosX-25;y,BarsPosY-10;horizalign,left;zoomx,1.3;glowshift;effectclock,"beat";diffuseramp;effectcolor1,color(".8,.8,.8,1");effectcolor2,color("1,1,1,1"));
 			LifeChangedMessageCommand=function(self)
 				self:stoptweening();
 				self:bounceend(vittim);

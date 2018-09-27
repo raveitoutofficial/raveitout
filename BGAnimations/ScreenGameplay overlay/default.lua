@@ -152,9 +152,10 @@ return Def.ActorFrame{
 			end;
 		};--]]
 		LoadActor("song meter")..{
-			OnCommand=function(self)
-				if stage == "ScreenGameplay stage Demo" then self:visible(truer); end
-			end;
+			--this would never NOT be visible... Items are visible by default
+			--[[OnCommand=function(self)
+				if stage == "ScreenGameplay stage Demo" then self:visible(true); end
+			end;]]
 		};
 		
 		LoadActor("demoplay")..{

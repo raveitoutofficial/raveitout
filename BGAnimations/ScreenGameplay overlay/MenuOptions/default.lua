@@ -93,9 +93,9 @@ return Def.ActorFrame{
 	Def.ActorFrame{
 		Name="MenuObjects";
 		InitCommand=cmd(draworder,100;visible,false;);
-		
-		LoadActor("/Backgrounds/arcade")..{
-		InitCommand=cmd(draworder,1;Center;zoomto,default_width,SCREEN_HEIGHT;);
+		--This is shown when the player pauses the game, probably...
+		LoadActor(THEME:GetPathG("","_BGMovies/arcade"))..{
+			InitCommand=cmd(draworder,1;Center;zoomto,default_width,SCREEN_HEIGHT;);
 		};
 		
 		Def.Quad{

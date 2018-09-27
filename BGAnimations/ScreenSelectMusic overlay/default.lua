@@ -27,7 +27,7 @@ local function MsgScroll()
 	}		
 end;
 
-
+--HAS THIS GUY EVER HEARD OF METRICS???
 local stage =		GAMESTATE:GetCurrentStage()
 --optionlist controls
 local olwid =		THEME:GetMetric("CustomRIO","OpQuadWidth")		--option list quad width
@@ -76,233 +76,8 @@ t[#t+1] = Def.ActorFrame{
 	end;
 };
 
-shine_index = 0;
 --PREVIEW BOX
-t[#t+1] = Def.ActorFrame{
-	
-		LoadActor("preview_shine/0")..{
-			InitCommand=cmd(horizalign,center;zoomx,0.65;zoomy,0.7;x,_screen.cx;y,_screen.cy);
-			CurrentSongChangedMessageCommand=cmd(stoptweening;queuecommand,"Effect");
-			MenuLeftP1MessageCommand=cmd(playcommand,"Effect");
-			MenuLeftP2MessageCommand=cmd(playcommand,"Effect");
-			MenuUpP1MessageCommand=cmd(playcommand,"Effect");
-			MenuUpP2MessageCommand=cmd(playcommand,"Effect");
-			MenuRightP1MessageCommand=cmd(playcommand,"Effect");
-			MenuRightP2MessageCommand=cmd(playcommand,"Effect");
-			MenuDownP1MessageCommand=cmd(playcommand,"Effect");
-			MenuDownP2MessageCommand=cmd(playcommand,"Effect");
-			EffectCommand=function(self)	
-				self:stoptweening();
-				self:Load(nil);
-				self:Load(THEME:GetCurrentThemeDirectory().."Bganimations/ScreenSelectMusic overlay/preview_shine/"..shine_index..".png");
-				self:sleep(0.03);
-				if shine_index == 8 then
-					self:stoptweening();
-					shine_index = 1;
-					self:visible(false);
-				else
-					self:visible(true);
-					shine_index = shine_index+1
-					self:queuecommand("Effect");
-				end;
-			end;
-		};
-
-		LoadActor("preview_frame")..{
-			InitCommand=cmd(horizalign,center;zoomto,400,250;x,_screen.cx;y,_screen.cy-30);
-		};
-	
-		Def.Sprite{
-			--Name = "BGAPreview";
-			InitCommand=cmd(x,_screen.cx;y,_screen.cy-30);
-			CurrentSongChangedMessageCommand=cmd(stoptweening;queuecommand,"PlayVid");
-			MenuLeftP1MessageCommand=cmd(playcommand,"PlayVid");
-			MenuLeftP2MessageCommand=cmd(playcommand,"PlayVid");
-			MenuUpP1MessageCommand=cmd(playcommand,"PlayVid");
-			MenuUpP2MessageCommand=cmd(playcommand,"PlayVid");
-			MenuRightP1MessageCommand=cmd(playcommand,"PlayVid");
-			MenuRightP2MessageCommand=cmd(playcommand,"PlayVid");
-			MenuDownP1MessageCommand=cmd(playcommand,"PlayVid");
-			MenuDownP2MessageCommand=cmd(playcommand,"PlayVid");
-			PlayVidCommand=function(self)
-				self:Load(nil);
-				local song = GAMESTATE:GetCurrentSong()
-				path = GetBGAPreviewPath("PREVIEWVID");
-				--path = song:GetBannerPath();
-				self:Load(path);
-				self:diffusealpha(0);
-				self:zoomto(384,232);
-				self:sleep(0.5);
-				self:linear(0.2);
-				if path == "/Backgrounds/Title.mp4" then
-					self:diffusealpha(0.5);
-				else
-					self:diffusealpha(1);
-				end
-			end;
-		};
-	
-		LoadActor("preview_songinfo")..{
-			InitCommand=cmd(horizalign,center;zoomto,385,75;x,_screen.cx;y,_screen.cy+50;diffusealpha,1);
-		};
-	
-		Def.Sprite {
-			InitCommand=cmd(Load,nil;diffusealpha,0;zoomto,70,70;horizalign,left;x,_screen.cx-190;y,_screen.cy+50);
-			CurrentSongChangedMessageCommand=cmd(stoptweening;Load,nil;diffusealpha,0;zoom,0.25;linear,0.5;decelerate,0.25;LoadFromSongBanner,GAMESTATE:GetCurrentSong();diffusealpha,1;zoomto,70,70;);
-		};
-
-		--Genre display
-		LoadFont("monsterrat/_montserrat semi bold 60px")..{
-			InitCommand=cmd(horizalign,left;x,_screen.cx-115;y,_screen.cy+25.75;zoom,0.6;skewx,-0.2);
-			CurrentSongChangedMessageCommand=function(self)
-				self:settext("GENRE:");
-				(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.2;)) (self)
-			end;
-		};
-		LoadFont("monsterrat/_montserrat light 60px")..{
-			InitCommand=cmd(horizalign,left;uppercase,true;x,_screen.cx-67.5;y,_screen.cy+25.5);
-			CurrentSongChangedMessageCommand=function(self)
-				self:settext(GAMESTATE:GetCurrentSong():GetGenre());
-				(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.2;skewx,-0.2)) (self)
-			end;
-		};
-	
-		--Year display
-		LoadFont("monsterrat/_montserrat semi bold 60px")..{
-			InitCommand=cmd(horizalign,left;x,_screen.cx-115;y,_screen.cy+40.75;zoom,0.6;skewx,-0.2);
-			CurrentSongChangedMessageCommand=function(self)
-				self:settext("YEAR:");
-				(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.2;)) (self)
-			end;
-		};
-		LoadFont("monsterrat/_montserrat light 60px")..{
-			InitCommand=cmd(horizalign,left;uppercase,true;x,_screen.cx-76;y,_screen.cy+40.5);
-			OnCommand=cmd(playcommand,"YearTag");
-			CurrentSongChangedMessageCommand=cmd(playcommand,"YearTag");
-			YearTagCommand=function(self)
-				ssc_year = GetCourseDescription(GAMESTATE:GetCurrentSong():GetSongFilePath(),"ORIGIN")
-				if ssc_year == nil or ssc_year == "" then
-					self:settext("????");
-				else
-					self:settext(ssc_year);
-				end;
-				(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.2;skewx,-0.2)) (self)
-			end;
-		};
-		
-		--BPM DISPLAY
-		LoadFont("monsterrat/_montserrat semi bold 60px")..{
-			InitCommand=cmd(horizalign,left;x,_screen.cx-115;y,_screen.cy+55.75;zoom,0.6;skewx,-0.2);
-			CurrentSongChangedMessageCommand=function(self)
-				self:settext("BPM:");
-				(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.2;)) (self)
-			end;
-		};
-		
-		LoadFont("monsterrat/_montserrat light 60px")..{
-			InitCommand=cmd(horizalign,left;uppercase,true;x,_screen.cx-83;y,_screen.cy+55.5;zoom,0.22;skewx,-0.2);
-			CurrentSongChangedMessageCommand=function(self)
-
-				local song = GAMESTATE:GetCurrentSong();
-				-- ROAD24: more checks,
-				-- TODO: decide what to do if no song is chosen, ignore or hide ??
-				if song then
-					local rawbpm = GAMESTATE:GetCurrentSong():GetDisplayBpms();
-					local lobpm = math.ceil(rawbpm[1]);
-					local hibpm = math.ceil(rawbpm[2]);
-					if lobpm == hibpm then
-						speedvalue = hibpm
-					else
-						speedvalue = lobpm.." - "..hibpm
-					end;
-					self:settext(speedvalue);
-					(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.2;)) (self)
-				else
-					self:stoptweening();self:linear(0.25);self:diffusealpha(0);
-				end;
-			end;
-		};
-		
-		
-		--HEART
-		LoadActor(THEME:GetPathG("","USB_stuff/heart_foreground.png"))..{
-		InitCommand=cmd(x,_screen.cx-105;y,_screen.cy+85;zoom,0.6;);
-		OnCommand=cmd(playcommand,"Refresh";);
-		CurrentSongChangedMessageCommand=cmd(finishtweening;diffusealpha,0;sleep,0.01;queuecommand,"Refresh";);
-		RefreshCommand=function(self)
-			(cmd(diffusealpha,0;sleep,0.3;y,_screen.cy+85;linear,0.3;diffusealpha,1;y,_screen.cy+75))(self);
-		end;
-		};
-		
-		LoadFont("monsterrat/_montserrat semi bold 60px")..{
-			InitCommand=cmd(horizalign,left;x,_screen.cx-95;y,_screen.cy+74;zoom,0.3;);
-			CurrentSongChangedMessageCommand=function(self)
-				self:settext("X"..GAMESTATE:GetNumStagesForCurrentSongAndStepsOrCourse()*GAMESTATE:GetNumSidesJoined());
-				(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.2;skewx,-0.2)) (self)
-			end;
-		};
-		
-		--SONG COUNTER
-		LoadFont("monsterrat/_montserrat light 60px")..{
-			InitCommand=cmd(horizalign,right;uppercase,true;x,_screen.cx+190;y,_screen.cy+75;zoom,0.8;skewx,-0.2);
-			CurrentSongChangedMessageCommand=function(self)
-				local song = GAMESTATE:GetCurrentSong();
-				if song then
-					self:stoptweening();
-					local num = SCREENMAN:GetTopScreen():GetChild('MusicWheel'):GetCurrentIndex();
-					if not num then num = 0 else num = num + 1 end;
-					local numb = num < 1000 and string.format("%.3i", num) or scorecap(num);
-					local index = SCREENMAN:GetTopScreen():GetChild('MusicWheel'):GetNumItems();
-					if not index then index = 0 end;
-					local total = index < 1000 and string.format("%.3i", index) or scorecap(index);
-					self:settext( numb.."/"..total );
-					(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.275;)) (self)
-				else
-					self:stoptweening();self:linear(0.25);self:diffusealpha(0);
-				end;
-			end;
-		};
-		
-		
-		--SONG/ARTIST BACKGROUND
-		LoadActor("songartist_name")..{
-			InitCommand=cmd(x,_screen.cx;y,SCREEN_CENTER_Y-170;zoomto,547,46);
-		};
-	
-		-- CURRENT SONG NAME
-		LoadFont("bebas/_bebas neue bold 90px")..{	
-			InitCommand=cmd(uppercase,true;x,_screen.cx;y,_screen.cy-171;zoom,0.45;maxwidth,(_screen.w/0.9);skewx,-0.1);
-			CurrentSongChangedMessageCommand=function(self)
-			local song = GAMESTATE:GetCurrentSong()
-				if song then
-					self:settext(song:GetDisplayFullTitle());
-					self:finishtweening();self:diffusealpha(0);
-					self:x(_screen.cx+75);self:sleep(0.25);self:decelerate(0.75);self:x(_screen.cx);self:diffusealpha(1);
-				else
-					self:stoptweening();self:linear(0.25);self:diffusealpha(0);
-				end;
-			end;
-
-		};
-		-- CURRENT SONG ARTIST
-		LoadFont("monsterrat/_montserrat semi bold 60px")..{	
-			InitCommand=cmd(uppercase,true;x,_screen.cx;y,_screen.cy-187;zoom,0.2;maxwidth,(_screen.w*2);skewx,-0.1);
-			CurrentSongChangedMessageCommand=function(self)
-			local song = GAMESTATE:GetCurrentSong();
-				if song then
-					self:settext(song:GetDisplayArtist());
-					self:finishtweening();self:diffusealpha(0);
-					self:x(_screen.cx-75);self:sleep(0.25);self:decelerate(0.75);self:x(_screen.cx);self:diffusealpha(1);
-				else
-					self:stoptweening();self:linear(0.25);self:diffusealpha(0);
-				end;
-			end;
-
-
-		};
-		
-	
-};
+t[#t+1] = LoadActor("songPreview");
 
 
 ---DECORATIONS IN GENERAL
@@ -1182,7 +957,8 @@ t[#t+1] = LoadActor("code_detector.lua")..{};
 --t[#t+1] = LoadActor("PlayerMods")..{};
 t[#t+1] = LoadActor("GenreSounds.lua")..{};
 if getenv("PlayMode") == "Arcade" or getenv("PlayMode") == "Pro" then 
-	t[#t+1] = LoadActor("channel_system")..{};
+	--TODO: SHOWSTOPPER: This causes a giant lag spike, needs investigation
+	--t[#t+1] = LoadActor("channel_system")..{};
 end;
 
 t[#t+1] = LoadActor(THEME:GetPathG("","USB_stuff"))..{};
@@ -1209,75 +985,75 @@ t[#t+1] = LoadActor("ready")..{		-- 1 PLAYER JOINED READY
 ready_index = 1;
 		
 t[#t+1] = LoadActor("ready/ready_shine/effect (1)")..{
-		InitCommand=cmd(diffusealpha,0;horizalign,center;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;);
-		OffCommand=function(self,param)
+	InitCommand=cmd(diffusealpha,0;horizalign,center;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;);
+	OffCommand=function(self,param)
+		self:stoptweening();
+		self:Load(nil);
+		self:zoom(1);
+		self:diffusealpha(1);
+		self:sleep(0.03);
+		self:Load(THEME:GetCurrentThemeDirectory().."Bganimations/ScreenSelectMusic overlay/ready/ready_shine/effect ("..ready_index..").png");
+		if ready_index > 12 then
 			self:stoptweening();
-			self:Load(nil);
-			self:zoom(1);
-			self:diffusealpha(1);
-			self:sleep(0.03);
-			self:Load(THEME:GetCurrentThemeDirectory().."Bganimations/ScreenSelectMusic overlay/ready/ready_shine/effect ("..ready_index..").png");
-			if ready_index > 12 then
-				self:stoptweening();
-				ready_index = 1;
-				self:Load(THEME:GetPathG("","_white"));
-				self:zoomto(SCREEN_WIDTH,SCREEN_HEIGHT);
-			else
-				ready_index = ready_index+1
-				self:queuecommand("Off");
-			end;
+			ready_index = 1;
+			self:Load(THEME:GetPathG("","_white"));
+			self:zoomto(SCREEN_WIDTH,SCREEN_HEIGHT);
+		else
+			ready_index = ready_index+1
+			self:queuecommand("Off");
 		end;
-		};
+	end;
+};
 
-		t[#t+1] = Def.ActorFrame{
-		
-			--PLAYER 1
-			LoadActor("DifficultyList/background_orb")..{
-				InitCommand=cmd(visible,false;horizalign,center;zoom,0.7;x,SCREEN_WIDTH/7;y,SCREEN_CENTER_Y+107);
-				OnCommand = function(self, params)
-					if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_1) then self:visible(true); end;
-				end;
-				OffCommand=function(self,param)
-					self:linear(0.3);
-					self:Load(THEME:GetPathG("","_white"));
-				end;
-			};
-			
-			LoadFont("facu/_zona pro bold 20px")..{
-				InitCommand=cmd(uppercase,true;visible,false;horizalign,center;zoom,0.45;x,SCREEN_WIDTH/7;y,SCREEN_CENTER_Y+107);
-				OnCommand = function(self, params)
-					if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_1) then self:settext("Speed:\n"..GAMESTATE:GetPlayerState(PLAYER_1):GetCurrentPlayerOptions():XMod().."x"); self:visible(true); end;
-				end;
-				CodeMessageCommand = function(self, params)
-					if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_1) then self:settext("Speed:\n"..GAMESTATE:GetPlayerState(PLAYER_1):GetCurrentPlayerOptions():XMod().."x"); self:visible(true); end;
-				end;
-			};
-			
-			--PLAYER 2
-			LoadActor("DifficultyList/background_orb")..{
-				InitCommand=cmd(visible,false;horizalign,center;zoom,0.7;x,SCREEN_RIGHT-SCREEN_WIDTH/7;y,SCREEN_CENTER_Y+107);
-				OnCommand = function(self, params)
-					if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_2) then self:visible(true); end;
-				end;
-				OffCommand=function(self,param)
-					self:linear(0.3);
-					self:Load(THEME:GetPathG("","_white"));
-				end;
-			};
-			
-			LoadFont("facu/_zona pro bold 20px")..{
-				InitCommand=cmd(uppercase,true;visible,false;horizalign,center;zoom,0.45;x,SCREEN_RIGHT-SCREEN_WIDTH/7;y,SCREEN_CENTER_Y+107);
-				OnCommand = function(self, params)
-					if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_2) then self:settext("Speed:\n"..GAMESTATE:GetPlayerState(PLAYER_2):GetCurrentPlayerOptions():XMod().."x"); self:visible(true); end;
-				end;
-				CodeMessageCommand = function(self, params)
-					if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_2) then self:settext("Speed:\n"..GAMESTATE:GetPlayerState(PLAYER_2):GetCurrentPlayerOptions():XMod().."x"); self:visible(true); end;
-				end;
-			};
-		};
-		if getenv("PlayMode") == "Easy" then
-			t[#t+1] = 	LoadActor("channel_system/arrows")..{};	
+t[#t+1] = Def.ActorFrame{
+
+	--PLAYER 1
+	LoadActor("DifficultyList/background_orb")..{
+		InitCommand=cmd(visible,false;horizalign,center;zoom,0.7;x,SCREEN_WIDTH/7;y,SCREEN_CENTER_Y+107);
+		OnCommand = function(self, params)
+			if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_1) then self:visible(true); end;
 		end;
+		OffCommand=function(self,param)
+			self:linear(0.3);
+			self:Load(THEME:GetPathG("","_white"));
+		end;
+	};
+	
+	LoadFont("facu/_zona pro bold 20px")..{
+		InitCommand=cmd(uppercase,true;visible,false;horizalign,center;zoom,0.45;x,SCREEN_WIDTH/7;y,SCREEN_CENTER_Y+107);
+		OnCommand = function(self, params)
+			if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_1) then self:settext("Speed:\n"..GAMESTATE:GetPlayerState(PLAYER_1):GetCurrentPlayerOptions():XMod().."x"); self:visible(true); end;
+		end;
+		CodeMessageCommand = function(self, params)
+			if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_1) then self:settext("Speed:\n"..GAMESTATE:GetPlayerState(PLAYER_1):GetCurrentPlayerOptions():XMod().."x"); self:visible(true); end;
+		end;
+	};
+	
+	--PLAYER 2
+	LoadActor("DifficultyList/background_orb")..{
+		InitCommand=cmd(visible,false;horizalign,center;zoom,0.7;x,SCREEN_RIGHT-SCREEN_WIDTH/7;y,SCREEN_CENTER_Y+107);
+		OnCommand = function(self, params)
+			if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_2) then self:visible(true); end;
+		end;
+		OffCommand=function(self,param)
+			self:linear(0.3);
+			self:Load(THEME:GetPathG("","_white"));
+		end;
+	};
+	
+	LoadFont("facu/_zona pro bold 20px")..{
+		InitCommand=cmd(uppercase,true;visible,false;horizalign,center;zoom,0.45;x,SCREEN_RIGHT-SCREEN_WIDTH/7;y,SCREEN_CENTER_Y+107);
+		OnCommand = function(self, params)
+			if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_2) then self:settext("Speed:\n"..GAMESTATE:GetPlayerState(PLAYER_2):GetCurrentPlayerOptions():XMod().."x"); self:visible(true); end;
+		end;
+		CodeMessageCommand = function(self, params)
+			if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_2) then self:settext("Speed:\n"..GAMESTATE:GetPlayerState(PLAYER_2):GetCurrentPlayerOptions():XMod().."x"); self:visible(true); end;
+		end;
+	};
+};
+if getenv("PlayMode") == "Easy" then
+	t[#t+1] = 	LoadActor("channel_system/arrows")..{};	
+end;
 
 --[[
 

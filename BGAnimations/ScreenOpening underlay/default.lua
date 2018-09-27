@@ -7,7 +7,7 @@ else
 end;
 
 
-t[#t+1] =LoadActor("/Backgrounds/openning")..{
+t[#t+1] = LoadActor(THEME:GetPathG("","_BGMovies/openning.mpg"))..{
 	OnCommand=cmd(Center;zoomto,default_width,SCREEN_HEIGHT);
 };
 
