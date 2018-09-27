@@ -205,7 +205,7 @@ t[#t+1] = Def.ActorFrame{
 
 local initzoomp1 = 0.8;
 local finalzoomp1 = 0.6;
-local p1initx = (player == PLAYER_1) and SCREEN_WIDTH/4.5 or SCREEN_RIGHT-SCREEN_WIDTH/4.5+40;
+local p1initx = (player == PLAYER_1) and SCREEN_WIDTH/4.5 or SCREEN_RIGHT-SCREEN_WIDTH/4.5;
 local p1inity = SCREEN_CENTER_Y-30;
 
 

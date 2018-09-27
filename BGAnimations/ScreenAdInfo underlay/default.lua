@@ -11,12 +11,14 @@ t[#t+1] = LoadActor(THEME:GetPathG("","background/common_bg/shared"))..{
 };
 
 t[#t+1] = LoadActor("1_ad")..{
-	InitCommand=cmd(x,SCREEN_CENTER_X-distance;y,SCREEN_CENTER_Y;zoomto,size,size;horizalign,center;sleep,TIMER-0.25;linear,1;diffusealpha,0);
+	InitCommand=cmd(x,SCREEN_CENTER_X-distance;y,SCREEN_CENTER_Y;rotationy,90;zoomto,size,size;horizalign,center;);
+	OnCommand=cmd(sleep,.1;decelerate,1;rotationy,0;sleep,TIMER-0.25;linear,1;diffusealpha,0;);
 	OffCommand=cmd(linear,0.15;diffusealpha,0);
 };
 
 t[#t+1] = LoadActor("2_ad")..{
-	InitCommand=cmd(x,SCREEN_CENTER_X+distance;y,SCREEN_CENTER_Y;zoomto,size,size;horizalign,center;sleep,TIMER-0.25;linear,1;diffusealpha,0);
+	InitCommand=cmd(x,SCREEN_CENTER_X+distance;y,SCREEN_CENTER_Y;rotationy,90;zoomto,size,size;horizalign,center;);
+	OnCommand=cmd(sleep,.1;decelerate,1;rotationy,0;sleep,TIMER-0.25;linear,1;diffusealpha,0;);
 	OffCommand=cmd(linear,0.15;diffusealpha,0);
 };
 

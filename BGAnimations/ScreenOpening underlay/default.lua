@@ -7,8 +7,8 @@ else
 end;
 
 
-t[#t+1] = LoadActor(THEME:GetPathG("","_BGMovies/openning.mpg"))..{
-	OnCommand=cmd(Center;zoomto,default_width,SCREEN_HEIGHT);
+t[#t+1] = LoadActor(THEME:GetPathG("","_BGMovies/Opening"))..{
+	OnCommand=cmd(Center;Cover;);
 };
 
 return t;
