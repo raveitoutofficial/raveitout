@@ -1,7 +1,5 @@
 local t = Def.ActorFrame {};
 
-local shine_index = 1;
-
 t[#t+1] = Def.ActorFrame{
 	LoadActor("hexagon")..{
 		OnCommand=function(self,param)
@@ -13,24 +11,11 @@ t[#t+1] = Def.ActorFrame{
 		end;
 	};
 		
-	LoadActor("polygon_shine/effect (1)")..{
-		StepsChosenMessageCommand=cmd(playcommand,"On";);
-		OnCommand=function(self,param)
-			self:stoptweening();
-			self:Load(nil);
-			self:zoom(0.55);
-			self:diffusealpha(1);
-			self:sleep(0.03);
-			self:Load(THEME:GetCurrentThemeDirectory().."Bganimations/ScreenSelectMusic overlay/ready/polygon_shine/effect ("..shine_index..").png");
-			if shine_index > 6 then
-				self:stoptweening();
-				shine_index = 1;
-				self:diffusealpha(0);
-			else
-				shine_index = shine_index+1
-				self:queuecommand("On");
-			end;
-		end;
+	Def.Sprite{
+		Texture="polygon_shine 3x2";
+		InitCommand=cmd(animate,false;SetAllStateDelays,0.55);
+		StepsChosenMessageCommand=cmd(animate,true);
+		AnimationFinishedCommand=cmd(animate,false);
 		};
 	
 	LoadActor("label")..{

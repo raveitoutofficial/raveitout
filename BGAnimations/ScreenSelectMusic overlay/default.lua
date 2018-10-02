@@ -8,10 +8,10 @@ local function MsgScroll()
 	return LoadActor("help_info/msg_1")..{
 		SetCommand=function(self)
 			index = index+1
-			path = "/Themes/RioTI/Bganimations/ScreenSelectMusic overlay/help_info/";
+			path = THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectMusic overlay/help_info/";
 			total = #FILEMAN:GetDirListing(path)-3
 			if getenv("PlayMode") == "Easy" then
-				path = "/Themes/RioTI/Bganimations/ScreenSelectMusic overlay/help_info/easy/";
+				path = THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectMusic overlay/help_info/easy/";
 				total = #FILEMAN:GetDirListing(path)
 			end
 			if index > total then index = 1 end
@@ -133,6 +133,7 @@ t[#t+1] = Def.ActorFrame {
 	};
  };
  
+t[#t+1] = LoadActor("arrow_shine");
 t[#t+1] = Def.ActorFrame{
 
 	--[[
@@ -689,8 +690,7 @@ t[#t+1] = LoadActor("code_detector.lua")..{};
 --t[#t+1] = LoadActor("PlayerMods")..{};
 t[#t+1] = LoadActor("GenreSounds.lua")..{};
 if getenv("PlayMode") == "Arcade" or getenv("PlayMode") == "Pro" then 
-	--TODO: SHOWSTOPPER: This causes a giant lag spike, needs investigation
-	--t[#t+1] = LoadActor("channel_system")..{};
+	t[#t+1] = LoadActor("channel_system")..{};
 end;
 
 t[#t+1] = LoadActor(THEME:GetPathG("","USB_stuff"))..{};
@@ -716,24 +716,19 @@ t[#t+1] = LoadActor("ready")..{		-- 1 PLAYER JOINED READY
 
 ready_index = 1;
 		
-t[#t+1] = LoadActor("ready/ready_shine/effect (1)")..{
-	InitCommand=cmd(diffusealpha,0;horizalign,center;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;);
+t[#t+1] = Def.Sprite{
+	Texture="ready/ready_shine 4x3";
+	InitCommand=cmd(diffusealpha,0;horizalign,center;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;SetAllStateDelays,0.03;animate,false;);
 	OffCommand=function(self,param)
-		self:stoptweening();
-		self:Load(nil);
-		self:zoom(1);
+		self:animate(true);
 		self:diffusealpha(1);
-		self:sleep(0.03);
-		self:Load(THEME:GetCurrentThemeDirectory().."Bganimations/ScreenSelectMusic overlay/ready/ready_shine/effect ("..ready_index..").png");
-		if ready_index > 12 then
-			self:stoptweening();
-			ready_index = 1;
-			self:Load(THEME:GetPathG("","_white"));
-			self:zoomto(SCREEN_WIDTH,SCREEN_HEIGHT);
-		else
-			ready_index = ready_index+1
-			self:queuecommand("Off");
-		end;
+		self:decelerate(.48); --16 frames * 0.03 seconds per frame
+		self:zoom(2);
+	end;
+	AnimationFinishedCommand=function(self)
+		self:animate(false);
+		self:Load(THEME:GetPathG("","_white"));
+		self:zoomto(SCREEN_WIDTH,SCREEN_HEIGHT);
 	end;
 };
 
@@ -783,9 +778,6 @@ t[#t+1] = Def.ActorFrame{
 		end;
 	};
 };
-if getenv("PlayMode") == "Easy" then
-	t[#t+1] = 	LoadActor("channel_system/arrows")..{};	
-end;
 
 --[[
 

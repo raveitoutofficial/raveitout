@@ -1,9 +1,10 @@
 local shine_index = 0;
 return Def.ActorFrame{
 	
-		LoadActor("preview_shine/0")..{
-			InitCommand=cmd(horizalign,center;zoomx,0.65;zoomy,0.7;x,_screen.cx;y,_screen.cy);
-			CurrentSongChangedMessageCommand=cmd(stoptweening;queuecommand,"Effect");
+		Def.Sprite{
+			Texture="preview_shine";
+			InitCommand=cmd(horizalign,center;zoomx,0.65;zoomy,0.7;x,_screen.cx;y,_screen.cy;SetAllStateDelays,0.03;animate,false;setstate,0;);
+			CurrentSongChangedMessageCommand=cmd(stoptweening;animate,true;setstate,0;);
 			--[[MenuLeftP1MessageCommand=cmd(playcommand,"Effect");
 			MenuLeftP2MessageCommand=cmd(playcommand,"Effect");
 			MenuUpP1MessageCommand=cmd(playcommand,"Effect");
@@ -12,7 +13,7 @@ return Def.ActorFrame{
 			MenuRightP2MessageCommand=cmd(playcommand,"Effect");
 			MenuDownP1MessageCommand=cmd(playcommand,"Effect");
 			MenuDownP2MessageCommand=cmd(playcommand,"Effect");]]
-			EffectCommand=function(self)	
+			--[[EffectCommand=function(self)	
 				self:stoptweening();
 				self:Load(nil);
 				self:Load(THEME:GetCurrentThemeDirectory().."Bganimations/ScreenSelectMusic overlay/preview_shine/"..shine_index..".png");
@@ -26,7 +27,8 @@ return Def.ActorFrame{
 					shine_index = shine_index+1
 					self:queuecommand("Effect");
 				end;
-			end;
+			end;]]
+			AnimationFinishedCommand=cmd(animate,false;setstate,0;);
 		};
 
 		LoadActor("preview_frame")..{

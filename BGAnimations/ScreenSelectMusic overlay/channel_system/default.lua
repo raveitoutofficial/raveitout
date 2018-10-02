@@ -1,4 +1,92 @@
-local t = Def.ActorFrame{}		
+--=======================================================
+--Input handler. Brought to you by PIU Delta NEX Rebirth.
+--=======================================================
+local function inputs(event)
+	
+	local pn= event.PlayerNumber
+	local button = event.button
+	-- If the PlayerNumber isn't set, the button isn't mapped.  Ignore it.
+	--Also we only want it to activate when they're NOT selecting the difficulty.
+	if not pn or not SCREENMAN:get_input_redirected(pn) then return end
+
+	-- If it's a release, ignore it.
+	if event.type == "InputEventType_Release" then return end
+	
+	if button == "Center" or button == "Start" then
+		SCREENMAN:set_input_redirected(PLAYER_1, false);
+		SCREENMAN:set_input_redirected(PLAYER_2, false);
+		MESSAGEMAN:Broadcast("StartSelectingSong");
+	elseif button == "DownLeft" or button == "Left" then
+		--scroller:scroll_by_amount(-1);
+		SOUND:PlayOnce(THEME:GetPathS("MusicWheel", "change"), true);
+		MESSAGEMAN:Broadcast("PreviousGroup");
+	elseif button == "DownRight" or button == "Right" then
+		--scroller:scroll_by_amount(1);
+		SOUND:PlayOnce(THEME:GetPathS("MusicWheel", "change"), true);
+		MESSAGEMAN:Broadcast("NextGroup");
+	elseif button == "Back" then
+		SCREENMAN:set_input_redirected(PLAYER_1, false);
+		SCREENMAN:set_input_redirected(PLAYER_2, false);
+		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen");
+	else
+		--SCREENMAN:SystemMessage(button);
+	end;
+	
+	if button == "MenuDown" then
+		local groupName = scroller:get_info_at_focus_pos()
+		if initialGroup then
+			SCREENMAN:SystemMessage(groupName.." | "..initialGroup);
+		else
+			SCREENMAN:SystemMessage(groupName.." | No initial group.");
+		end;
+		--SCREENMAN:SystemMessage(groupName.." | "..SONGMAN:GetSongGroupBannerPath(groupName));
+	end;
+	
+	if button == "MenuUp" then
+		SCREENMAN:SystemMessage(tostring(ReadPrefFromFile("UserPrefHiddenChannels") == "Enabled"));
+	end;
+	
+end;
+
+local isPickingDifficulty = false;
+local t = Def.ActorFrame{
+	OnCommand=function(self)
+		SCREENMAN:GetTopScreen():AddInputCallback(inputs);
+	end;
+
+	SongChosenMessageCommand=function(self)
+		isPickingDifficulty = true;
+	end;
+	TwoPartConfirmCanceledMessageCommand=cmd(sleep,.1;queuecommand,"PickingSong");
+	SongUnchosenMessageCommand=cmd(sleep,.1;queuecommand,"PickingSong");
+	
+	PickingSongCommand=function(self)
+		isPickingDifficulty = false;
+	end;
+	
+	CodeMessageCommand=function(self,param)
+		local codeName = param.Name		-- code name, matches the one in metrics
+		--player is not needed
+		--local pn = param.PlayerNumber	-- which player entered the code
+		if codeName == "GroupSelect1" or codeName == "GroupSelect2" then
+			if isPickingDifficulty then return end; --Don't want to open the group select if they're picking the difficulty.
+			MESSAGEMAN:Broadcast("StartSelectingGroup");
+			--SCREENMAN:SystemMessage("Group select opened.");
+			--No need to check if both players are present... Probably.
+			SCREENMAN:set_input_redirected(PLAYER_1, true);
+			SCREENMAN:set_input_redirected(PLAYER_2, true);
+		else
+			--Debugging only
+			--SCREENMAN:SystemMessage(codeName);
+		end;
+	end;
+
+
+}		
+
+--==========================
+--Group select
+--==========================
 local hearts = GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer();
 groups = {};
 local shine_index = 1;
@@ -42,7 +130,7 @@ end;
 if DevMode() then groups = SONGMAN:GetSongGroupNames(); end
 
 t[#t+1] = Def.Actor{
-	NextGroupChangeMessageCommand=function(self,params)
+	NextGroupMessageCommand=function(self,params)
 		if selection == #groups then
 			selection = 1;
 		else
@@ -51,7 +139,7 @@ t[#t+1] = Def.Actor{
 		MESSAGEMAN:Broadcast("GroupChange");
 
 	end;
-	PreviousGroupChangeMessageCommand=function(self,params)
+	PreviousGroupMessageCommand=function(self,params)
 		if selection == 1 then
 			selection = #groups;
 		else
@@ -125,7 +213,7 @@ for k = 1, #groups do
 	
 	Banners[#Banners+1] =
 		LoadActor( banner )..{
-		InitCommand=cmd(stoptweening;linear,0.3;zoom,0;diffusealpha,0;scaletoclipped,500,375);
+		InitCommand=cmd(scaletoclipped,500,375;zoom,0;diffusealpha,0;);
 	};
 	
 end;
@@ -156,12 +244,13 @@ t[#t+1] =
 				end
 			end;
 			self:SetCurrentAndDestinationItem(selection-1);
+			self:zoom(0);
 		end;
 		
 		StartSelectingGroupMessageCommand=cmd(stoptweening;linear,0.35;zoom,1;diffusealpha,1);
 		StartSelectingSongMessageCommand=cmd(stoptweening;linear,0.3;zoom,0;diffusealpha,0);
 		
-		PreviousGroupChangeMessageCommand=function(self,params)
+		PreviousGroupMessageCommand=function(self,params)
 		(cmd(stoptweening;zoom,1;decelerate,.05;zoom,1.03;linear,.3;zoom,1))(self);
 			if self:GetDestinationItem() == 0 then
 				self:SetCurrentAndDestinationItem(self:GetNumChildren()-1)
@@ -170,7 +259,7 @@ t[#t+1] =
 			end
 		end;
 		
-		NextGroupChangeMessageCommand=function(self,params)
+		NextGroupMessageCommand=function(self,params)
 			(cmd(stoptweening;zoom,1;decelerate,.05;zoom,1.03;linear,.3;zoom,1))(self);
 			if self:GetDestinationItem() == self:GetNumChildren()-1 then
 				self:SetCurrentAndDestinationItem(0)
@@ -246,6 +335,6 @@ t[#t+1] = LoadFont("monsterrat/_montserrat light 60px")..{
 	end;
 };
 
-t[#t+1] = 	LoadActor("arrows")..{};	
+t[#t+1] = 	LoadActor("../arrow_shine")..{};
 
 return t;
