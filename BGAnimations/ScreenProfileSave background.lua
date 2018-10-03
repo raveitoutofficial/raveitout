@@ -20,7 +20,7 @@ local LastStageGradeHighest =		math.max(LastStageGradeP1,LastStageGradeP2);
 function getRandomWall()
 -- Cortes quiere random wallpaper, este script cargara de forma aleatoria
 --  una imagen dentro del folder _RandomWalls en BGAnimations
-	local sImagesPath = THEME:GetPathB("","_RandomWalls/NewWalls");
+	local sImagesPath = THEME:GetPathB("","_RandomWalls/HDWalls");
 	local sRandomWalls = FILEMAN:GetDirListing(sImagesPath.."/",false,true);
 	-- El random seed
 	 math.randomseed(Hour()*3600+Second());
@@ -38,6 +38,15 @@ if LastSongPlayedArtist == "Kanye West" and LastStageAccuracyHighest >= 90 then
 	LoadSpecialTransition = getSpecialRandom()
 	SpecialTransition = true
 --	ShowRIOLogo = false
+elseif LastSongPlayedArtist == "Logic feat. Alessia Cara & Khalid" then
+	function getSpecialRandom()
+		local sImagesPath = THEME:GetPathB("","_SpecialTransitions/SuicidePrevention");
+		local sRandomWalls = FILEMAN:GetDirListing(sImagesPath.."/",false,true);
+		math.randomseed(Hour()*3600+Second());
+		return sRandomWalls[math.random(#sRandomWalls)];
+	end;
+	LoadSpecialTransition = getSpecialRandom()
+	SpecialTransition = true
 else
 	SpecialTransition = false
 end;
@@ -55,6 +64,7 @@ if SpecialTransition then		--load wallpaper or special transition
 				end;
 				if IsImage then		--if the file loaded for the special transition is an image then
 					self:Center();	--center this actor
+					self:zoomto(SCREEN_WIDTH,SCREEN_HEIGHT);
 				end;
 			end;
 		};
@@ -66,11 +76,7 @@ else
 			--OnCommand=cmd(FullScreen);
 			OnCommand=function(self)
 				self:Center();
-				if IsUsingWideScreen() then
-					self:zoomto(SCREEN_WIDTH+20,SCREEN_HEIGHT);
-				else
-					self:zoomto(SCREEN_WIDTH,SCREEN_HEIGHT);
-				end;
+				self:zoomto(SCREEN_WIDTH,SCREEN_HEIGHT);
 			end;
 		};
 	};
