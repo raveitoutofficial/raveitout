@@ -25,33 +25,7 @@ else
 end
 local IsP1On =		GAMESTATE:IsPlayerEnabled(PLAYER_1)	--Is player 1 present? BRETTY OBIOS :DDDD
 local IsP2On =		GAMESTATE:IsPlayerEnabled(PLAYER_2)	--Is player 2 present? BRETTY OBIOS :DDDD
---tip controls
-local th =			4			--tip height
-local tw =			52/2		--tip width
---note: for animation time we use local vittim
---diffusecolor,tc1,tc2,tc3;fadeleft,tfl;faderight,tfr
-local tc1 =			1			--tip color param 1 (R)
-local tc2 =			1			--tip color param 2 (G)
-local tc3 =			1			--tip color param 3 (B)
-local tfl =			0.25		--tip fade  left ratio 0..1
-local tfr =			0.25		--tip face right ratio 0..1
---bar controls
-local barin =		0.05		--bar in animation time
-local barstay =		3			--bar stay (sleep) time
-local baroff =		0.25		--bar off animation time
-local barout =		60			--bar distance out screen from edge
-local bzom = 		1			--bar zoom
-local lfwide =		360+16+10	--life bar   wide screen position X, distance from center value
-local lfnorm =		302			--life bar normal screen position X, distance from center value
-local lfbpsy =		175*bzom	--life bar position Y			--local lfbpsy =	200			--life bar position Y
-local vittim =		0.2			--vitality (life) change/variation animation time
-local spawid =		320			--spacebar graphic width
-local andiff =		0			--animation effect magnitude, also difference
-local debgz1 =		0.75		--debug zoom category 1 value (Player name)
-local bralph =		0.25		--life bar alpha diffuse value
-local maxwid =		spawid*0.5	--Player name maxwidth (1/2 of the graphic width)	--varies depeding on font used
-local namesp =		10			--additional name spacing
-local BarsPosY =	_screen.cy+lfbpsy	--Standard Bar Y axis positioning (both players)
+
 local notefxp1 =	THEME:GetMetric("ScreenGameplay","PlayerP1OnePlayerOneSideX")	--Note field X position P1
 local notefxp2 =	THEME:GetMetric("ScreenGameplay","PlayerP2OnePlayerOneSideX")	--Note field X position P2
 if IsP1On then
@@ -88,9 +62,9 @@ local GPS2 =		GAMESTATE:GetPlayerState(PLAYER_2);
 local PSS1 =		STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1)	--
 local PSS2 =		STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2)	--
 local PSSMaster =	STATSMAN:GetCurStageStats():GetPlayerStageStats(GAMESTATE:GetMasterPlayerNumber())	--
---ScreenFilter mod
-local filterp1 =	GetUserPref("ScreenFilterP1")	--shortcut
-local filterp2 =	GetUserPref("ScreenFilterP2")	--shortcut
+local lfbpsy =	175 --life bar position Y			--local lfbpsy =	200			--life bar position Y
+local spawid =		320			--spacebar graphic width
+
 --Cortes usual dumb shit lol
 local cfsepx = 35		--cortes fix screen edge separation
 function GetOpositePlayer(pn)	--Obtiene el jugador "opuesto" by ROAD24
@@ -150,170 +124,38 @@ function EndScreen()
 --	SCREENMAN:SystemMessage("Restoring Combo from "..GetBreakCombo().." to "..iOldCombo);
 	setenv("BreakCombo",51);
 end;
-	--P1BarPosX, P2BarPosX variables + CortesWideScreen Fix
-if IsUsingWideScreen() then	
-	P1BarPosX = SCREEN_LEFT+cfsepx+30;
-	P2BarPosX = SCREEN_RIGHT-cfsepx-30;
-else
-	P1BarPosX = SCREEN_LEFT+cfsepx;
-	P2BarPosX = SCREEN_RIGHT-cfsepx;
-end
 
-setenv("P1BarPosX",P1BarPosX);
-setenv("P2BarPosX",P2BarPosX);
 
-return Def.ActorFrame{
+local t = Def.ActorFrame{
 	
 	Def.ActorFrame{		-- Wow este codigo es enorme que te parece si lo hacemos un poco mas modular --ROAD24
 		-- Iniciamos algunas cosas en la screen
 		OnCommand=SetupScreen;
 		OffCommand=EndScreen;
 	};
-	--///// VISUAL STUFF /////
-	Def.ActorFrame{	-- PLAYER 1		LIFE BAR STUFF
-		InitCommand=cmd(x,-80);
-		OnCommand=cmd(sleep,2;accelerate,0.25;x,barin-10);
-		LifeChangedMessageCommand=function(self)
-			if stage == "ScreenGameplay stage Demo" then
-				self:visible(true);
-			end;
-		end;
-		
-		LoadActor("spacebar")..{			--back meter graphic
-			InitCommand=cmd(visible,IsP1On;x,P1BarPosX;y,BarsPosY+2;horizalign,left;rotationz,-90;zoomx,bzom+0.01;zoomy,bzom+0.2);
-		};
-		
-		LoadActor("spacebar")..{		--lifebar mask
-			InitCommand=cmd(visible,IsP1On;x,P1BarPosX;y,BarsPosY-spawid-andiff;MaskSource;horizalign,right;rotationz,-90;zoom,bzom;);
-			OnCommand=cmd(bounce;effectmagnitude,0,andiff,0;effectclock,"bgm";effecttiming,1,0,0,0;);
-			LifeChangedMessageCommand=function(self)
-				self:stoptweening();
-				self:bounceend(vittim);
-				if ((PSS1:GetCurrentMissCombo()/GetBreakCombo())-1) >= 0 then
-					self:cropleft(0);
-				else
-					self:cropleft(math.abs((PSS1:GetCurrentMissCombo()/GetBreakCombo())-1));
-				end;
-			end;
-		};
-		LoadActor("p1_lifebar")..{			--meter graphic
-			InitCommand=cmd(visible,IsP1On;x,P1BarPosX;y,BarsPosY;MaskDest;horizalign,left;rotationz,-90;zoom,bzom;);};
-		--Def.Quad{						--meter tip indicator
-		LoadActor("tip")..{
-			--We IIDX now
-			InitCommand=cmd(visible,IsP1On;x,P1BarPosX-25;y,BarsPosY-10;horizalign,left;zoomx,1.3;glowshift;effectclock,"beat";diffuseramp;effectcolor1,color(".8,.8,.8,1");effectcolor2,color("1,1,1,1"));
-			LifeChangedMessageCommand=function(self)
-				self:stoptweening();
-				self:bounceend(vittim);
-				if ((PSS1:GetCurrentMissCombo()/GetBreakCombo())-1) >= 0 then
-					self:y(BarsPosY);
-				else
-					self:y(_screen.cy-lfbpsy+(spawid*(PSS1:GetCurrentMissCombo()/GetBreakCombo())+(64/2)));
-				end;
-			end;
-		};
-		LoadFont("Common normal")..{	--Player name
-			InitCommand=function(self)
-				(cmd(visible,IsP1On;x,P1BarPosX;y,BarsPosY-namesp;horizalign,left;rotationz,-90;zoom,debgz1;maxwidth,maxwid;))(self)		--notice, has no "zoom,bzom;"
-				if prfnam1 == "" then self:settext("PLAYER 1");
-				else self:settext(prfnam1);
-				end;
-			end;
-		};
+}
+--yeah this isn't really good code
+activeModP1 = ActiveModifiers["P1"]["BGAMode"]
+activeModP2 = ActiveModifiers["P2"]["BGAMode"]
+if activeModP1 == "Black" or activeModP2 == "Black" then
+	t[#t+1] = Def.Quad{InitCommand=cmd(setsize,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color("Black");Center)};
+elseif activeModP1 == "Off" or activeModP2 == "Off" then
+	t[#t+1] = LoadActor(THEME:GetPathG("","_BGMovies/bgaoff"))..{InitCommand=cmd(zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;Center)}
+elseif activeModP1 == "Dark" or activeModP2 == "Dark" then
+	t[#t+1] = Def.Quad{InitCommand=cmd(setsize,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color("0,0,0,.3");Center)};
+end;
+for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+	local negativeOffset = (pn == PLAYER_1) and -1 or 1;
+	local barposX = (pn == PLAYER_1) and 55 or SCREEN_RIGHT-55;
+	setenv("BarPosX",barposX);
+	t[#t+1] = LoadActor("lifebar", pn)..{
+		InitCommand=cmd(xy,barposX+(negativeOffset*100),SCREEN_CENTER_Y;rotationz,-90;);
+		OnCommand=cmd(sleep,1.5;accelerate,0.25;x,barposX);
 	};
-	
-	Def.ActorFrame{	-- PLAYER 2		LIFE BAR STUFF
-		InitCommand=cmd(x,barout+80);
-		OnCommand=cmd(sleep,2;accelerate,0.25;x,barin+10);
-		LifeChangedMessageCommand=function(self)
-			if stage == "ScreenGameplay stage Demo" then
-				self:visible(true);
-			end;
-		end;
-		
-		LoadActor("spacebar")..{			--back meter graphic
-			InitCommand=cmd(visible,IsP2On;x,P2BarPosX;y,BarsPosY+2;horizalign,left;rotationz,-90;zoomx,bzom+0.01;zoomy,bzom+0.2);
-		};
-		
-		LoadActor("spacebar")..{		--lifebar mask
-			InitCommand=cmd(visible,IsP2On;x,P2BarPosX;y,BarsPosY-spawid-andiff;MaskSource;horizalign,right;rotationz,-90;zoom,bzom;);
-			OnCommand=cmd(bounce;effectmagnitude,0,andiff,0;effectclock,"bgm";effecttiming,1,0,0,0;);
-			LifeChangedMessageCommand=function(self)
-				self:stoptweening();
-				self:linear(vittim);
-				if ((PSS2:GetCurrentMissCombo()/GetBreakCombo())-1) >= 0 then
-					self:cropleft(0);
-				else
-					self:cropleft(math.abs((PSS2:GetCurrentMissCombo()/GetBreakCombo())-1));
-				end;
-			end;
-		};
-		LoadActor("p2_lifebar")..{			--meter graphic
-			InitCommand=cmd(visible,IsP2On;x,P2BarPosX;y,BarsPosY;MaskDest;horizalign,left;rotationz,-90;zoom,bzom;);};
-		--Def.Quad{						--meter tip indicator
-		LoadActor("tip")..{
-			InitCommand=cmd(visible,IsP2On;x,P2BarPosX-25;y,BarsPosY-10;horizalign,left;zoomx,1.3;glowshift;effectclock,"beat";diffuseramp;effectcolor1,color(".8,.8,.8,1");effectcolor2,color("1,1,1,1"));
-			LifeChangedMessageCommand=function(self)
-				self:stoptweening();
-				self:bounceend(vittim);
-				if ((PSS2:GetCurrentMissCombo()/GetBreakCombo())-1) >= 0 then
-					self:y(BarsPosY);
-				else
-					self:y(_screen.cy-lfbpsy+(spawid*(PSS2:GetCurrentMissCombo()/GetBreakCombo())+32));
-				end;
-			end;
-		};
-		LoadFont("Common normal")..{	--Player name
-			InitCommand=function(self)
-				(cmd(visible,IsP2On;x,P2BarPosX;y,BarsPosY-namesp;horizalign,left;rotationz,-90;zoom,debgz1;maxwidth,maxwid;))(self)		--notice, has no "zoom,bzom;"
-				if prfnam2 == "" then self:settext("PLAYER 2");
-				else self:settext(prfnam2);
-				end;
-			end;
-		};
-	};
-
-	Def.ActorFrame{		--ScreenFilters
-			OnCommand=function(self)
-				if stage == "ScreenGameplay stage Demo" then self:visible(true); end
-			end;
-
-		Def.Quad{		--Player 1 Filter
-			InitCommand=cmd(draworder,3;visible,IsP1On;x,notefxp1;vertalign,top;zoomto,257,SCREEN_HEIGHT;diffuse,0,0,0,(filterp1*0.01);playcommand,"Refresh";);
-			RefreshCommand=function(self)
-				if IsP1On then
-					if GAMESTATE:GetCurrentSteps(PLAYER_1):GetStepsType() == "StepsType_Pump_Halfdouble" then
-						self:zoomto(310,SCREEN_HEIGHT);
-						self:x(_screen.cx);
-					elseif GAMESTATE:GetCurrentSteps(PLAYER_1):GetStepsType() ~= "StepsType_Pump_Single" then
-						self:zoomto(505,SCREEN_HEIGHT);
-						self:x(_screen.cx);
-					elseif PREFSMAN:GetPreference("Center1Player") and GAMESTATE:GetNumSidesJoined() == 1 then
-							self:x(_screen.cx);
-					end
-				end;
-			end;
-		};
-		Def.Quad{		--Player 2 Filter
-			InitCommand=cmd(draworder,3;visible,IsP2On;x,notefxp2;vertalign,top;zoomto,257,SCREEN_HEIGHT;diffuse,0,0,0,(filterp2*0.01);playcommand,"Refresh";);
-			RefreshCommand=function(self)
-				if GAMESTATE:IsPlayerEnabled(PLAYER_2) then
-					if GAMESTATE:GetCurrentSteps(PLAYER_2):GetStepsType() == "StepsType_Pump_Halfdouble" then
-						self:zoomto(310,SCREEN_HEIGHT);
-						self:x(_screen.cx);
-					elseif GAMESTATE:GetCurrentSteps(PLAYER_2):GetStepsType() ~= "StepsType_Pump_Single" then
-						self:zoomto(505,SCREEN_HEIGHT);
-						self:x(_screen.cx);
-					elseif PREFSMAN:GetPreference("Center1Player") and GAMESTATE:GetNumSidesJoined() == 1 then
-						self:x(_screen.cx);
-					end
-				end;
-			end;
-		};
-	};
+end;
 
 --/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Def.ActorFrame{		--Limit break by ROAD24 and NeobeatIKK
+t[#t+1] = Def.ActorFrame{		--Limit break by ROAD24 and NeobeatIKK
 		--el modo "Perfectionist" hace que el jugador instantaneamente falle si obtiene algo igual o menor a un W3 (un Good) -NeobeatIKK
 		ComboChangedMessageCommand=function(self,params)
 			local css1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1);
@@ -393,7 +235,7 @@ return Def.ActorFrame{
 		};		--]]
 	};
 
-	Def.ActorFrame{		-- Write data to PlayerProfile/RIO_SongData
+t[#t+1] = 	Def.ActorFrame{		-- Write data to PlayerProfile/RIO_SongData
 		Def.Actor{		-- Write SpeedMod to Profile (PLAYER_1) by NeobeatIKK
 			OnCommand=function(self)
 				if IsP1On then
@@ -452,7 +294,7 @@ return Def.ActorFrame{
 
 	
 --/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Def.ActorFrame{		-- DEBUG STUFF
+t[#t+1] = 	Def.ActorFrame{		-- DEBUG STUFF
 		OnCommand=cmd(visible,DoDebug);
 		--[[LoadFont(DebugFont)..{		--Hit Mine button
 			InitCommand=cmd(xy,_screen.cx,_screen.cy-20;zoom,0.5;settext,"MINE HIT BUTTON");
@@ -484,11 +326,11 @@ return Def.ActorFrame{
 		};
 		LoadFont(DebugFont)..{		-- ScreenFilter status P1
 			InitCommand=cmd(visible,IsP1On;xy,notefxp1,_screen.cy-100;zoom,0.5;);
-			OnCommand=cmd(settext,"ScreenFilter P1: "..filterp1);
+			OnCommand=cmd(settext,"ScreenFilter P1: "..ActiveModifiers["P1"]["ScreenFilter"]);
 		};
 		LoadFont(DebugFont)..{		-- ScreenFilter status P2
 			InitCommand=cmd(visible,IsP2On;xy,notefxp2,_screen.cy-100;zoom,0.5;);
-			OnCommand=cmd(settext,"ScreenFilter P2: "..filterp2);
+			OnCommand=cmd(settext,"ScreenFilter P2: "..ActiveModifiers["P2"]["ScreenFilter"]);
 		};
 		LoadFont(DebugFont)..{		-- Miss bar value P1
 			InitCommand=cmd(visible,IsP1On;xy,SCREEN_LEFT+5,SCREEN_TOP+10+15;horizalign,left;zoom,0.5;);	--notice, has no "zoom,bzom;"
@@ -613,4 +455,4 @@ return Def.ActorFrame{
 			end;
 		};--]]
 	};
-};
+return t;

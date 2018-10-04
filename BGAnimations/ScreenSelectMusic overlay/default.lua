@@ -122,12 +122,12 @@ t[#t+1] = Def.ActorFrame {
 			if song then
 				self:uppercase(true);
 				cur_group = GAMESTATE:GetCurrentSong():GetGroupName();
-				
-				if string.find(cur_group,"Rave It Out") then
+				self:settext(string.gsub(cur_group,"^%d%d? ?%- ?", ""));
+				--[[if string.find(cur_group,"Rave It Out") then
 					self:settext(string.sub(cur_group, 17, string.len(cur_group)-1));
 				else
 					self:settext(string.sub(cur_group, 4, string.len(cur_group)));
-				end;
+				end;]]
 			end
 		end;
 	};

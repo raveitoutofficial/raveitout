@@ -33,8 +33,7 @@ local p1score =		css1:GetScore()			--score :v
 --local p2accuracy =	tonumber(string.format("%.02f",(p2score/stagemaxscore)*100))	--Player 2 accuracy formatted number
 
 --TODO: Why are you declaring a variable and then assigning it on the next line wtf
-local p1accuracy = 0;
-p1accuracy = getenv("P1_accuracy") or 0;
+local p1accuracy = getenv(pname(player).."_accuracy") or 0;
 
 
 local p1ravins =	p1holdstr+p1w1
@@ -195,9 +194,8 @@ t[#t+1] = Def.ActorFrame{
 			--don't pass nil values to env
 			if p1accuracy == nil then p1accuracy = 0 end
 			if p1grade == nil then p1grade = 0 end
-			--TODO: setenv LastStageAccuracyPX (SuperNOVA 3 theme and X2 theme does it)
-			setenv("LastStageAccuracyP1",p1accuracy);
-			setenv("LastStageGradeP1",p1grade);
+			setenv("LastStageAccuracy"..pname(player),p1accuracy);
+			setenv("LastStageGrade"..pname(player),p1grade);
 		end;
 	};
 };

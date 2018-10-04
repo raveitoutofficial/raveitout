@@ -32,26 +32,14 @@ local function inputs(event)
 		--SCREENMAN:SystemMessage(button);
 	end;
 	
-	if button == "MenuDown" then
-		local groupName = scroller:get_info_at_focus_pos()
-		if initialGroup then
-			SCREENMAN:SystemMessage(groupName.." | "..initialGroup);
-		else
-			SCREENMAN:SystemMessage(groupName.." | No initial group.");
-		end;
-		--SCREENMAN:SystemMessage(groupName.." | "..SONGMAN:GetSongGroupBannerPath(groupName));
-	end;
-	
-	if button == "MenuUp" then
-		SCREENMAN:SystemMessage(tostring(ReadPrefFromFile("UserPrefHiddenChannels") == "Enabled"));
-	end;
-	
 end;
 
 local isPickingDifficulty = false;
+local musicwheel; --Need a handle on the MusicWheel to work around a StepMania bug
 local t = Def.ActorFrame{
 	OnCommand=function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback(inputs);
+		musicwheel = SCREENMAN:GetTopScreen():GetChild('MusicWheel');
 	end;
 
 	SongChosenMessageCommand=function(self)
@@ -75,6 +63,7 @@ local t = Def.ActorFrame{
 			--No need to check if both players are present... Probably.
 			SCREENMAN:set_input_redirected(PLAYER_1, true);
 			SCREENMAN:set_input_redirected(PLAYER_2, true);
+			musicwheel:Move(0);
 		else
 			--Debugging only
 			--SCREENMAN:SystemMessage(codeName);
@@ -97,8 +86,9 @@ selection = 1;
 local spacing = 210;
 local numplayers = GAMESTATE:GetHumanPlayers();
 
+--This shit is completely broken in multiplayer.
 -- Snap Songs
-if hearts >= 1*GAMESTATE:GetNumSidesJoined() then
+--[[if hearts >= 1*GAMESTATE:GetNumSidesJoined() then
 	groups[#groups+1] = "00 Rave It Out (Snap Tracks)";
 	if GAMESTATE:GetCurrentSong():GetGroupName() == "00 Rave It Out (Snap Tracks)" then selection = 1; end;
 end;
@@ -127,7 +117,15 @@ if hearts >= 4*GAMESTATE:GetNumSidesJoined() then
 	if GAMESTATE:GetCurrentSong():GetGroupName() == "81 Rave It Out (Rave)" then selection = total_arcade_folders+2; end;
 end;
 
-if DevMode() then groups = SONGMAN:GetSongGroupNames(); end
+if DevMode() then groups = SONGMAN:GetSongGroupNames(); end]]
+groups = SONGMAN:GetSongGroupNames();
+local curGroup = GAMESTATE:GetCurrentSong():GetGroupName();
+for key,value in pairs(groups) do
+	if curGroup == value then
+		selection = key;
+	end
+end;
+setenv("cur_group",groups[selection]);
 
 t[#t+1] = Def.Actor{
 	NextGroupMessageCommand=function(self,params)
@@ -136,6 +134,7 @@ t[#t+1] = Def.Actor{
 		else
 			selection = selection + 1
 		end
+		setenv("cur_group",groups[selection]);
 		MESSAGEMAN:Broadcast("GroupChange");
 
 	end;
@@ -145,11 +144,8 @@ t[#t+1] = Def.Actor{
 		else
 			selection = selection - 1 ;
 		end;
-		MESSAGEMAN:Broadcast("GroupChange");
-	end;
-	
-	GroupChangeMessageCommand=function(self,params)
 		setenv("cur_group",groups[selection]);
+		MESSAGEMAN:Broadcast("GroupChange");
 	end;
 	
 	
@@ -305,10 +301,15 @@ t[#t+1] = LoadFont("monsterrat/_montserrat semi bold 60px")..{
 		StartSelectingGroupMessageCommand=cmd(stoptweening;linear,0.35;diffusealpha,1;playcommand,"GroupChangeMessage");
 		StartSelectingSongMessageCommand=cmd(stoptweening;linear,0.3;diffusealpha,0);
 		GroupChangeMessageCommand=function(self)
-			if string.find(getenv("cur_group"),"Rave It Out") then
+			--[[if string.find(getenv("cur_group"),"Rave It Out") then
 				self:settext(string.sub(getenv("cur_group"), 17, string.len(getenv("cur_group"))-1));
 			else
 				self:settext(string.sub(getenv("cur_group"), 4, string.len(getenv("cur_group"))));
+			end;]]
+			if not getenv("cur_group") then
+				self:settext("cur_group env var missing!");
+			else	
+				self:settext(string.gsub(getenv("cur_group"),"^%d%d? ?%- ?", ""));
 			end;
 		end;
 	};

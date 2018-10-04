@@ -96,5 +96,10 @@ function Setup()
 
 	--no sirve, aun con esto aun hay que relanzar el programa para que disablesong tenga efecto.
 	--GAMESTATE:SaveLocalData();	--nope
+	ActiveModifiers = {
+		P1 = table.shallowcopy(PlayerDefaults),
+		P2 = table.shallowcopy(PlayerDefaults),
+		MACHINE = table.shallowcopy(PlayerDefaults),
+	}
 
 end

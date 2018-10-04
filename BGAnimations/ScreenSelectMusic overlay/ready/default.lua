@@ -13,7 +13,7 @@ t[#t+1] = Def.ActorFrame{
 		
 	Def.Sprite{
 		Texture="polygon_shine 3x2";
-		InitCommand=cmd(animate,false;SetAllStateDelays,0.55);
+		InitCommand=cmd(animate,false;SetAllStateDelays,0.05);
 		StepsChosenMessageCommand=cmd(animate,true);
 		AnimationFinishedCommand=cmd(animate,false);
 		};

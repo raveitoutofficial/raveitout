@@ -65,7 +65,14 @@ t[#t+1] = Def.Actor {
 		self:sleep(NextStageSleepTime+WallpaperSleepTime);
 		self:queuecommand("Load");
 	end;
-	LoadCommand=function() SCREENMAN:GetTopScreen():Continue(); end;
+	LoadCommand=function()
+		--Workaround for SaveProfileCustom not being called by SM
+		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			local profileDir = PROFILEMAN:GetProfileDir(ProfileSlot[PlayerNumber:Reverse()[player]+1]);
+			SaveProfileCustom(PROFILEMAN:GetProfile(player),profileDir);
+		end;
+		SCREENMAN:GetTopScreen():Continue();
+	end;
 };
 
 --[[DEBUG

@@ -4,49 +4,35 @@ return Def.ActorFrame{
 		Def.Sprite{
 			Texture="preview_shine";
 			InitCommand=cmd(horizalign,center;zoomx,0.65;zoomy,0.7;x,_screen.cx;y,_screen.cy;SetAllStateDelays,0.03;animate,false;setstate,0;);
-			CurrentSongChangedMessageCommand=cmd(stoptweening;animate,true;setstate,0;);
-			--[[MenuLeftP1MessageCommand=cmd(playcommand,"Effect");
-			MenuLeftP2MessageCommand=cmd(playcommand,"Effect");
-			MenuUpP1MessageCommand=cmd(playcommand,"Effect");
-			MenuUpP2MessageCommand=cmd(playcommand,"Effect");
-			MenuRightP1MessageCommand=cmd(playcommand,"Effect");
-			MenuRightP2MessageCommand=cmd(playcommand,"Effect");
-			MenuDownP1MessageCommand=cmd(playcommand,"Effect");
-			MenuDownP2MessageCommand=cmd(playcommand,"Effect");]]
-			--[[EffectCommand=function(self)	
-				self:stoptweening();
-				self:Load(nil);
-				self:Load(THEME:GetCurrentThemeDirectory().."Bganimations/ScreenSelectMusic overlay/preview_shine/"..shine_index..".png");
-				self:sleep(0.03);
-				if shine_index == 8 then
-					self:stoptweening();
-					shine_index = 1;
-					self:visible(false);
-				else
-					self:visible(true);
-					shine_index = shine_index+1
-					self:queuecommand("Effect");
-				end;
-			end;]]
-			AnimationFinishedCommand=cmd(animate,false;setstate,0;);
+			CurrentSongChangedMessageCommand=cmd(stoptweening;diffusealpha,1;animate,true;setstate,0;);
+			AnimationFinishedCommand=cmd(animate,false;setstate,0;diffusealpha,0);
 		};
 
 		LoadActor("preview_frame")..{
 			InitCommand=cmd(horizalign,center;zoomto,400,250;x,_screen.cx;y,_screen.cy-30);
 		};
-	
+		--Song background. ONLY IF THERE IS NO BGA!
+		Def.Sprite{
+			InitCommand=cmd(x,_screen.cx;y,_screen.cy-30;diffusealpha,0);
+			CurrentSongChangedMessageCommand=function(self)
+				self:stoptweening():diffusealpha(0);
+				if GAMESTATE:GetCurrentSong() then
+					if GAMESTATE:GetCurrentSong():GetPreviewVidPath() then
+						--Do nothing
+					else
+						self:sleep(.5):queuecommand("Load2");
+					end;
+				end;
+			end;
+			Load2Command=function(self)
+				self:Load(GAMESTATE:GetCurrentSong():GetBackgroundPath()):zoomto(384,232);
+				self:linear(.2):diffusealpha(1);
+			end;
+		};
 		Def.Sprite{
 			--Name = "BGAPreview";
 			InitCommand=cmd(x,_screen.cx;y,_screen.cy-30);
 			CurrentSongChangedMessageCommand=cmd(stoptweening;queuecommand,"PlayVid");
-			--[[MenuLeftP1MessageCommand=cmd(playcommand,"PlayVid");
-			MenuLeftP2MessageCommand=cmd(playcommand,"PlayVid");
-			MenuUpP1MessageCommand=cmd(playcommand,"PlayVid");
-			MenuUpP2MessageCommand=cmd(playcommand,"PlayVid");
-			MenuRightP1MessageCommand=cmd(playcommand,"PlayVid");
-			MenuRightP2MessageCommand=cmd(playcommand,"PlayVid");
-			MenuDownP1MessageCommand=cmd(playcommand,"PlayVid");
-			MenuDownP2MessageCommand=cmd(playcommand,"PlayVid");]]
 			PlayVidCommand=function(self)
 				self:Load(nil);
 				local song = GAMESTATE:GetCurrentSong()

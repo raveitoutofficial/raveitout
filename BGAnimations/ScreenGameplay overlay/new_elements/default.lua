@@ -58,7 +58,7 @@ t[#t+1] = Def.ActorFrame{
 t[#t+1] = Def.ActorFrame{
 
 	InitCommand=cmd(vertalign,top;horizalign,left;zoom,1.1;x,-80);
-	OnCommand=cmd(sleep,1.5;accelerate,0.25;x,getenv("P1BarPosX")-35);
+	OnCommand=cmd(sleep,1.5;accelerate,0.25;x,getenv("BarPosX")-35);
 	
 	LoadActor("mask")..{
 		InitCommand=cmd(y,18;vertalign,top;horizalign,left;zoomto,45,45;MaskSource);
@@ -104,7 +104,7 @@ t[#t+1] = Def.ActorFrame{
 t[#t+1] = Def.ActorFrame{
 
 	InitCommand=cmd(vertalign,top;horizalign,right;zoom,1.1;x,SCREEN_RIGHT+80);
-	OnCommand=cmd(sleep,1.5;accelerate,0.25;x,getenv("P2BarPosX")+35);
+	OnCommand=cmd(sleep,1.5;accelerate,0.25;x,getenv("BarPosX")+SCREEN_RIGHT+35);
 	LoadActor("mask")..{
 		InitCommand=cmd(y,18;vertalign,top;horizalign,right;zoomto,45,45;MaskSource);
 	};

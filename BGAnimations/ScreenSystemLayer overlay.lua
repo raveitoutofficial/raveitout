@@ -31,7 +31,7 @@ t[#t+1] = LoadFont(SysLayerFont) .. {
 		if gMode == 'CoinMode_Home' then
 			self:settext('HOME MODE');
 		elseif gMode == 'CoinMode_Free' then
-			self:settext('FREEPLAY');
+			self:settext('FREE PLAY');
 		elseif gMode == 'CoinMode_Pay' then
 			local CoinstoJoin = GAMESTATE:GetCoinsNeededToJoin();
 			local Coins = GAMESTATE:GetCoins();
