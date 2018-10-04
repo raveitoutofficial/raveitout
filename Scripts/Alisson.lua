@@ -38,8 +38,8 @@ if FILEMAN:DoesFileExist(sscfile) then
 		if previewvid ~= "" then
 			if FILEMAN:DoesFileExist(song:GetSongDir().."/"..previewvid) then
 				return song:GetSongDir().."/"..previewvid
-			elseif FILEMAN:DoesFileExist("/SongMovies/PreviewVids/"..previewvid) then
-				return "/SongMovies/PreviewVids/"..previewvid
+			elseif FILEMAN:DoesFileExist("/SongPreviews/"..previewvid) then
+				return "/SongPreviews/"..previewvid
 			else
 				return "/Backgrounds/bgaoff.avi" --temporarily using this because loading RandomMovies in ScreenSelectMusic causes lag due to large file size -Gio
 			end;
