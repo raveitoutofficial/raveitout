@@ -713,25 +713,7 @@ t[#t+1] = LoadActor("ready")..{		-- 1 PLAYER JOINED READY
 			StepsUnchosenMessageCommand=cmd(visible,false);
 			SongUnchosenMessageCommand=cmd(visible,false);
 		};
-
-ready_index = 1;
 		
-t[#t+1] = Def.Sprite{
-	Texture="ready/ready_shine 4x3";
-	InitCommand=cmd(diffusealpha,0;horizalign,center;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;SetAllStateDelays,0.03;animate,false;);
-	OffCommand=function(self,param)
-		self:animate(true);
-		self:diffusealpha(1);
-		self:decelerate(.48); --16 frames * 0.03 seconds per frame
-		self:zoom(2);
-	end;
-	AnimationFinishedCommand=function(self)
-		self:animate(false);
-		self:Load(THEME:GetPathG("","_white"));
-		self:zoomto(SCREEN_WIDTH,SCREEN_HEIGHT);
-	end;
-};
-
 t[#t+1] = Def.ActorFrame{
 
 	--PLAYER 1
