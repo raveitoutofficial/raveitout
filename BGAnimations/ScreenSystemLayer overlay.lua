@@ -28,10 +28,19 @@ t[#t+1] = LoadFont(SysLayerFont) .. {
 	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_BOTTOM-10;zoom,0.45;queuecommand,'Refresh');
 	RefreshCommand=function(self)
 		local gMode = GAMESTATE:GetCoinMode();
+		local eMode = GAMESTATE:IsEventMode();
 		if gMode == 'CoinMode_Home' then
-			self:settext('HOME MODE');
+			if eMode then
+				self:settext("HOME EVENT");
+			else
+				self:settext('HOME MODE');
+			end;
 		elseif gMode == 'CoinMode_Free' then
-			self:settext('FREE PLAY');
+			if eMode then
+				self:settext("EVENT MODE");
+			else
+				self:settext('FREE PLAY');
+			end;
 		elseif gMode == 'CoinMode_Pay' then
 			local CoinstoJoin = GAMESTATE:GetCoinsNeededToJoin();
 			local Coins = GAMESTATE:GetCoins();

@@ -472,12 +472,14 @@ return Def.ActorFrame{
 	--]]
 		
 	OnCommand=function(self)
-		groups = SONGMAN:GetSongGroupNames();
-		total_arcade_folders = #groups-4;
-		default_arcade_folder = groups[math.random(2,total_arcade_folders)];
-		
-		if default_arcade_folder == groups[1] then default_arcade_folder = groups[7]; end;
-		
+		if not RIO_FOLDER_NAMES["DefaultArcadeFolder"] then
+			groups = getAvailableGroups();
+			total_arcade_folders = #groups-4;
+			RIO_FOLDER_NAMES["DefaultArcadeFolder"] = groups[math.random(2,total_arcade_folders)];
+			
+			--What?
+			--if RIO_FOLDER_NAMES["DefaultArcadeFolder"] == groups[1] then RIO_FOLDER_NAMES["DefaultArcadeFolder"] = groups[7]; end;
+		end;
 	end;
 
 	OffCommand=function(self)
@@ -488,14 +490,14 @@ return Def.ActorFrame{
 			GAMESTATE:ApplyGameCommand( "mod,3x,rio,30% mini;", pn );
 		end
 		setenv("StageBreak",true);
-		WritePrefToFile("UserPrefProtimingP1",false);
-		WritePrefToFile("UserPrefProtimingP2",false);
+		--[[WritePrefToFile("UserPrefProtimingP1",false);
+		WritePrefToFile("UserPrefProtimingP2",false);]]
 
 		if SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber()) == 0 then
 			-- Easy Mode
 			setenv("PlayMode","Easy");
 			setenv("HeaderTitle","SELECT MUSIC");
-			folder = SONGMAN:GetSongsInGroup("99 Rave It Out (Easy)");
+			folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["EasyFolder"]);
 			randomSong = folder[math.random(1,#folder)]
 			GAMESTATE:SetCurrentSong(randomSong);
 			GAMESTATE:SetPreferredSong(randomSong);
@@ -503,26 +505,47 @@ return Def.ActorFrame{
 			-- Arcade Mode
 			setenv("PlayMode","Arcade");
 			setenv("HeaderTitle","SELECT MUSIC");
-			if SONGMAN:DoesSongGroupExist(default_arcade_folder) then
-					folder = SONGMAN:GetSongsInGroup(default_arcade_folder);
-					randomSong = folder[math.random(#folder)]
-					GAMESTATE:SetCurrentSong(randomSong);
-					GAMESTATE:SetPreferredSong(randomSong);
+			
+			--[[ we don't want them to be able to access a song from Easy or Special mode, so if the last played song was from there,
+			     pick a random song instead.]]
+			local lastPlayedSong = PROFILEMAN:GetProfile(GAMESTATE:GetMasterPlayerNumber()):GetLastPlayedSong();
+			if lastPlayedSong then
+				local lastUsedGroup = lastPlayedSong:GetGroupName();
+				if lastUsedGroup == RIO_FOLDER_NAMES["EasyFolder"] or lastUsedGroup == RIO_FOLDER_NAMES["SpecialFolder"] then
+					pickRandom = true
+				end;
+			else
+				--If there wasn't a last played song it probably doesn't exist anymore so pick random
+				pickRandom = true;
+			end;
+			
+			if pickRandom then
+				folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["DefaultArcadeFolder"]);
+				randomSong = folder[math.random(#folder)]
+				GAMESTATE:SetCurrentSong(randomSong);
+				GAMESTATE:SetPreferredSong(randomSong);
+			else
+				GAMESTATE:SetCurrentSong(lastPlayedSong);
 			end;
 		elseif SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber()) == 2 then
 			-- Pro Mode
 			setenv("HeaderTitle","SELECT MUSIC");
 			setenv("PlayMode","Pro");
-			if SONGMAN:DoesSongGroupExist(default_arcade_folder) then
-					local folder = SONGMAN:GetSongsInGroup(default_arcade_folder);
-					local randomSong = folder[math.random(1,#folder)]
+			
+			--same as above
+			local lastUsedGroup = PROFILEMAN:GetProfile(GAMESTATE:GetMasterPlayerNumber()):GetLastPlayedSong():GetGroupName();
+			if lastUsedGroup == RIO_FOLDER_NAMES["EasyFolder"] or lastUsedGroup == RIO_FOLDER_NAMES["SpecialFolder"] then
+					folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["DefaultArcadeFolder"]);
+					randomSong = folder[math.random(#folder)]
 					GAMESTATE:SetCurrentSong(randomSong);
 					GAMESTATE:SetPreferredSong(randomSong);
 			end;
+			
 			PREFSMAN:SetPreference("AllowW1",'AllowW1_Everywhere');
-			WritePrefToFile("UserPrefProtimingP1",false);
-			WritePrefToFile("UserPrefProtimingP2",false);
-			WritePrefToFile("UserPrefBGAMode",true);
+			--[[WritePrefToFile("UserPrefProtimingP1",false);
+			WritePrefToFile("UserPrefProtimingP2",false);]]
+			ActiveModifiers["P1"]["BGAMode"] = "Off"
+			ActiveModifiers["P2"]["BGAMode"] = "Off"
 			for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 				GAMESTATE:ApplyGameCommand( "mod,3x,rhythm;", pn );
 			end
@@ -531,7 +554,7 @@ return Def.ActorFrame{
 			setenv("PlayMode","Mixtapes");
 		elseif SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber()) == 4 then
 			-- Special Mode
-			local folder = SONGMAN:GetSongsInGroup("99 Rave It Out (Special)");
+			local folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["SpecialFolder"]);
 			local randomSong = folder[math.random(1,#folder)]
 			GAMESTATE:SetCurrentSong(randomSong);
 			GAMESTATE:SetPreferredSong(randomSong);

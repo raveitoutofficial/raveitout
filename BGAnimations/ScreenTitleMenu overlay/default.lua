@@ -1,4 +1,23 @@
 return Def.ActorFrame{
+	--[[LoadFont("common normal")..{
+		Text=SysInfo["InternalName"]..":"..SysInfo["Version"];
+		InitCommand=cmd(xy,5,5;horizalign,left;vertalign,top;zoom,.5;Stroke,Color("Black"));
+	};
+	LoadFont("common normal")..{
+		InitCommand=cmd(xy,5,15;horizalign,left;vertalign,top;zoom,.5;Stroke,Color("Black"));
+		OnCommand=function(self)
+			local aspectRatio = round(GetScreenAspectRatio(),2);
+			if aspectRatio == 1.78 then
+				self:settext("DISPLAY TYPE: HD");
+			elseif aspectRatio < 1.78 then
+				self:settext("DISPLAY TYPE: SD");
+			else
+				self:settext("DISPLAY TYPE: ???");
+			end;
+		end;
+	};]]
+
+
 	LoadFont("Common normal")..{	--Unlock status data
 		InitCommand=cmd(visible,DoDebug;x,SCREEN_LEFT+10;y,SCREEN_TOP+10+30;vertalign,top;horizalign,left;zoom,0.5;);
 		OnCommand=function(self)

@@ -118,7 +118,8 @@ if hearts >= 4*GAMESTATE:GetNumSidesJoined() then
 end;
 
 if DevMode() then groups = SONGMAN:GetSongGroupNames(); end]]
-groups = SONGMAN:GetSongGroupNames();
+local groups = getAvailableGroups();
+assert(GAMESTATE:GetCurrentSong(), "The current song should have been set in ScreenSelectPlayMode!");
 local curGroup = GAMESTATE:GetCurrentSong():GetGroupName();
 for key,value in pairs(groups) do
 	if curGroup == value then
@@ -128,6 +129,7 @@ end;
 setenv("cur_group",groups[selection]);
 
 t[#t+1] = Def.Actor{
+
 	NextGroupMessageCommand=function(self,params)
 		if selection == #groups then
 			selection = 1;
