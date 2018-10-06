@@ -70,7 +70,7 @@ else
 	stats_y = -SCREEN_HEIGHT+50;
 end
 				
-return Def.ActorFrame{
+local t = Def.ActorFrame{
 
  	Def.ActorFrame{	--Main
 		LoadActor("stats.lua")..{
@@ -99,7 +99,7 @@ return Def.ActorFrame{
 				if stepsp1 == "StepsType_Pump_Routine" and GAMESTATE:GetMasterPlayerNumber() ~= PLAYER_1 then
 					self:settext("");
 				else
-					if accuracy == 0 or PlayerType ~= 'PlayerController_Human' then
+					if accuracy == 0 then
 						self:settext("0.00%");
 					else
 						self:settext(accuracy.."%");
@@ -247,12 +247,13 @@ return Def.ActorFrame{
 			self:skewx(-0.25);
 			self:diffusealpha(0.9);
 		end;
-		ScoreChangedMessageCommand=function(self,params)
+		--Score is updated in score_system then broadcast and this recieves it
+		RIOScoreChangedMessageCommand=function(self,params)
 			if params.Player == PLAYER_1 then
 				if params.Score > 0 then
 					self:settext("Score: "..params.Score);
 				else
-					self:settext("Score: ".."0000");
+					self:settext("Score: 0000");
 				end;				
 			end;
 		end;
@@ -273,7 +274,7 @@ return Def.ActorFrame{
 			self:skewx(-0.25);
 			self:diffusealpha(0.9);
 		end;
-		ScoreChangedMessageCommand=function(self,params)
+		RIOScoreChangedMessageCommand=function(self,params)
 			if params.Player == PLAYER_2 then
 				if params.Score > 0 then
 					self:settext("Score: "..params.Score);
@@ -289,3 +290,25 @@ return Def.ActorFrame{
 
 	LoadActor("MenuOptions");	
 };
+
+for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+	t[#t+1] = LoadActor("Failed")..{
+		InitCommand=function(self)
+			local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
+			if style == "OnePlayerOneSide" and PREFSMAN:GetPreference("Center1Player") == true then
+				self:x(SCREEN_CENTER_X);
+			else
+				self:x(THEME:GetMetric("ScreenGameplay","Player"..pname(pn).."OnePlayerOneSideX"));
+			end;
+			self:y(SCREEN_CENTER_Y):visible(false);
+		end;
+		ComboChangedMessageCommand=function(self,params)
+			if STATSMAN:GetCurStageStats():GetPlayerStageStats(pn):GetFailed() then
+				self:visible(true);
+			end;
+		end;
+	
+	};
+end;
+
+return t;

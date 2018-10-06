@@ -57,6 +57,9 @@ local TapNoteType = {
 	TapNoteType_Fake = "TapNoteType_Fake"
 };
 
+function boolToString(b)
+	return (b and "true" or "false")
+end;
 
 return Def.ActorFrame {
 		JudgmentMessageCommand=function(self,params)
@@ -72,30 +75,30 @@ return Def.ActorFrame {
 			local CSS = STATSMAN:GetCurStageStats();
 			local PSS = CSS:GetPlayerStageStats(Player);
 			local iCombo = PSS:GetCurrentCombo();
-			if PlayerType == 'PlayerController_Human' then
-			-- now we can safely calculate the number of arrows in this tapnote
-			Holds = params.Holds;
-			Notes = params.Notes;
-			iStepsCount = getNumberOfElements(Holds) + getNumberOfElements(Notes);
-			local PlayerScore = PlayerScores[Player];
-			-- get new scores
-			if iCombo >= 50 then
-				local scorepoints = ComboTapNoteScorePoints[TapNoteScore];
-				PlayerScore = PlayerScore + scorepoints;
-			else
-				PlayerScore = PlayerScore + TapNoteScorePoints[TapNoteScore];
-			end;
+			if true then
+				-- now we can safely calculate the number of arrows in this tapnote
+				Holds = params.Holds;
+				Notes = params.Notes;
+				iStepsCount = getNumberOfElements(Holds) + getNumberOfElements(Notes);
+				local PlayerScore = PlayerScores[Player];
+				-- get new scores
+				if iCombo >= 50 then
+					local scorepoints = ComboTapNoteScorePoints[TapNoteScore];
+					PlayerScore = PlayerScore + scorepoints;
+				else
+					PlayerScore = PlayerScore + TapNoteScorePoints[TapNoteScore];
+				end;
 
-			-- we dont want negative scores
-			if PlayerScore <= 0 then
-				PlayerScores[Player] = 0;
-			else
-				PlayerScores[Player] = PlayerScore;
-			end;
+				-- we dont want negative scores
+				if PlayerScore <= 0 then
+					PlayerScores[Player] = 0;
+				else
+					PlayerScores[Player] = PlayerScore;
+				end;
 
-			setScores(PlayerScores);
-			--Broadcast a message to update scores
-			MESSAGEMAN:Broadcast("ScoreChanged",{Player = Player , Score = PlayerScore });
+				setScores(PlayerScores);
+				--Broadcast a message to update scores
+				MESSAGEMAN:Broadcast("RIOScoreChanged",{Player = Player , Score = PlayerScore });
 			end
 		end;
 };

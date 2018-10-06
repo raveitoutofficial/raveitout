@@ -33,7 +33,7 @@ local t = Def.ActorFrame{
 			LifeChangedMessageCommand=function(self)
 				self:stoptweening();
 				self:bounceend(vittim);
-				if ((PSS1:GetCurrentMissCombo()/GetBreakCombo())-1) >= 0 then
+				if ((PSS1:GetCurrentMissCombo()/GetBreakCombo())-1) >= 0 or PSS1:GetFailed() then
 					self:cropleft(0);
 				else
 					self:cropleft(math.abs((PSS1:GetCurrentMissCombo()/GetBreakCombo())-1));
@@ -49,8 +49,8 @@ local t = Def.ActorFrame{
 			LifeChangedMessageCommand=function(self)
 				self:stoptweening();
 				self:bounceend(vittim);
-				if ((PSS1:GetCurrentMissCombo()/GetBreakCombo())-1) >= 0 then
-					self:x(barPosY);
+				if ((PSS1:GetCurrentMissCombo()/GetBreakCombo())-1) >= 0 or PSS1:GetFailed() then
+					self:x(-LIFEBAR_WIDTH/2):glow(color("0,0,0,1"));
 				else
 					--So how the life calculation works is that full life is zero, and empty life is 1
 					--(PSS1:GetCurrentMissCombo()/GetBreakCombo()) is the command that gives you the (reversed) life percentage

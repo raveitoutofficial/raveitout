@@ -159,7 +159,7 @@ t[#t+1] = Def.ActorFrame{
 					local curmaxscore =	stagemaxscore
 					local score =		css:GetScore()				--score :v
 					local rawaccuracy =	(score/curmaxscore)*100		--Player accuracy RAW number
-					rawaccuracy = getenv("P1_accuracy");
+					--rawaccuracy = getenv("P1_accuracy");
 					local maxzoomx = 0.8;
 					local multiplier = (maxzoomx/100)*rawaccuracy
 					

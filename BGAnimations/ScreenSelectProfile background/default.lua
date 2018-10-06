@@ -33,25 +33,7 @@ local t = Def.ActorFrame {
 	--		end;
 	--};
 
-local function MsgScroll()
-	local index = 1
-	return LoadActor("help_info/msg_1")..{
-		SetCommand=function(self)
-			index = index+1
-			path = "/Themes/RioTI/Bganimations/ScreenSelectProfile background/help_info/";
-			total = #FILEMAN:GetDirListing(path)-1
-			if index == 3 then index = 1 end
-			
-			self:Load(path.."msg_"..index..".png");
-			self:linear(0.2);
-			self:diffusealpha(1);
-			self:sleep(2);
-			self:linear(0.2)
-			self:diffusealpha(0);
-			self:queuecommand("Set");
-		end;
-	}		
-end;
+
 
 --MSG INFO
 t[#t+1] = Def.ActorFrame {
@@ -59,8 +41,24 @@ t[#t+1] = Def.ActorFrame {
 		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_BOTTOM-50;zoomx,0.9;zoomy,0.65);
 	};
 	
-	MsgScroll()..{
-		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_BOTTOM-50;zoom,0.6;queuecommand,"Set");
+	Def.Sprite{
+		Texture="help_info/messages";
+		InitCommand=cmd(animate,false;diffusealpha,0;x,SCREEN_CENTER_X;y,SCREEN_BOTTOM-50;zoom,0.6;);
+		OnCommand=cmd(playcommand,"Animate");
+		AnimateCommand=function(self)
+			self:linear(0.2);
+			self:diffusealpha(1);
+			self:sleep(2);
+			self:linear(0.2)
+			self:diffusealpha(0);
+			local nextState = self:GetState()+1;
+			if nextState == self:GetNumStates() then
+				self:setstate(0);
+			else
+				self:setstate(nextState);
+			end;
+			self:queuecommand("Animate");
+		end;
 	};
 };
 

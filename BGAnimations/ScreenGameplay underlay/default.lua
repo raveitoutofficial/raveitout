@@ -168,19 +168,39 @@ t[#t+1] = Def.ActorFrame{		--Limit break by ROAD24 and NeobeatIKK
 			local OpositePlayer = GetOpositePlayer(params.Player);
 			local OpositeStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(OpositePlayer);
 			local bOpositePlayerFailed = OpositeStats:GetCurrentMissCombo() >= GetBreakCombo();
-			if GetUserPref("PerfectionistMode") == "true" then
-				if p1w3 >= 1 or p1w4 >= 1 or p1w5 >= 1 or p1ms >= 1 or p1cm >= 1 or p2w3 >= 1 or p2w4 >= 1 or p2w5 >= 1 or p2ms >= 1 or p2cm >= 1 then								-- Only W1s (AKA RAVINs / Marvelouses)
-					GTS:PostScreenMessage("SM_BeginFailed",0);
-					if GAMESTATE:GetCurrentStage() == "Stage_1st" and Enjoy1stStagePMode == true then
-						return nil
-					else
-						PSS1:FailPlayer();
-						PSS2:FailPlayer();
-						setenv("StageFailed",true);
+			--Shit code
+			for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+				if ActiveModifiers[pname(pn)]["PerfectionistMode"] then
+					local OppositePlayer = GetOpositePlayer(pn);
+					local css = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn);
+					--[[local w1 = css:GetTapNoteScores("TapNoteScore_W1");
+					local w2 = css:GetTapNoteScores("TapNoteScore_W2");]]
+					local w3 = css:GetTapNoteScores("TapNoteScore_W3");
+					local w4 = css:GetTapNoteScores("TapNoteScore_W4");
+					local w5 = css:GetTapNoteScores("TapNoteScore_W5");
+					local ms = css:GetTapNoteScores("TapNoteScore_Miss");
+					local cm = css:GetTapNoteScores("TapNoteScore_CheckpointMiss");
+					local hm = css:GetTapNoteScores("TapNoteScore_HitMine");
+					if w3 >= 1 or w4 >= 1 or w5 >= 1 or ms >= 1 or cm >= 1 then								-- Only W1s (AKA RAVINs / Marvelouses)
+						--GTS:PostScreenMessage("SM_BeginFailed",0);
+						if GAMESTATE:GetCurrentStage() == "Stage_1st" and Enjoy1stStagePMode == true then
+							return nil
+						else
+							--SCREENMAN:SystemMessage("Player "..pn.." failed");
+							css:FailPlayer();
+							if GAMESTATE:IsSideJoined(OppositePlayer) and STATSMAN:GetCurStageStats():GetPlayerStageStats(OppositePlayer):GetFailed() then
+								setenv("StageFailed",true);
+								GTS:PostScreenMessage("SM_BeginFailed",0);
+							elseif not GAMESTATE:IsSideJoined(OppositePlayer) then
+								setenv("StageFailed",true);
+								GTS:PostScreenMessage("SM_BeginFailed",0);
+							end;
+						end;
 					end;
 				end;
-			elseif GetUserPref("PerfectionistMode") == "false" then
-				if IsBreakOn() then			-- Si no esta activado el break no tiene caso revisar todo lo demas
+			end;
+			
+			if IsBreakOn() then			-- Si no esta activado el break no tiene caso revisar todo lo demas
 				if THEME:GetMetric("CustomRIO","GamePlayMenu") == false then
 					if GAMESTATE:IsPlayerEnabled( OpositePlayer ) then
 						bFailed = bFailed and bOpositePlayerFailed;
@@ -195,7 +215,6 @@ t[#t+1] = Def.ActorFrame{		--Limit break by ROAD24 and NeobeatIKK
 							setenv("StageFailed",true);
 						end;
 					end;
-				end;
 				end;
 			end;
 		end;
