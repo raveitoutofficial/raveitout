@@ -13,7 +13,7 @@ function LoadProfileCustom(profile, dir)
 	if Players then
 		for player in ivalues(Players) do
 			if profile == PROFILEMAN:GetProfile(player) then
-				pn = ToEnumShortString(player)
+				pn = player;
 			end
 		end
 	end
@@ -21,11 +21,11 @@ function LoadProfileCustom(profile, dir)
 
 	-- ...and then, if a player profile exists, read .cfg files from it
 	if pn then
-
+		local pns = pname(pn); --pn = PlayerNumber_PX, pns = PX
 		local f = RageFileUtil.CreateRageFile()
 		local setting
 		--This uses the ActiveModifiers table from PlayerOptions.lua
-		for k,v in pairs( ActiveModifiers[pn] ) do
+		for k,v in pairs( ActiveModifiers[pns] ) do
 
 			local fullFilename = PrefPath..k..".cfg"
 
@@ -39,13 +39,27 @@ function LoadProfileCustom(profile, dir)
 				elseif setting == "false" then setting = false
 				end
 
-				ActiveModifiers[pn][k] = setting
+				ActiveModifiers[pns][k] = setting
 			else
 				local fError = f:GetError()
 				Trace( "[FileUtils] Error reading ".. fullFilename ..": ".. fError )
 				f:ClearError()
 			end
 		end
+		
+		--Custom profile icon handling
+		--Check for icons on a USB first (The function will return nil if it's not a USB profile, so it's fine)
+		local profileIcon = getUSBProfileIcon(pn)
+		if profileIcon then
+			setenv("profile_icon_"..pns,profileIcon);
+		else --None found, check if it's a built in profile icon in the ActiveModifiers table
+			--Will return nil if there isn't a profile icon, but if there was one we want to check that the icon hasn't been removed or renamed
+			if ActiveModifiers[pns]["ProfileIcon"] and FILEMAN:DoesFileExist(THEME:GetPathG("","USB_stuff/avatars").."/"..ActiveModifiers[pns]["ProfileIcon"]) then
+				setenv("profile_icon_"..pns,ActiveModifiers[pns]["ProfileIcon"]);
+			else --Still none found, just pick a random one
+				setenv("profile_icon_"..pns,getRandomProfileIcon(pn));
+			end;
+		end;
 
 		-- don't destroy the RageFile until we've tried to load all custom options
 		-- and set them to the env table to make them accessible from anywhere in SM

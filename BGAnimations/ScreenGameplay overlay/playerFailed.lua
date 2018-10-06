@@ -5,12 +5,8 @@ for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 	t[#t+1] = Def.ActorFrame{
 	
 		InitCommand=function(self)
-			local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
-			if style == "OnePlayerOneSide" and PREFSMAN:GetPreference("Center1Player") == true then
-				self:x(SCREEN_CENTER_X);
-			else
-				self:x(THEME:GetMetric("ScreenGameplay","Player"..pname(pn).."OnePlayerOneSideX"));
-			end;
+			--You'll only ever see the failed message in multiplayer versus
+			self:x(THEME:GetMetric("ScreenGameplay","Player"..pname(pn).."OnePlayerOneSideX"));
 			self:y(SCREEN_CENTER_Y+50);
 		end;
 		ComboChangedMessageCommand=function(self,params)

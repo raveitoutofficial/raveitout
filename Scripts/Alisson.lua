@@ -101,21 +101,7 @@ function DevMode()
 return THEME:GetMetric("CustomRIO","DevMode")
 end;
 
-function split( delimiter, text )
-	local list = {}
-	local pos = 1
-	while 1 do
-		local first,last = string.find( text, delimiter, pos )
-		if first then
-			table.insert( list, string.sub(text, pos, first-1) )
-			pos = last+1
-		else
-			table.insert( list, string.sub(text, pos) )
-			break
-		end
-	end
-	return list
-end
+
 
 function ResetPreferences()
 	PREFSMAN:SetPreference("AllowW1",'AllowW1_Never');
@@ -140,18 +126,6 @@ function ResetLife()
 			GAMESTATE:AddStageToPlayer(pn);
 		end
 	end
-end
-
-function strleft(str, lenght)
-	return string.sub(str, 1, lenght)
-end
-
-function strright(str, lenght)
-	return string.sub(str, -(tonumber(lenght)))
-end
-
-function strmiddle(str, start, final)
-	return string.sub(str, start, final)
 end
 
 

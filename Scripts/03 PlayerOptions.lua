@@ -17,10 +17,15 @@ PlayerDefaults = {
 	DetailedPrecision = false,
 	JudgmentType = "Normal",
 	ScreenFilter = 0,
-	PerfectionistMode = false,
 	BGAMode = "On", --Options: Black, Off, Dark, On
-	ProfileIcon = "Default" -- Technically not an OptionsList option, but it gets saved at ScreenProfileSave so it's here anyway.
+	ProfileIcon = nil -- Technically not an OptionsList option, but it gets saved at ScreenProfileSave so it's here anyway.
 }
+
+--PerfectionistMode should NEVER be written to profile, so it's not in the PlayerDefaults table.
+PerfectionistMode = {
+	PlayerNumber_P1 = false,
+	PlayerNumber_P2 = false
+};
 
 --Set tables so you can do ActiveModifiers["P1"] to get the table of custom player modifiers, ex ActiveModifiers["P1"]["JudgmentType"]
 --No metatable because it was too hard to implement
@@ -41,7 +46,7 @@ ActiveModifiers = {
 }
 ]]
 
---Requires string:split from Utils
+--Requires string:split
 function OptionRowAvailableNoteskins()
 	local ns = NOTESKIN:GetNoteSkinNames();
 	local disallowedNS = THEME:GetMetric("Common","NoteSkinsToHide"):split(",");
@@ -135,7 +140,7 @@ function OptionRowScreenFilter()
 	return t
 end
 
-function PerfectionistMode()		--Perfectionist Mode 2.0 rewritten by Rhythm Lunatic
+function PerfectionistModeOptionRow()		--Perfectionist Mode 2.0 rewritten by Rhythm Lunatic
 	local t = {
 		Name = "PerfectionistMode";
 		LayoutType = "ShowAllInRow";
@@ -144,7 +149,7 @@ function PerfectionistMode()		--Perfectionist Mode 2.0 rewritten by Rhythm Lunat
 		ExportOnChange = false;
 		Choices = { "Off", "On"};
 		LoadSelections = function(self, list, pn)
-			local perfMode = ActiveModifiers[pname(pn)]["PerfectionistMode"] --Get the player's PerfectionistMode preference
+			local perfMode = PerfectionistMode[pn] --Get the player's PerfectionistMode preference
 			if perfMode == true then --You don't really need the == true here but whatever
 				list[2] = true; --Make the "On" choice selected
 			else
@@ -153,7 +158,7 @@ function PerfectionistMode()		--Perfectionist Mode 2.0 rewritten by Rhythm Lunat
 		end;
 		SaveSelections = function(self, list, pn)
 			--If list[2] (The On choice) is selected, then it would get set true in ActiveModifiers. If it's not selected, it's false, so it gets set false in ActiveModifiers.
-			ActiveModifiers[pname(pn)]["PerfectionistMode"] = list[2];
+			PerfectionistMode[pn] = list[2];
 		end;
 	};
 	setmetatable( t, t );

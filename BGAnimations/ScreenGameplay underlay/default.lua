@@ -170,7 +170,7 @@ t[#t+1] = Def.ActorFrame{		--Limit break by ROAD24 and NeobeatIKK
 			local bOpositePlayerFailed = OpositeStats:GetCurrentMissCombo() >= GetBreakCombo();
 			--Shit code
 			for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
-				if ActiveModifiers[pname(pn)]["PerfectionistMode"] then
+				if PerfectionistMode[pn] then
 					local OppositePlayer = GetOpositePlayer(pn);
 					local css = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn);
 					--[[local w1 = css:GetTapNoteScores("TapNoteScore_W1");
@@ -231,7 +231,7 @@ t[#t+1] = Def.ActorFrame{		--Limit break by ROAD24 and NeobeatIKK
 		LoadFont("Common Normal")..{	--Stage break + value, message
 			InitCommand=cmd(x,_screen.cx;y,SCREEN_BOTTOM-30;zoom,0.5);
 			OnCommand=function(self)
-				if GetUserPref("PerfectionistMode") == "true" then		--don't do shit if Perfectionist Mode is activated
+				if PerfectionistMode[PLAYER_1] and PerfectionistMode[PLAYER_2] then		--don't do shit if Perfectionist Mode is activated
 					return false
 				end;
 				-- TODO: Add a GetBreakCombo
@@ -311,7 +311,8 @@ t[#t+1] = 	Def.ActorFrame{		-- Write data to PlayerProfile/RIO_SongData
 		};
 	};
 
-	
+
+
 --/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 t[#t+1] = 	Def.ActorFrame{		-- DEBUG STUFF
 		OnCommand=cmd(visible,DoDebug);
@@ -332,15 +333,12 @@ t[#t+1] = 	Def.ActorFrame{		-- DEBUG STUFF
 			OnCommand=cmd(visible,CortesWideFix;settext,"\[Using Cortes Widescreen patch\]");
 		};
 		LoadFont(DebugFont)..{		-- PerfectionistMode status
-			InitCommand=cmd(x,_screen.cx;y,SCREEN_BOTTOM-60;zoom,0.5);
+			InitCommand=cmd(x,_screen.cx;y,SCREEN_BOTTOM-80;zoom,0.5);
 		--	OnCommand=cmd(settext,"PerfectionistMode Status: "..GetUserPref("PerfectionistMode"));	--works
 			OnCommand=function(self)
-				if GetUserPref("PerfectionistMode") == "true" then
-					temptex = "On.\nGet fucking rekt"
-				elseif GetUserPref("PerfectionistMode") == "false" then
-					temptex = "Off.\nYou'll never know true pain, fucking pussy bitch"
-				end;
-				self:settext("PerfectionistMode Status: "..temptex);	--works OK
+				local perfModeP1 = boolToString(PerfectionistMode[PLAYER_1]);
+				local perfModeP2 = boolToString(PerfectionistMode[PLAYER_2]);
+				self:settext("PerfectionistMode Status: P1="..perfModeP1.." | P2="..perfModeP2);	--works OK
 			end;
 		};
 		LoadFont(DebugFont)..{		-- ScreenFilter status P1

@@ -115,7 +115,7 @@ local nbfon =		"Common normal"			--Live stats numbers font
 local p1stats =		STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1);
 local p2stats =		STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2);
 --
-if GetUserPref("PerfectionistMode") ~= "true" and IsP1On then	--p1 live stats
+if IsP1On and not PerfectionistMode[PLAYER_1] then	--p1 live stats
 	for i = 1,#jllist,1 do
 		t[#t+1] = LoadFont(lbfon)..{	--LABELS P1
 			InitCommand=cmd(horizalign,lbhali;vertalign,lbvali;xy,p1xlist[i],p1ylist[i];zoom,lbzoom;diffusealpha,labelalpha;);
@@ -162,7 +162,7 @@ if GetUserPref("PerfectionistMode") ~= "true" and IsP1On then	--p1 live stats
 	end;
 end;
 
-if GetUserPref("PerfectionistMode") ~= "true" and IsP2On then	--p2 live stats
+if IsP2On and not PerfectionistMode[PLAYER_2] then	--p2 live stats
 	for i = 1,#jllist,1 do
 		t[#t+1] = LoadFont(lbfon)..{	--LABELS P2
 			InitCommand=cmd(horizalign,lbhali;vertalign,lbvali;xy,p2xlist[i],p2ylist[i];zoom,lbzoom;diffusealpha,labelalpha;);

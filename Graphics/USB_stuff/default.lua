@@ -82,21 +82,7 @@ t = Def.ActorFrame {
 		InitCommand=cmd(zoom,1;x,SCREEN_CENTER_X-293;y,SCREEN_BOTTOM-15;horizalign,left;draworder,350;);
 		OnCommand=function(self)
 			self:visible(GAMESTATE:IsSideJoined(PLAYER_1));
-			if PROFILEMAN:ProfileWasLoadedFromMemoryCard(PLAYER_1) then
-				if (FILEMAN:DoesFileExist(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.png")) then
-					self:Load(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.png");
-				elseif (FILEMAN:DoesFileExist(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.jpg")) then
-					self:Load(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.jpg");
-				elseif (FILEMAN:DoesFileExist(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.bmp")) then
-					self:Load(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.bmp");
-				elseif (FILEMAN:DoesFileExist(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.gif")) then
-					self:Load(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.gif");
-				else
-					self:Load(getenv("random_avatar_p1"));
-				end
-			else 
-				self:Load(getenv("random_avatar_p1"));
-			end
+			self:Load(getenv("profile_icon_P1"));
 			self:setsize(20,20);
 		end;
 		ScreenChangedMessageCommand=cmd(playcommand,"On");
@@ -159,21 +145,7 @@ t = Def.ActorFrame {
 		InitCommand=cmd(zoom,1;x,SCREEN_CENTER_X+293;y,SCREEN_BOTTOM-15;horizalign,right;draworder,350;);
 		OnCommand=function(self)
 			self:visible(GAMESTATE:IsSideJoined(PLAYER_2));
-			if PROFILEMAN:ProfileWasLoadedFromMemoryCard(PLAYER_2) then
-				if (FILEMAN:DoesFileExist(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.png")) then
-					self:Load(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.png");
-				elseif (FILEMAN:DoesFileExist(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.jpg")) then
-					self:Load(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.jpg");
-				elseif (FILEMAN:DoesFileExist(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.bmp")) then
-					self:Load(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.bmp");
-				elseif (FILEMAN:DoesFileExist(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.gif")) then
-					self:Load(PROFILEMAN:GetProfileDir("ProfileSlot_Player1").."avatar.gif");
-				else
-					self:Load(getenv("random_avatar_p2"));
-				end
-			else 
-				self:Load(getenv("random_avatar_p2"));
-			end
+			self:Load(getenv("profile_icon_P2"));
 			self:setsize(20,20);
 		end;
 		ScreenChangedMessageCommand=cmd(playcommand,"On");

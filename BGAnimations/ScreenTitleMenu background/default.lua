@@ -1,7 +1,3 @@
-setenv("random_avatar_p1",THEME:GetPathG("","USB_stuff/avatars/"..string.format("%03i",tostring(math.random(40)))));
-math.randomseed(Hour()*3600+Second());
-setenv("random_avatar_p2",THEME:GetPathG("","USB_stuff/avatars/"..string.format("%03i",tostring(math.random(40)))));
-
 if IsUsingWideScreen() then
 	default_width = SCREEN_WIDTH+20
 else

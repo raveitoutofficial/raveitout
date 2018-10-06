@@ -82,6 +82,55 @@ end
 --[[FUNCTIONS]]
 
 
+--If this is called at the same frame, it's not truly random... So use the playernumber to randomize it a bit
+function getRandomProfileIcon(pn)
+	if pn == PLAYER_2 then
+		math.randomseed(Hour()*3600+Second());
+	end;
+	--return THEME:GetPathG("","USB_stuff/avatars/"..string.format("%03i",tostring(math.random(40))));
+	
+	--This junk is copypasted from Delta NEX Rebirth (which was copypasted from Simply Love), so it still uses the backgrounds variable
+    local fullPath = THEME:GetPathG("","USB_stuff/avatars")
+    local files = FILEMAN:GetDirListing(fullPath.."/")
+    local backgrounds = {}
+    local backgroundsLength=0 --Fucking lua
+
+    for k,filename in ipairs(files) do
+        backgrounds[#backgrounds+1] = filename--:sub(1, -5)
+        backgroundsLength = backgroundsLength+1;
+    end
+    
+   
+	if backgroundsLength > 0 then
+		local bg = backgrounds[math.random(backgroundsLength)]
+		return THEME:GetPathG("","USB_stuff/avatars/"..bg);
+	end;
+	
+	assert("No backgrounds found!");
+	return nil
+end;
+
+--DO NOT CALL THIS FUNCTION!!! Use getenv("profile_icon_PX") (where X is the player number).
+--SL-CustomProfiles will set the env var "profile_icon_PX" when you load a profile.
+function getUSBProfileIcon(pn)
+	if PROFILEMAN:ProfileWasLoadedFromMemoryCard(pn) then
+		local profileDir = PROFILEMAN:GetProfileDir(ProfileSlot[PlayerNumber:Reverse()[pn]+1]);
+		if (FILEMAN:DoesFileExist(profileDir.."avatar.png")) then
+			return profileDir.."avatar.png";
+		elseif (FILEMAN:DoesFileExist(profileDir.."avatar.jpg")) then
+			return profileDir.."avatar.jpg";
+		elseif (FILEMAN:DoesFileExist(profileDir.."avatar.bmp")) then
+			return profileDir.."avatar.bmp";
+		elseif (FILEMAN:DoesFileExist(profileDir.."avatar.gif")) then
+			return profileDir.."avatar.gif";
+		else
+			return nil
+		end
+	else 
+		return nil;
+	end
+end;
+
 
 --Unlock functions
 function GetUnlockIndex( sEntryID )		--GetUnlockIndex	 by ROAD24 (Jose Jesus)		--HUGE thanks to him -NeobeatIKK
