@@ -13,7 +13,7 @@ return Def.ActorFrame{
 	Def.ActorFrame{
 
 		LoadActor(THEME:GetPathG("","_BGMovies/selplaymode"))..{
-			InitCommand=cmd(Cover);
+			InitCommand=cmd(Center;zoomto,867,482);
 			--InitCommand=cmd(Center;zoomto,default_width,SCREEN_HEIGHT)
 		};
 		
@@ -26,7 +26,7 @@ return Def.ActorFrame{
 		};
 		
 		LoadActor("layer")..{
-			InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_TOP-2;horizalign,center;vertalign,top;zoom,0.65;);
+			InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_TOP+2;horizalign,center;vertalign,top;zoom,0.66;);
 		};
 		
 		LoadFont("monsterrat/_montserrat light 60px")..{	
