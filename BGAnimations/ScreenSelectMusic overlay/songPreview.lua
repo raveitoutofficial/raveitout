@@ -58,7 +58,7 @@ return Def.ActorFrame{
 		Def.Sprite {
 			InitCommand=cmd(Load,nil;diffusealpha,0;zoomto,70,70;horizalign,left;x,_screen.cx-190;y,_screen.cy+50);
 			CurrentSongChangedMessageCommand=function(self)
-				(cmd(stoptweening;Load,nil;diffusealpha,0;zoom,0.25;linear,0.5;decelerate,0.25;))(self);
+				(cmd(stoptweening;Load,nil;diffusealpha,0;zoomto,30,30;zoom,0.235;linear,0.05;decelerate,0.25;))(self);
 				if GAMESTATE:GetCurrentSong():HasJacket() then
 					self:Load(GAMESTATE:GetCurrentSong():GetJacketPath());
 				else
