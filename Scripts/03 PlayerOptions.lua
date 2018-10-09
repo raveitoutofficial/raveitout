@@ -14,8 +14,8 @@ end
 
 --This defines the custom player options. PlayerDefaults is initialized from InitGame
 PlayerDefaults = {
-	DetailedPrecision = false,
-	JudgmentType = "Normal",
+	DetailedPrecision = false, --Options: false, EarlyLate, ProTiming
+	ReverseGrade = false, --Like the PIU thing? Perfect is shown as bad
 	ScreenFilter = 0,
 	BGAMode = "On", --Options: Black, Off, Dark, On
 	ProfileIcon = nil -- Technically not an OptionsList option, but it gets saved at ScreenProfileSave so it's here anyway.
@@ -240,3 +240,35 @@ function ReverseGrade()		--Reverse Grade			by Alisson A2 (Alisson de Oliveira)
 	setmetatable( t, t );
 	return t;
 end
+
+function OptionRowDetailedPrecision()
+	local t = {
+		Name = "UserPrefDetailedPrecision";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = false;
+		ExportOnChange = true;
+		Choices = { "Off", "Early/Late Indicators", "ProTiming Graph"};
+		LoadSelections = function(self, list, pn)
+			local opt = ActiveModifiers[pname(pn)]["DetailedPrecision"]
+			if opt == "EarlyLate" then
+				list[1] = true
+			elseif opt == "ProTiming" then
+				list[2] = true
+			else
+				list[3] = true
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			if list[1] then
+				ActiveModifiers[pname(pn)]["DetailedPrecision"] = "EarlyLate";
+			elseif list[2] then
+				ActiveModifiers[pname(pn)]["DetailedPrecision"] = "ProTiming";
+			else
+				ActiveModifiers[pname(pn)]["DetailedPrecision"] = false;
+			end;
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end;

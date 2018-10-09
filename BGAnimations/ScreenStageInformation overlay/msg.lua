@@ -38,13 +38,19 @@ end;
 --animation controls
 local inanit = 0.5		--in animation time
 local inefft = 2		--in effect time
-local stayat = 5		--stay still animation time
+local stayat = 5-inanit-inefft		--stay still animation time
 local outtwt = 0.25		--out tweening time
 local itemy = 13		--item list y separation
 local MessageFont = "Common normal"
 return Def.ActorFrame{
 	Def.ActorFrame{	--main
-		Def.Sprite{				--Disc image
+		--bg
+		Def.Sprite{
+			InitCommand=cmd(LoadFromCurrentSongBackground;Cover;diffusealpha,0.2);
+			OnCommand=cmd(sleep,stayat+inanit+inefft;linear,.4;diffusealpha,.8);
+		};
+	
+		Def.Sprite{				--Song Jacket
 			InitCommand=cmd(x,_screen.cx;y,_screen.cy;zoom,10;diffusealpha,0;);
 			OnCommand=function(self)
 				if song:HasJacket() then
@@ -52,17 +58,17 @@ return Def.ActorFrame{
 				else
 					self:Load(song:GetBannerPath());
 				end
-				(cmd(accelerate,inanit;zoomto,300,300;diffusealpha,1;linear,inefft;zoomto,255,255;sleep,stayat-inanit-inefft))(self)
+				(cmd(accelerate,inanit;zoomto,300,300;diffusealpha,1;linear,inefft;zoomto,255,255;sleep,stayat))(self)
 			end;
-			OffCommand=cmd(decelerate,outtwt;rotationz,90*0.5;zoom,0.8;);
+			OffCommand=cmd(decelerate,outtwt;rotationz,90*0.5;zoom,0.8;diffusealpha,0);
 		};
 		LoadFont(MessageFont)..{	--MESSAGE		
 			InitCommand=cmd(xy,_screen.cx,SCREEN_BOTTOM-60;zoom,0.75;maxwidth,SCREEN_WIDTH;wrapwidthpixels,780;maxheight,100;settext,message);
 		};
 		Def.Quad{				--Fade in/out
 			InitCommand=function(self)
-				(cmd(FullScreen;diffuse,color("0,0,0,1");linear,inanit*0.5;diffuse,color("0,0,0,0")))(self);
-				(cmd(sleep,(inanit*0.5)+inefft+(stayat-(inanit+inefft))))(self);
+				(cmd(FullScreen;diffuse,color("1,1,1,1");linear,inanit*0.5;diffuse,color("0,0,0,0")))(self);
+				(cmd(sleep,(inanit*0.5)+inefft+(stayat)))(self);
 				--[[ ^ this shit needs some explanation:
 				-- inanit is always the half the time as the disc image one
 				-- resolved should be:
@@ -71,7 +77,7 @@ return Def.ActorFrame{
 				--  sleep,0.25+2+2.5
 				--  sleep,4.75
 				--]]
-				(cmd(linear,inanit*0.5;diffuse,color("0,0,0,1")))(self);
+				--(cmd(linear,inanit*0.5;diffuse,color("0,0,0,1")))(self);
 			end;
 		};
 	};

@@ -18,7 +18,13 @@ RIO_FOLDER_NAMES = {
 	as StepMania intended.
 	Also the code for picking a random song is somewhere in ScreenSelectPlayMode.
 	]]
-	DefaultArcadeFolder;
+	DefaultArcadeFolder,
+	--The groups that are shown in the group select in the order you want them displayed.
+	--If this is empty all groups will be shown.
+	PREDEFINED_GROUP_LIST = {
+	
+	
+	}
 }
 
 --Called from ScreenSelectPlayMode to pick a random group and the GroupWheel to show available groups

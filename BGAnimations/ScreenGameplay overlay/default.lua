@@ -106,10 +106,6 @@ local t = Def.ActorFrame{
 				setenv("P2_accuracy",accuracy);
 			end;
 		};]]
-
-		Def.Quad{		--fade in to gameplay screen
-			OnCommand=cmd(FullScreen;diffuse,0,0,0,1;linear,0.4;diffusealpha,0);
-		};
 		--[[Def.Actor{		--TO DO: Only activate the gamecommand IF the player is using Sink and or Rise
 			InitCommand=cmd(queuecommand,"SinkRise");
 			SinkRiseCommand=function(self)

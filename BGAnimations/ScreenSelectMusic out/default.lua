@@ -11,7 +11,9 @@ return Def.ActorFrame{
 		AnimationFinishedCommand=function(self)
 			self:setstate(self:GetNumStates()-1);
 			self:animate(false);
-			self:GetParent():GetChild("Quad"):linear(1):diffusealpha(1):queuecommand("Play");
+			self:GetParent():GetChild("Quad"):queuecommand("Play");
+			--Fade out white into ScreenStageInfo instead of black
+			--:linear(1):diffusealpha(1):
 		end;
 	};
 
@@ -25,12 +27,12 @@ return Def.ActorFrame{
 			end;
 			
 			--AutoSetStyle is already a thing, WTF is this even doing?
-			if GAMESTATE:GetNumSidesJoined() == 2 and (GAMESTATE:GetCurrentSteps(PLAYER_1):GetStepsType() == "StepsType_Pump_Routine" or GAMESTATE:GetCurrentSteps(PLAYER_2):GetStepsType() == "StepsType_Pump_Routine") then
+			--[[if GAMESTATE:GetNumSidesJoined() == 2 and (GAMESTATE:GetCurrentSteps(PLAYER_1):GetStepsType() == "StepsType_Pump_Routine" or GAMESTATE:GetCurrentSteps(PLAYER_2):GetStepsType() == "StepsType_Pump_Routine") then
 				GAMESTATE:SetCurrentStyle("routine");
 				setenv("routine_switch","off");
 			elseif GAMESTATE:GetNumSidesJoined() == 2 then
 				GAMESTATE:SetCurrentStyle("versus");
-			end;
+			end;]]
 		end;
 	};
 

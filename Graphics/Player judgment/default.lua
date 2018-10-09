@@ -27,7 +27,7 @@ if stage == "ScreenGameplay stage Demo" then
     return GetUserPrefB("UserPrefProtiming" .. ToEnumShortString(player));
   end
 end;
-local bShowProtiming = ShowProtiming();
+local bShowProtiming = true
 local graphset = bShowProtiming;		--graph setting
 local ProtimingWidth = 480*0.4;	--default is "240"
 local function MakeAverage( t )
