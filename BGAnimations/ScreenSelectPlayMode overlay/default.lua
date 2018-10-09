@@ -533,12 +533,24 @@ return Def.ActorFrame{
 			setenv("PlayMode","Pro");
 			
 			--same as above
-			local lastUsedGroup = PROFILEMAN:GetProfile(GAMESTATE:GetMasterPlayerNumber()):GetLastPlayedSong():GetGroupName();
-			if lastUsedGroup == RIO_FOLDER_NAMES["EasyFolder"] or lastUsedGroup == RIO_FOLDER_NAMES["SpecialFolder"] then
-					folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["DefaultArcadeFolder"]);
-					randomSong = folder[math.random(#folder)]
-					GAMESTATE:SetCurrentSong(randomSong);
-					GAMESTATE:SetPreferredSong(randomSong);
+			local lastPlayedSong = PROFILEMAN:GetProfile(GAMESTATE:GetMasterPlayerNumber()):GetLastPlayedSong();
+			if lastPlayedSong then
+				local lastUsedGroup = lastPlayedSong:GetGroupName();
+				if lastUsedGroup == RIO_FOLDER_NAMES["EasyFolder"] or lastUsedGroup == RIO_FOLDER_NAMES["SpecialFolder"] then
+					pickRandom = true
+				end;
+			else
+				--If there wasn't a last played song it probably doesn't exist anymore so pick random
+				pickRandom = true;
+			end;
+			
+			if pickRandom then
+				folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["DefaultArcadeFolder"]);
+				randomSong = folder[math.random(#folder)]
+				GAMESTATE:SetCurrentSong(randomSong);
+				GAMESTATE:SetPreferredSong(randomSong);
+			else
+				GAMESTATE:SetCurrentSong(lastPlayedSong);
 			end;
 			
 			PREFSMAN:SetPreference("AllowW1",'AllowW1_Everywhere');
