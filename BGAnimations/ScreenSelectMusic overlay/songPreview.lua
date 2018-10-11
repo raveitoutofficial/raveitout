@@ -55,6 +55,7 @@ return Def.ActorFrame{
 			InitCommand=cmd(horizalign,center;zoomto,385,75;x,_screen.cx;y,_screen.cy+50;diffusealpha,1);
 		};
 	
+		--Song jacket/album art
 		Def.Sprite {
 			InitCommand=cmd(Load,nil;diffusealpha,0;zoomto,70,70;horizalign,left;x,_screen.cx-190;y,_screen.cy+50);
 			CurrentSongChangedMessageCommand=function(self)

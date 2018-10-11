@@ -17,7 +17,14 @@ return Def.ActorFrame{
 		SetMessageCommand=function(self,param)
 			local song = param.Song
 			if song then
-				self:LoadFromSong(song) --// load the song banner
+				path = song:GetJacketPath();
+				--self:scaletoclipped(180,180);
+				if not path then
+					path = song:GetBannerPath();
+					--self:scaletoclipped(250,177);
+				end;
+				if not path then path = THEME:GetPathG("Common","fallback banner") end
+				self:Load(path);
 			else
 				self:Load(THEME:GetPathG("Common fallback","banner")) --// load the fallback banner if we panic
 			end;

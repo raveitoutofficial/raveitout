@@ -58,10 +58,10 @@ if IsP2On then
 	end
 end
 
+local stats_x, stats_y;
 if PREFSMAN:GetPreference("Center1Player") and GAMESTATE:GetNumSidesJoined() == 1 then
 	stats_x = SCREEN_CENTER_X/2-20;
 	stats_y = -SCREEN_HEIGHT+45;
-	
 elseif stepsp1 ~= "StepsType_Pump_Single" or stepsp2 ~= "StepsType_Pump_Single" then
 	stats_y = -SCREEN_HEIGHT+59;
 else
