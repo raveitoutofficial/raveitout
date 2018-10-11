@@ -13,12 +13,15 @@ function table.shallowcopy(orig)
 end
 
 --This defines the custom player options. PlayerDefaults is initialized from InitGame
+--Use ActiveModifiers["P1"] or ActiveModifiers["P2"] to access options. ActiveModifiers
+--is automatically set when the profile is loaded.
 PlayerDefaults = {
 	DetailedPrecision = false, --Options: false, EarlyLate, ProTiming
 	ReverseGrade = false, --Like the PIU thing? Perfect is shown as bad
 	ScreenFilter = 0,
 	BGAMode = "On", --Options: Black, Off, Dark, On
-	ProfileIcon = nil -- Technically not an OptionsList option, but it gets saved at ScreenProfileSave so it's here anyway.
+	ProfileIcon = nil, -- Technically not an OptionsList option, but it gets saved at ScreenProfileSave so it's here anyway.
+	JudgmentGraphic = "Season 2", --Judgment graphic
 }
 
 --PerfectionistMode should NEVER be written to profile, so it's not in the PlayerDefaults table.
@@ -140,7 +143,7 @@ function OptionRowScreenFilter()
 	return t
 end
 
-function PerfectionistModeOptionRow()		--Perfectionist Mode 2.0 rewritten by Rhythm Lunatic
+function OptionRowPerfectionistMode()		--Perfectionist Mode 2.0 rewritten by Rhythm Lunatic
 	local t = {
 		Name = "PerfectionistMode";
 		LayoutType = "ShowAllInRow";
@@ -165,7 +168,7 @@ function PerfectionistModeOptionRow()		--Perfectionist Mode 2.0 rewritten by Rhy
 	return t;
 end;
 
-function BGAMode()		--BGAMode		by Alisson A2 (Alisson de Oliveira)
+function OptionRowBGAMode() --BGAMode v2 by Rhythm Lunatic, original by Alisson A2 (Alisson de Oliveira)
 	local t = {
 		Name = "UserPrefBGAMode";
 		LayoutType = "ShowAllInRow";
@@ -203,38 +206,23 @@ function BGAMode()		--BGAMode		by Alisson A2 (Alisson de Oliveira)
 	setmetatable( t, t );
 	return t;
 end;
-function ReverseGrade()		--Reverse Grade			by Alisson A2 (Alisson de Oliveira)
+function OptionRowReverseGrade() --Reverse Grade v2 by Rhythm Lunatic, original by Alisson A2
 	local t = {
 		Name = "UserPrefReverseGrade";
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
-		OneChoiceForAllPlayers = true;
+		OneChoiceForAllPlayers = false;
 		ExportOnChange = true;
 		Choices = { "Reverse", "Normal"};
 		LoadSelections = function(self, list, pn)
-			if ReadPrefFromFile("UserPrefReverseGrade") == nil then
+			if ActiveModifiers[pname(pn)]["ReverseGrade"] then
 				list[1] = true;
-				WritePrefToFile("UserPrefReverseGrade",true);
 			else
-				if GetUserPrefB("UserPrefReverseGrade") == true then
-					list[2] = true;
-				end;
-				if GetUserPrefB("UserPrefReverseGrade") == false then
-					list[1] = true;
-				end;
+				list[2] = true;
 			end;
 		end;
 		SaveSelections = function(self, list, pn)
-			local val;
-				if list[1] then
-					val = false
-					WritePrefToFile("UserPrefJudgmentType","Normal");
-				end;
-				if list[2] then
-					val = true
-					WritePrefToFile("UserPrefJudgmentType","Reverse");
-				end;
-			WritePrefToFile("UserPrefReverseGrade",val);
+			ActiveModifiers[pname(pn)]["ReverseGrade"] = list[1]; --if reverse is selected list[1] is true, else list[2] is true.
 		end;
 	};
 	setmetatable( t, t );
@@ -248,7 +236,7 @@ function OptionRowDetailedPrecision()
 		SelectType = "SelectOne";
 		OneChoiceForAllPlayers = false;
 		ExportOnChange = true;
-		Choices = { "Off", "Early/Late Indicators", "ProTiming Graph"};
+		Choices = {"Early/Late Indicators", "ProTiming Graph", "Off"};
 		LoadSelections = function(self, list, pn)
 			local opt = ActiveModifiers[pname(pn)]["DetailedPrecision"]
 			if opt == "EarlyLate" then
@@ -272,3 +260,43 @@ function OptionRowDetailedPrecision()
 	setmetatable( t, t );
 	return t;
 end;
+
+function OptionRowJudgmentGraphic()
+	local judgementNames = { "Season 1", "Season 2"}
+	local t = {
+		Name="JudgmentType",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = false,
+		ExportOnChange = false,
+		Choices = judgementNames,
+		LoadSelections = function(self, list, pn)
+			local pName = ToEnumShortString(pn)
+			local found = false;
+			for i=1,#list do
+				if judgementNames[i] == ActiveModifiers[pName]["JudgmentGraphic"] then
+					list[i] = true;
+					found = true;
+				end;
+			end;
+			if not found then
+				list[1] = true;
+				assert(found, "Should have defaulted to S2 judgement, but none was found")
+			end;
+		end,
+		SaveSelections = function(self, list, pn)
+			local pName = ToEnumShortString(pn)
+			local found = false
+			for i=1,#list do
+				if not found then
+					if list[i] == true then
+						ActiveModifiers[pName]["JudgmentGraphic"] = judgementNames[i];
+						found = true
+					end
+				end
+			end
+		end,
+	};
+	setmetatable(t, t)
+	return t
+end
