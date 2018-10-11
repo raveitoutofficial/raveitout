@@ -1,6 +1,9 @@
 local t = Def.ActorFrame{}	
 local playmode = getenv("PlayMode");
-assert(playmode, "PlayMode environment var isn't set!");
+if not playmode then
+	SCREENMAN:SystemMessage("Error: playmode environment not set!");
+	playmode = "Arcade";
+end;
 --PREV/NEXT Song indicator effects
 t[#t+1] = Def.ActorFrame{
 
