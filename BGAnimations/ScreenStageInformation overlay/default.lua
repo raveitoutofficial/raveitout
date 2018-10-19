@@ -27,10 +27,13 @@ else
 end
 
 local sttype =		GAMESTATE:GetCurrentStyle():GetStepsType()
+local cstyle;
 if 		sttype == "StepsType_Pump_Single" 		then cstyle = "S"
 elseif	sttype == "StepsType_Pump_Halfdouble"	then cstyle = "H"
 elseif	sttype == "StepsType_Pump_Double"		then cstyle = "D"
 elseif	sttyle == "StepsType_Pump_Routine"		then cstyle = "R"
+else
+	cstyle = "S" --Fallback
 end;
 local chartspecificanimationpath =	songdir.."_customanimation_"..cstyle..meterhighest..".lua"
 local customanimationpath =			songdir.."_customanimation.lua"

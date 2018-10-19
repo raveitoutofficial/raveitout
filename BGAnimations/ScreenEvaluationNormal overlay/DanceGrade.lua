@@ -48,12 +48,17 @@ end;
 local p1none =		css1:GetTapNoteScores("TapNoteScore_None")				--No step (DDR1st Hard mode)
 --
 
-local datalabelslist = {"AMAZING","RAVIN","COOL","OKAY","MISS","MAX COMBO","TOTAL SCORE","PRECISION","CALORIE (KCAL)"};
+--Sorry
+function gs(s)
+	return THEME:GetString("JudgmentLine",s)
+end
+
+local datalabelslist = {gs("W1"),gs("W2"),gs("W3"),gs("W4"),gs("Miss"),gs("MaxCombo"),"TOTAL SCORE","PRECISION","CALORIE (KCAL)"};
 local p1datalist =	{p1ravins,string.format("%03d",p1w2),string.format("%03d",p1w3),string.format("%03d",p1w4),string.format("%03d",p1misses),maxcp1,p1score,p1accuracy.."%",p1kcal};
 
-
-if PREFSMAN:GetPreference("AllowW1") == "AllowW1_Never" then
-	datalabelslist = {"RAVIN","COOL","OKAY","MISS","MAX COMBO","PRECISION","TOTAL SCORE","CALORIE (KCAL)"};
+local noFantastics = (PREFSMAN:GetPreference("AllowW1") == "AllowW1_Never") --Used in two places
+if noFantastics then
+	datalabelslist = {gs("W2"),gs("W3"),gs("W4"),gs("Miss"),gs("MaxCombo"),"PRECISION","TOTAL SCORE","CALORIE (KCAL)"};
 	p1datalist =	{p1ravins+p1w2,string.format("%03d",p1w3),string.format("%03d",p1w4),string.format("%03d",p1misses),maxcp1,p1accuracy.."%",p1score,p1kcal};
 end;
 	
@@ -157,7 +162,8 @@ for i = 1,#datalabelslist,1 do
 		InitCommand=cmd(xy,_screen.cx,iniy+(i*sepy)+2;diffuse,0,0,0,0;);
 		OnCommand=cmd(sleep,initsleeps[i];accelerate,intw;diffuse,0,0,0,0.55;zoomto,SCREEN_WIDTH,22;);
 	};]]
-	if i >= 5 then
+	--Ternary abuse: If noFantastics is true then it will do (i >= 5), if it's false it will do (i >= 6).
+	if i >= (noFantastics and 5 or 6) then
 		t[#t+1] = LoadActor("gfx/judge_back")..{
 			InitCommand=cmd(xy,_screen.cx,iniy+(i*sepy)+2;zoom,initzoom;diffusealpha,0);
 			OnCommand=cmd(sleep,initsleeps[i];accelerate,intw;;diffusealpha,1;x,_screen.cx;y,iniy+(i*sepy)+2;zoomto,175,22;);

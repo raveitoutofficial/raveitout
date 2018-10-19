@@ -1,10 +1,9 @@
-local distance = SCREEN_WIDTH/3;
+local defaultzoom = 0.55;
+local distance = IsUsingWideScreen() and SCREEN_WIDTH/5 or SCREEN_WIDTH/3;
 local shine_index = 1;
-if IsUsingWideScreen() then	
-	defaultzoom = 0.55;
+if IsUsingWideScreen() then
 	default_width = SCREEN_WIDTH+20
 else
-	defaultzoom = 0.35;
 	default_width = SCREEN_WIDTH
 end;
 
@@ -13,7 +12,7 @@ return Def.ActorFrame{
 	Def.ActorFrame{
 
 		LoadActor(THEME:GetPathG("","_BGMovies/selplaymode"))..{
-			InitCommand=cmd(Center;zoomto,867,482);
+			InitCommand=cmd(Center;Cover);
 			--InitCommand=cmd(Center;zoomto,default_width,SCREEN_HEIGHT)
 		};
 		
@@ -47,7 +46,23 @@ return Def.ActorFrame{
 		InitCommand=cmd(x,SCREEN_LEFT;y,SCREEN_BOTTOM+500;);
 		
 		OnCommand=cmd(sleep,0.3;decelerate,0.5;x,distance/2;y,SCREEN_CENTER_Y);
-		
+		MenuLeftP1MessageCommand=cmd(playcommand,"Refresh");
+		MenuLeftP2MessageCommand=cmd(playcommand,"Refresh");
+		MenuUpP1MessageCommand=cmd(playcommand,"Refresh");
+		MenuUpP2MessageCommand=cmd(playcommand,"Refresh");
+		MenuRightP1MessageCommand=cmd(playcommand,"Refresh");
+		MenuRightP2MessageCommand=cmd(playcommand,"Refresh");
+		MenuDownP1MessageCommand=cmd(playcommand,"Refresh");
+		MenuDownP2MessageCommand=cmd(playcommand,"Refresh");
+		RefreshCommand=function(self)
+			if not IsUsingWideScreen() then
+				if SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber()) > 2 then
+					self:stoptweening():decelerate(.5):x(-distance*2.5);
+				else
+					self:stoptweening():decelerate(.5):x(distance/2);
+				end;
+			end;
+		end;
 
 		LoadActor(THEME:GetPathG("","PlayModes/Easy"))..{
 			InitCommand=cmd(zoom,0.45;x,0;y,0);

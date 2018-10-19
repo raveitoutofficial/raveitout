@@ -9,6 +9,7 @@ local t = Def.ActorFrame{
 --NEXT STAGE
 local curstage = GAMESTATE:GetCurrentStage()
 
+--Time until each video ends, I guess.
 local delay_time = {
 	Stage_Extra1 = 9;
 	Stage_1st = 8;

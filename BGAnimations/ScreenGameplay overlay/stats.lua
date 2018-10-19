@@ -28,11 +28,14 @@ local nmzoom =		lbzoom		--Global numbers zoom
 
 	local stage = gfxNames[curstage];
 
-	
-local jllist = {"AMAZING","RAVIN","COOL","OKAY","MISS"};	--judgement label list
+--Sorry
+function gs(s)
+	return THEME:GetString("JudgmentLine",s)
+end
+local jllist = {gs("W1"),gs("W2"),gs("W3"),gs("W4"),gs("Miss")};	--judgement label list
 
 if PREFSMAN:GetPreference("AllowW1") == "AllowW1_Never" or stage == "ScreenGameplay stage Demo" then
-	jllist = {"RAVIN","COOL","OKAY","MISS"};	--judgement label list for easy
+	jllist = {gs("W2"),gs("W3"),gs("W4"),gs("Miss")};	--judgement label list for easy
 end
 
 local LSXoff =		40			--Global X offset

@@ -54,67 +54,6 @@ t[#t+1] = Def.ActorFrame{
 
 };
 
---AVATAR P1
-t[#t+1] = Def.ActorFrame{
-
-	InitCommand=cmd(vertalign,top;horizalign,left;zoom,1.1;x,-80);
-	OnCommand=cmd(sleep,1.5;accelerate,0.25;x,getenv("BarPosX")-35);
-	
-	LoadActor("mask")..{
-		InitCommand=cmd(y,18;vertalign,top;horizalign,left;zoomto,45,45;MaskSource);
-	};
-
-	LoadActor(THEME:GetPathG("","USB_stuff/avatars/blank")) .. {
-		InitCommand=cmd(x,3;y,40;horizalign,left;zoomto,40,40;MaskDest);
-		OnCommand=function(self)
-			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_1));
-			self:Load(getenv("profile_icon_P1"));
-			self:setsize(60,60);
-		end;
-		ScreenChangedMessageCommand=cmd(playcommand,"On");
-		PlayerJoinedMessageCommand=cmd(playcommand,"On");
-		CoinInsertedMessageCommand=cmd(playcommand,"On");
-		CoinModeChangedMessageCommand=cmd(playcommand,"On");
-		ScreenChangedMessageCommand=cmd(playcommand,"On");
-		StorageDevicesChangedMessageCommand=cmd(playcommand,"On");
-
-	};
-	
-	LoadActor("avatar_frame")..{
-		InitCommand=cmd(x,0;y,18;vertalign,top;horizalign,left;zoomto,45,45;visible,GAMESTATE:IsPlayerEnabled(PLAYER_1););
-	};
-};
-
-
---AVATAR P2
-t[#t+1] = Def.ActorFrame{
-
-	InitCommand=cmd(vertalign,top;horizalign,right;zoom,1.1;x,SCREEN_RIGHT+80);
-	OnCommand=cmd(sleep,1.5;accelerate,0.25;x,getenv("BarPosX")+SCREEN_RIGHT+35);
-	LoadActor("mask")..{
-		InitCommand=cmd(y,18;vertalign,top;horizalign,right;zoomto,45,45;MaskSource);
-	};
-
-	LoadActor(THEME:GetPathG("","USB_stuff/avatars/blank")) .. {
-		InitCommand=cmd(x,0;y,40;horizalign,right;zoomto,40,40;MaskDest);
-		OnCommand=function(self)
-			self:visible(GAMESTATE:IsPlayerEnabled(PLAYER_2));
-			self:Load(getenv("profile_icon_P2"));
-		end;
-		ScreenChangedMessageCommand=cmd(playcommand,"On");
-		PlayerJoinedMessageCommand=cmd(playcommand,"On");
-		CoinInsertedMessageCommand=cmd(playcommand,"On");
-		CoinModeChangedMessageCommand=cmd(playcommand,"On");
-		ScreenChangedMessageCommand=cmd(playcommand,"On");
-		StorageDevicesChangedMessageCommand=cmd(playcommand,"On");
-
-	};
-	
-	LoadActor("avatar_frame")..{
-		InitCommand=cmd(x,0;y,18;vertalign,top;horizalign,right;zoomto,45,45;visible,GAMESTATE:IsPlayerEnabled(PLAYER_2););
-	};
-};
-
 
 
 t[#t+1] = Def.ActorFrame {
