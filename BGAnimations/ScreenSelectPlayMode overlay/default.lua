@@ -474,7 +474,8 @@ return Def.ActorFrame{
 	OnCommand=function(self)
 		if not RIO_FOLDER_NAMES["DefaultArcadeFolder"] then
 			groups = getAvailableGroups();
-			total_arcade_folders = #groups-4;
+			--TODO: Is this global or something? What's going on?
+			total_arcade_folders = #groups;
 			RIO_FOLDER_NAMES["DefaultArcadeFolder"] = groups[math.random(2,total_arcade_folders)];
 			
 			--What?
