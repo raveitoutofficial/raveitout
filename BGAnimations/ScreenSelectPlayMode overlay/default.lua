@@ -155,28 +155,29 @@ local ItemChoices = Def.ActorFrame{
 	InitCommand=cmd(x,SCREEN_LEFT;y,SCREEN_BOTTOM+500;);
 	OnCommand=cmd(sleep,0.3;decelerate,0.5;x,distance/2;y,SCREEN_CENTER_Y);
 };
-ChoiceIntroPlayed = false
+local ChoiceIntroPlayed = false
 
 for i=1,#Choices do
 	-- Choice Sound
 	SoundBank[#SoundBank+1] = Def.Sound{
-	Condition=FILEMAN:DoesFileExist( THEME:GetPathS("","PlayModes/"..Choices[i]) );
-	File=THEME:GetPathS("","PlayModes/"..Choices[i]);
-	Name=Choices[i];
-	InitCommand=function(self)
-		local ragesound_file = self:get()
-		ragesound_file:volume(0.4)
-		SOUND:PlayOnce( THEME:GetPathS("","PlayModes/select_game_mode") )
-		self:sleep(1)
-		self:queuecommand("IntroCheck")
-	end;
-	IntroCheckCommand=function(self) ChoiceIntroPlayed = true end;
-	RefreshOptionMessageCommand=function(self)
-		local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber());
-		if ChoiceIntroPlayed then
-			SBank:GetChild( Choices[sel+1] ):play()
-		end
-	end;
+		Condition=FILEMAN:DoesFileExist( THEME:GetPathS("","PlayModes/"..Choices[i]) );
+		File=THEME:GetPathS("","PlayModes/"..Choices[i]);
+		Name=Choices[i];
+		InitCommand=function(self)
+			local ragesound_file = self:get()
+			ragesound_file:volume(0.4)
+			--TODO: Fix duplicated select game mode sound
+			SOUND:PlayOnce( THEME:GetPathS("","PlayModes/select_game_mode") )
+			self:sleep(1)
+			self:queuecommand("IntroCheck")
+		end;
+		IntroCheckCommand=function(self) ChoiceIntroPlayed = true end;
+		RefreshOptionMessageCommand=function(self)
+			local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber());
+			if ChoiceIntroPlayed then
+				SBank:GetChild( Choices[sel+1] ):play()
+			end
+		end;
 	};
 
 	-- Choice Selection Sprite
@@ -188,15 +189,15 @@ for i=1,#Choices do
 			InitCommand=cmd(zoom,0.45);
 			OffCommand=cmd(bouncebegin,0.4;zoom,0);
 			RefreshOptionMessageCommand=function(self)
-			local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber())+1
-			local match = (sel == i)
-			self:stoptweening():stopeffect():decelerate(0.15)
-			
-			:zoom( sel == i and defaultzoom or 0.5 )
-			:diffusealpha( match and 1 or 0.45 )
-			if sel == i then
-				self:pulse():effectmagnitude(1,1.05,1):effectperiod(1);
-			end
+				local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber())+1
+				local match = (sel == i)
+				self:stoptweening():stopeffect():decelerate(0.15)
+				
+				:zoom( sel == i and defaultzoom or 0.5 )
+				:diffusealpha( match and 1 or 0.45 )
+				if sel == i then
+					self:pulse():effectmagnitude(1,1.05,1):effectperiod(1);
+				end
 			end;
 		};
 	
@@ -206,18 +207,18 @@ for i=1,#Choices do
 			InitCommand=cmd(MaskDest;zoom,0.45);
 			OffCommand=cmd(bouncebegin,0.4;zoom,0);					
 			RefreshOptionMessageCommand=function(self)
-			local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber())+1
-			local match = (sel == i)
-			self:stoptweening():stopeffect():decelerate(0.01)
-			:zoom( sel == i and defaultzoom-0.1 or 0.38 )
-			:diffusealpha( 0 )
-			:position(0)
-			:sleep(0.1)
-			:decelerate(0.15)
-			:diffusealpha( match and 1 or 0 )
-			if sel == i then
-				self:pulse():effectmagnitude(1,1.05,1):effectperiod(1);
-			end
+				local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber())+1
+				local match = (sel == i)
+				self:stoptweening():stopeffect():decelerate(0.01)
+				:zoom( sel == i and defaultzoom-0.1 or 0.38 )
+				:diffusealpha( 0 )
+				:position(0)
+				:sleep(0.1)
+				:decelerate(0.15)
+				:diffusealpha( match and 1 or 0 )
+				if sel == i then
+					self:pulse():effectmagnitude(1,1.05,1):effectperiod(1);
+				end
 			end;		
 		};
 	};
