@@ -156,6 +156,7 @@ local ItemChoices = Def.ActorFrame{
 	OnCommand=cmd(sleep,0.3;decelerate,0.5;x,distance/2;y,SCREEN_CENTER_Y);
 };
 ChoiceIntroPlayed = false
+SOUND:PlayOnce( THEME:GetPathS("","PlayModes/select_game_mode") )
 
 for i=1,#Choices do
 	-- Choice Sound
@@ -166,7 +167,6 @@ for i=1,#Choices do
 	InitCommand=function(self)
 		local ragesound_file = self:get()
 		ragesound_file:volume(0.4)
-		SOUND:PlayOnce( THEME:GetPathS("","PlayModes/select_game_mode") )
 		self:sleep(1)
 		self:queuecommand("IntroCheck")
 	end;
