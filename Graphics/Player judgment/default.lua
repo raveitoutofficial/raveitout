@@ -16,7 +16,7 @@
 
 	local stage = gfxNames[curstage];
 local style = GAMESTATE:GetCurrentStyle()		--get style
-local ptbrotz = -90		--protiming bar rotationz
+local ptbrotz = 0		--protiming bar rotationz
 
 local c;
 local player = Var "Player";
@@ -40,6 +40,7 @@ end
 
 local tTotalJudgments = {};
 
+--Why would someone do this
 local judani = Comboanijudge;	--\Scripts\Themefunctions.lua
 
 local JudgeCmds = {
@@ -93,21 +94,18 @@ else
 	sepx = 140
 end
 
---local infdiff = 30
-if ToEnumShortString(player) == "P1" then
-	ptsepax = -sepx;
-elseif ToEnumShortString(player) == "P2" then
-	ptsepax = sepx;
-else
-	ptsepax = 0;
-end;
-
+local ptsepax = 0;
 local ptinfdy = 30		--protiming information difference Y axis
-local ptbposy = 32		--protiming bar position Y axis
+local ptbposy = 27		--protiming bar position Y axis
 
 local t = Def.ActorFrame {};
+--Either Season2 or Normal.
+local judgmentToLoad = "Season2";
+if ActiveModifiers[pname(player)]["JudgmentGraphic"] == "Season 1" then
+	judgmentToLoad = "Normal";
+end;
 t[#t+1] = Def.ActorFrame {
-	LoadActor(THEME:GetPathG("Judgment","Normal")) .. {
+	LoadActor(THEME:GetPathG("Judgment",judgmentToLoad)) .. {
 		Name="Judgment";	--\nJudgmentOnCommand en metrics
 		InitCommand=cmd(pause;visible,false);	--	OnCommand=cmd();	--originalmente apuntaba a metrics, pero en metrics tambien estaba sin anim. PS: No tiene sentido tenerlo activado, JudgeCmds controlan la animacion.
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
@@ -231,6 +229,7 @@ t[#t+1] = Def.ActorFrame {
 	--	c.Judgment:visible(not bShowProtiming);	--Original
 		c.Judgment:visible(true);				--Forced for ProTiming Display
 		c.Judgment:setstate(iFrame);
+		--Yep, this right here is what sets the animation.
 		JudgeCmds[param.TapNoteScore](c.Judgment);
 		
 	--	c.ProtimingDisplay:visible(bShowProtiming);					--Original

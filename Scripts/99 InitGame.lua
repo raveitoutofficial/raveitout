@@ -7,8 +7,6 @@ function Setup()
 --PREFSMAN:SetPreference("VideoRenderers","d3d");
 --PREFSMAN:SetPreference("Vsync",0);
 	--PREFSMAN:SetPreference("SongsPerPlay",6);
-	setenv("PlayMode","Arcade")
-	setenv("RandomAvatar",THEME:GetPathG("","USB_stuff/avatars/"..string.format("%03i",tostring(math.random(40)))));
 	--forced prefs by game design
 	--//copied and modified from NIKK's DDRS2KHD theme
 	--THEME:ReloadMetrics();
@@ -99,7 +97,11 @@ function Setup()
 	ActiveModifiers = {
 		P1 = table.shallowcopy(PlayerDefaults),
 		P2 = table.shallowcopy(PlayerDefaults),
-		MACHINE = table.shallowcopy(PlayerDefaults),
+		--MACHINE = table.shallowcopy(PlayerDefaults),
 	}
+	PerfectionistMode = {
+		PlayerNumber_P1 = false,
+		PlayerNumber_P2 = false
+	};
 
 end
