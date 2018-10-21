@@ -188,15 +188,15 @@ for i=1,#Choices do
 			InitCommand=cmd(zoom,0.45);
 			OffCommand=cmd(bouncebegin,0.4;zoom,0);
 			RefreshOptionMessageCommand=function(self)
-			local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber())+1
-			local match = (sel == i)
-			self:stoptweening():stopeffect():decelerate(0.15)
-			
-			:zoom( sel == i and defaultzoom or 0.5 )
-			:diffusealpha( match and 1 or 0.45 )
-			if sel == i then
-				self:pulse():effectmagnitude(1,1.05,1):effectperiod(1);
-			end
+				local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber())+1
+				local match = (sel == i)
+				self:stoptweening():stopeffect():decelerate(0.15)
+				
+				:zoom( sel == i and defaultzoom or 0.5 )
+				:diffusealpha( match and 1 or 0.45 )
+				if sel == i then
+					self:pulse():effectmagnitude(1,1.05,1):effectperiod(1);
+				end
 			end;
 		};
 	
@@ -206,18 +206,18 @@ for i=1,#Choices do
 			InitCommand=cmd(MaskDest;zoom,0.45);
 			OffCommand=cmd(bouncebegin,0.4;zoom,0);					
 			RefreshOptionMessageCommand=function(self)
-			local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber())+1
-			local match = (sel == i)
-			self:stoptweening():stopeffect():decelerate(0.01)
-			:zoom( sel == i and defaultzoom-0.1 or 0.38 )
-			:diffusealpha( 0 )
-			:position(0)
-			:sleep(0.1)
-			:decelerate(0.15)
-			:diffusealpha( match and 1 or 0 )
-			if sel == i then
-				self:pulse():effectmagnitude(1,1.05,1):effectperiod(1);
-			end
+				local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber())+1
+				local match = (sel == i)
+				self:stoptweening():stopeffect():decelerate(0.01)
+				:zoom( sel == i and defaultzoom-0.1 or 0.38 )
+				:diffusealpha( 0 )
+				:position(0)
+				:sleep(0.1)
+				:decelerate(0.15)
+				:diffusealpha( match and 1 or 0 )
+				if sel == i then
+					self:pulse():effectmagnitude(1,1.05,1):effectperiod(1);
+				end
 			end;		
 		};
 	};
