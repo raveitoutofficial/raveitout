@@ -1,10 +1,15 @@
 --THIS DOES NOT WORK IN DECORATIONS! ONLY OVERLAY!!!
 
+--Function for... Drawing a rectangle.
 function rectGen(width, height, lineSize, fgColor, bgColor)
     return Def.ActorFrame{
     
+		GlowCommand=function(self)
+			self:GetChild("Background"):stoptweening():glow(Color("White")):decelerate(.5):glow(color("1,1,1,0"));
+		end;
         --Background transparency
         Def.Quad{
+			Name="Background";
             InitCommand=cmd(setsize,width, height;diffuse,bgColor);
             
         };
@@ -32,23 +37,32 @@ function rectGen(width, height, lineSize, fgColor, bgColor)
     };
 end;
 
-local RECT_WIDTH,RECT_HEIGHT = SCREEN_WIDTH/2-10,SCREEN_HEIGHT*.8
+local player = ...;
 
-local f = Def.ActorFrame{
-	InitCommand=cmd(Center);
-	rectGen(RECT_WIDTH,RECT_HEIGHT,2,color("1,1,1,1"),color("0,0,0,0"))..{
-	};
-}
 --Settings you can change
+local RECT_WIDTH,RECT_HEIGHT = SCREEN_WIDTH/2-10,SCREEN_HEIGHT*.7
 local SSC_BORDER_SIZE = 4;
 local SSC_ROWS = 1;
 local SSC_COLUMNS = 9;
-local bWidth, bHeight = 40,80;
+local bWidth, bHeight = 40,50;
 --Various precalculated variables to make things easy to position
 local sqWidth = bWidth*SSC_COLUMNS+SSC_BORDER_SIZE*SSC_COLUMNS;
 local sqHeight = bHeight*SSC_ROWS+SSC_BORDER_SIZE*SSC_ROWS;
-local xPosition = SCREEN_CENTER_X-sqWidth/2+bWidth/2+SSC_BORDER_SIZE/2;
-local yPosition = SCREEN_CENTER_Y-100;
+local xPosition = -sqWidth/2+bWidth/2+SSC_BORDER_SIZE/2;
+local yPosition = -100;
+
+
+local f = Def.ActorFrame{
+	rectGen(RECT_WIDTH,RECT_HEIGHT,2,color("1,1,1,1"),color("0,0,0,0"))..{
+	};
+	--[[rectGen(bWidth,bHeight,2,Color("White"),color(".3,.3,.3,.5"))..{
+		Name="BGQuad";
+		InitCommand=cmd(y,100);
+	};]]
+	--[[LoadActor("arrow")..{
+		InitCommand=cmd(zoom,.5);
+	};]]
+}
 
 local boxFrameActor;
 local boxFrame = Def.ActorFrame{
@@ -70,6 +84,7 @@ for i = 0, SSC_ROWS-1 do
 			Name=j;
 			
 			Def.Quad{
+				--Name="DebugQuad";
 				InitCommand=cmd(setsize,bWidth,bHeight);
 				OnCommand=function(self)
 					if j%2 == 0 then
@@ -89,7 +104,7 @@ for i = 0, SSC_ROWS-1 do
 			};
 			
 			LoadFont("monsterrat/_montserrat semi bold 60px")..{
-				Name="TextQuad";
+				Name="TextActor";
 				InitCommand=cmd(diffuse,color("0,0,0,1");zoom,0.6;skewx,-0.255;maxwidth,bWidth+20);
 				NewTextCommand=cmd(zoom,1.6;decelerate,.5;zoom,.6);
 				--Text=j;
@@ -98,7 +113,7 @@ for i = 0, SSC_ROWS-1 do
 	end
 end
 
-local str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+local str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890"
 local strTable = {}
 for i = 1, #str do
     strTable[i] = str:sub(i, i)
@@ -128,12 +143,14 @@ local item_mt= {
 		  		--subself:zoom(.75);
 			end;
 				
-			rectGen(bWidth,bHeight,2,Color("White"),color(".5,.5,.5,1"));
+			rectGen(bWidth,bHeight,2,Color("White"),color(".2,.2,.2,.5"))..{
+				Name="BGQuad";
+			};
 			
 			LoadFont("monsterrat/_montserrat semi bold 60px")..{
 				Name="Text";
 				--Text="asdadsadasdasd";
-				InitCommand=cmd(diffuse,color("0,0,0,1");zoom,0.6;skewx,-0.255;maxwidth,bWidth+20);
+				InitCommand=cmd(diffuse,color("1,1,1,1");zoom,0.6;skewx,-0.255;maxwidth,bWidth+20);
 			};
 
 		};
@@ -170,6 +187,8 @@ local t = Def.ActorFrame{
 	end;
 	--Input handler
 	CodeMessageCommand=function(self, params)
+		if params.PlayerNumber ~= player then return end;
+	
 		if params.Name == "Left" then
 			--SCREENMAN:SystemMessage("aasdas");
 			scroller:scroll_by_amount(-1);
@@ -179,16 +198,17 @@ local t = Def.ActorFrame{
 			SOUND:PlayOnce(THEME:GetPathS("Codebox", "Move"))
 		elseif params.Name == "Center" then
 			local txt = scroller:get_info_at_focus_pos();
+			scroller:get_actor_item_at_focus_pos().container:GetChild("BGQuad"):playcommand("Glow");
 			--SCREENMAN:SystemMessage(txt)
 			if txt == "DEL" then
 				curName = string.sub(curName,1,-2);
-				boxFrameActor:GetChild(tostring(#curName)):GetChild("TextQuad"):settext("");
+				boxFrameActor:GetChild(tostring(#curName)):GetChild("TextActor"):settext("");
 				SOUND:PlayOnce(THEME:GetPathS("Codebox", "Enter"))
 			elseif txt == "END" then
 			
 			elseif #curName < SSC_COLUMNS then
 				curName = curName..txt;
-				boxFrameActor:GetChild(tostring(#curName-1)):GetChild("TextQuad"):settext(txt):playcommand("NewText");
+				boxFrameActor:GetChild(tostring(#curName-1)):GetChild("TextActor"):settext(txt):playcommand("NewText");
 				SOUND:PlayOnce(THEME:GetPathS("Codebox", "Select"))
 				if #curName == SSC_COLUMNS then
 					--END is the last element
@@ -202,9 +222,9 @@ local t = Def.ActorFrame{
 		end;
 	end;
 };
-t[#t+1] = scroller:create_actors("foo", numWheelItems, item_mt, SCREEN_CENTER_X, SCREEN_CENTER_Y+100);
-
 t[#t+1] = f;
+t[#t+1] = scroller:create_actors("foo", numWheelItems, item_mt, 0, 100);
+
 t[#t+1] = boxFrame;
 t[#t+1] = boxFrame2;
 return t;
