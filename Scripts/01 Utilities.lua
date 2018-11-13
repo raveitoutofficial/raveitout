@@ -10,8 +10,8 @@ SysInfo = {
 }
 
 RIO_FOLDER_NAMES = {
-	EasyFolder = "99 Rave It Out (Easy)",
-	SpecialFolder = "99 Rave It Out (Special)",
+	EasyFolder = "99-Easy",
+	SpecialFolder = "99-Special",
 	--[[
 	If this is set the game will use it for arcade mode. If not, it will pick a random folder,
 	but ONLY if you aren't playing with a profile. Profiles will resume from their last played song
