@@ -125,7 +125,11 @@ local t = Def.ActorFrame{
 		LoadActor("demoplay")..{
 			InitCommand=cmd(x,notefxp1;y,SCREEN_BOTTOM-70;zoom,0.5;playcommand,"Set");
 			OnCommand=function(self)
-				if stage ~= "ScreenGameplay stage Demo" then self:visible(false); end
+				if stage == "ScreenGameplay stage Demo" then
+					GAMESTATE:ApplyGameCommand("stopmusic");
+				else
+					self:visible(false);
+				end;
 			end;
 			
 			SetCommand=function(self)

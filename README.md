@@ -1,4 +1,4 @@
-# raveitout
+# Rave It Out
 Official Rave It Out builds. Pitbull would approve. Dale!
 
 ## Usage
