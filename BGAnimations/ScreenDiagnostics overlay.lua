@@ -120,7 +120,7 @@ local t = Def.ActorFrame{
 				self:settext(self:GetText().." Missing!");
 				self:diffuse(Color("Red"));
 			else
-				self:settext(self:GetText().." Ok! | "..#SONGMAN:GetSongsInGroup("BasicModeGroup").." songs");
+				self:settext(self:GetText().." Ok! | "..#SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["EasyFolder"]).." songs");
 				self:diffuse(Color("Green"));
 			end;
 			self:settext(self:GetText().." | "..RIO_FOLDER_NAMES["EasyFolder"])
@@ -134,7 +134,7 @@ local t = Def.ActorFrame{
 				self:settext(self:GetText().." Missing!");
 				self:diffuse(Color("Red"));
 			else
-				self:settext(self:GetText().." Ok! | "..#SONGMAN:GetSongsInGroup("BasicModeGroup").." songs");
+				self:settext(self:GetText().." Ok! | "..#SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["SpecialFolder"]).." songs");
 				self:diffuse(Color("Green"));
 			end;
 			self:settext(self:GetText().." | "..RIO_FOLDER_NAMES["SpecialFolder"])
