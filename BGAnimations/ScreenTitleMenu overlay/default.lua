@@ -1,6 +1,6 @@
 return Def.ActorFrame{
-	--[[LoadFont("common normal")..{
-		Text=SysInfo["InternalName"]..":"..SysInfo["Version"];
+	LoadFont("common normal")..{
+		Text=SysInfo["InternalName"].."-"..SysInfo["Version"];
 		InitCommand=cmd(xy,5,5;horizalign,left;vertalign,top;zoom,.5;Stroke,Color("Black"));
 	};
 	LoadFont("common normal")..{
@@ -15,7 +15,7 @@ return Def.ActorFrame{
 				self:settext("DISPLAY TYPE: ???");
 			end;
 		end;
-	};]]
+	};
 
 
 	LoadFont("Common normal")..{	--Unlock status data

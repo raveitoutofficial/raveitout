@@ -70,7 +70,8 @@ t[#t+1] = Def.ActorFrame{
 			-- Easy Mode
 			setenv("PlayMode","Easy");
 			setenv("HeaderTitle","SELECT MUSIC");
-			folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["EasyFolder"]);
+			assert(SONGMAN:DoesSongGroupExist(RIO_FOLDER_NAMES["EasyFolder"]),"Easy folder is missing!")
+			local folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["EasyFolder"]);
 			randomSong = folder[math.random(1,#folder)]
 			GAMESTATE:SetCurrentSong(randomSong);
 			GAMESTATE:SetPreferredSong(randomSong);
@@ -232,7 +233,10 @@ local Actions = Def.ActorFrame{
 	MenuLeftP2MessageCommand=function(self) MESSAGEMAN:Broadcast("RefreshOption") end;
 	MenuUpP1MessageCommand=function(self) MESSAGEMAN:Broadcast("RefreshOption") end;
 	MenuUpP2MessageCommand=function(self) MESSAGEMAN:Broadcast("RefreshOption") end;
-	MenuRightP1MessageCommand=function(self) MESSAGEMAN:Broadcast("RefreshOption") end;
+	MenuRightP1MessageCommand=function(self)
+		MESSAGEMAN:Broadcast("RefreshOption")
+		--SBank:GetChild( Choices[1] ):play()
+	end;
 	MenuRightP2MessageCommand=function(self) MESSAGEMAN:Broadcast("RefreshOption") end;
 	MenuDownP1MessageCommand=function(self) MESSAGEMAN:Broadcast("RefreshOption") end;
 	MenuDownP2MessageCommand=function(self) MESSAGEMAN:Broadcast("RefreshOption") end;

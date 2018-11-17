@@ -112,23 +112,34 @@ local t = Def.ActorFrame{
 		Text="Courses/Music Trains: "..SONGMAN:GetNumCourses().."+"..SONGMAN:GetNumAdditionalCourses();
 		InitCommand=cmd(xy,20,300;horizalign,left);
 	};
-	--[[LoadFont("Common Normal")..{
-		Text="BasicModeGroup: ";
+	LoadFont("Common Normal")..{
+		Text="Easy Group: ";
 		InitCommand=cmd(xy,20,325;horizalign,left);
 		OnCommand=function(self)
-			if ReadPrefFromFile("UserPrefBasicModeType") == "BasicModeGroup" then
-				if SONGMAN:DoesSongGroupExist("BasicModeGroup") == false then
-					self:settext(self:GetText().." Missing!");
-					self:diffuse(Color("Red"));
-				else
-					self:settext(self:GetText().." Ok! | "..#SONGMAN:GetSongsInGroup("BasicModeGroup").." songs");
-					self:diffuse(Color("Green"));
-				end;
+			if SONGMAN:DoesSongGroupExist(RIO_FOLDER_NAMES["EasyFolder"]) == false then
+				self:settext(self:GetText().." Missing!");
+				self:diffuse(Color("Red"));
 			else
-				self:settext(self:GetText().." Automatically generated");
+				self:settext(self:GetText().." Ok! | "..#SONGMAN:GetSongsInGroup("BasicModeGroup").." songs");
+				self:diffuse(Color("Green"));
 			end;
+			self:settext(self:GetText().." | "..RIO_FOLDER_NAMES["EasyFolder"])
 		end;
-	};]]
+	};
+	LoadFont("Common Normal")..{
+		Text="Special Group: ";
+		InitCommand=cmd(xy,20,350;horizalign,left);
+		OnCommand=function(self)
+			if SONGMAN:DoesSongGroupExist(RIO_FOLDER_NAMES["SpecialFolder"]) == false then
+				self:settext(self:GetText().." Missing!");
+				self:diffuse(Color("Red"));
+			else
+				self:settext(self:GetText().." Ok! | "..#SONGMAN:GetSongsInGroup("BasicModeGroup").." songs");
+				self:diffuse(Color("Green"));
+			end;
+			self:settext(self:GetText().." | "..RIO_FOLDER_NAMES["SpecialFolder"])
+		end;
+	};
 	
 	LoadFont("Common Normal")..{
 		--Text="Uptime: "..SecondsToHHMMSS(GetTimeSinceStart(););
