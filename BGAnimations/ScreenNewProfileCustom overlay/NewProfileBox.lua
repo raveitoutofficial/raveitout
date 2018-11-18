@@ -53,8 +53,8 @@ local yPosition = -100;
 
 
 local f = Def.ActorFrame{
-	rectGen(RECT_WIDTH,RECT_HEIGHT,2,color("1,1,1,1"),color("0,0,0,0"))..{
-	};
+	
+	rectGen(RECT_WIDTH,RECT_HEIGHT,2,color("1,1,1,1"),color("0,0,0,0"))..{};
 	--[[rectGen(bWidth,bHeight,2,Color("White"),color(".3,.3,.3,.5"))..{
 		Name="BGQuad";
 		InitCommand=cmd(y,100);
@@ -74,6 +74,11 @@ local boxFrame = Def.ActorFrame{
 	OnCommand=function(self)
 		boxFrameActor = self;
 	end;
+	
+	LoadActor('arrow')..{
+		InitCommand=cmd(rotationz,90;xy,sqWidth/2,100;bounce)
+		--OnCommand=cmd(self:GetTexture
+	};
 };
 
 for i = 0, SSC_ROWS-1 do
@@ -182,6 +187,25 @@ local item_mt= {
 
 local curName = "";
 local t = Def.ActorFrame{
+	--[[InitCommand=function(self)
+		--self:SetTextureName( "asdfghjkl" )
+		self:SetWidth( RECT_WIDTH );
+		self:SetHeight( RECT_HEIGHT );
+		self:EnableAlphaBuffer( false ); 
+		self:Create();
+
+		-- The ActorFrameTexture only needs to draw once, so hide it after the first draw.
+		self:Draw()
+		self:hibernate(math.huge)
+		self:Center();
+	end;
+	Def.ActorFrame{
+		Name = "Draw";
+		-- three random quads, two of them strattling the edge of the texture.
+		Def.Quad{ InitCommand=cmd(zoom,50;diffuse,1,0,0,0.5) };
+		Def.Quad{ InitCommand=cmd(zoom,50;diffuse,0,1,0,0.5;x,64;y,64) };
+		Def.Quad{ InitCommand=cmd(zoom,50;diffuse,0,0,1,0.5;x,120;y,100) };
+	};]]
 	OnCommand=function(self)
 		scroller:set_info_set(strTable, 1);
 	end;

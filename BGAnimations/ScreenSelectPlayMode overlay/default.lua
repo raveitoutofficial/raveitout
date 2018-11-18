@@ -172,12 +172,12 @@ for i=1,#Choices do
 		self:queuecommand("IntroCheck")
 	end;
 	IntroCheckCommand=function(self) ChoiceIntroPlayed = true end;
-	RefreshOptionMessageCommand=function(self)
+	--[[RefreshOptionMessageCommand=function(self)
 		local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber());
 		if ChoiceIntroPlayed then
 			SBank:GetChild( Choices[sel+1] ):play()
 		end
-	end;
+	end;]]
 	};
 
 	-- Choice Selection Sprite
@@ -228,18 +228,64 @@ t[#t+1] = SoundBank;
 t[#t+1] = ItemChoices;
 
 -- ALL ACTIONS
+--TODO: Yes I know it's really stupid but I can't figure out why it's playing the sounds twice so I moved them here
 local Actions = Def.ActorFrame{
-	MenuLeftP1MessageCommand=function(self) MESSAGEMAN:Broadcast("RefreshOption") end;
-	MenuLeftP2MessageCommand=function(self) MESSAGEMAN:Broadcast("RefreshOption") end;
-	MenuUpP1MessageCommand=function(self) MESSAGEMAN:Broadcast("RefreshOption") end;
-	MenuUpP2MessageCommand=function(self) MESSAGEMAN:Broadcast("RefreshOption") end;
+	MenuLeftP1MessageCommand=function(self)
+		MESSAGEMAN:Broadcast("RefreshOption")
+		local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber());
+		if ChoiceIntroPlayed then
+			SBank:GetChild( Choices[sel+1] ):play()
+		end
+	end;
+	MenuLeftP2MessageCommand=function(self)
+		MESSAGEMAN:Broadcast("RefreshOption")
+		local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber());
+		if ChoiceIntroPlayed then
+			SBank:GetChild( Choices[sel+1] ):play()
+		end
+	end;
+	MenuUpP1MessageCommand=function(self)
+		MESSAGEMAN:Broadcast("RefreshOption")
+		local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber());
+		if ChoiceIntroPlayed then
+			SBank:GetChild( Choices[sel+1] ):play()
+		end
+	end;
+	MenuUpP2MessageCommand=function(self)
+		MESSAGEMAN:Broadcast("RefreshOption")
+		local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber());
+		if ChoiceIntroPlayed then
+			SBank:GetChild( Choices[sel+1] ):play()
+		end
+	end;
 	MenuRightP1MessageCommand=function(self)
 		MESSAGEMAN:Broadcast("RefreshOption")
-		--SBank:GetChild( Choices[1] ):play()
+		local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber());
+		if ChoiceIntroPlayed then
+			SBank:GetChild( Choices[sel+1] ):play()
+		end
 	end;
-	MenuRightP2MessageCommand=function(self) MESSAGEMAN:Broadcast("RefreshOption") end;
-	MenuDownP1MessageCommand=function(self) MESSAGEMAN:Broadcast("RefreshOption") end;
-	MenuDownP2MessageCommand=function(self) MESSAGEMAN:Broadcast("RefreshOption") end;
+	MenuRightP2MessageCommand=function(self)
+		MESSAGEMAN:Broadcast("RefreshOption")
+		local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber());
+		if ChoiceIntroPlayed then
+			SBank:GetChild( Choices[sel+1] ):play()
+		end
+	end;
+	MenuDownP1MessageCommand=function(self)
+		MESSAGEMAN:Broadcast("RefreshOption")
+		local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber());
+		if ChoiceIntroPlayed then
+			SBank:GetChild( Choices[sel+1] ):play()
+		end
+	end;
+	MenuDownP2MessageCommand=function(self)
+		MESSAGEMAN:Broadcast("RefreshOption")
+		local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber());
+		if ChoiceIntroPlayed then
+			SBank:GetChild( Choices[sel+1] ):play()
+		end	
+	end;
 };
 
 t[#t+1] = Actions;

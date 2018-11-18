@@ -50,7 +50,8 @@ function Setup()
 	PREFSMAN:SetPreference("TimingWindowSecondsW4",0.145);
 	PREFSMAN:SetPreference("TimingWindowSecondsW5",0);
 	--	PREFSMAN:SetPreference("TimingWindowSecondsHoldCheckpoint",0.060);	--this value doesn't exist in SM5
-	PREFSMAN:SetPreference("TimingWindowStrum",0.060);	--Replacement for PRO's XXXHoldCheckpoint?
+	
+	--PREFSMAN:SetPreference("TimingWindowStrum",0.060);	--Replacement for PRO's XXXHoldCheckpoint?
 	PREFSMAN:SetPreference("MaxInputLatencySeconds",0);
 
 	--Forcing deleted options from operator
@@ -61,7 +62,7 @@ function Setup()
 	PREFSMAN:SetPreference("MusicWheelSwitchSpeed",15);
 			--Appearance Options
 	PREFSMAN:SetPreference("Announcer",nil); 		--not verified
-	PREFSMAN:SetPreference("DefaultNoteSkin","rio");	--not verified
+	--PREFSMAN:SetPreference("DefaultNoteSkin","rio");	--not verified
 	PREFSMAN:SetPreference("PercentageScoring",true);	--doesn't work?
 	PREFSMAN:SetPreference("RandomBackgroundMode","RandomBackgroundMode_RandomMovies");
 	PREFSMAN:SetPreference("ShowDancingCharacters","ShowDancingCharacters_Off");

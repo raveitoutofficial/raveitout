@@ -1,8 +1,30 @@
 local t =	Def.ActorFrame {};
 local sString;
 
+local function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+
+    return false
+end
+
+local isPumpMode = (GAMESTATE:GetCurrentGame():GetName() == "pump")
+
+--Lame hack because the difficulty graphic doesn't match dance colors
+local danceToRIOColors = {
+	["Beginner"] = 0,
+	["Easy"] = 3,
+	["Medium"] = 4,
+	["Hard"] = 1,
+	["Challenge"] = 2,
+	["Edit"] = 5
+}
+
 t[#t+1] = Def.ActorFrame{
---	InitCommand=cmd(draworder,190);
+	--InitCommand=cmd(draworder,190);
 	OnCommand=function(self)
 		if GAMESTATE:IsCourseMode() then
 			self:visible(false);
@@ -16,26 +38,34 @@ t[#t+1] = Def.ActorFrame{
 		SetMessageCommand=function(self,param)
 			customx = -12
 			self:x(customx);
-			if param.StepsType then
-				sString = THEME:GetString("StepsDisplay StepsType",ToEnumShortString(param.StepsType));
-				if sString == "Single" then
-					if param.Steps:IsAnEdit() then
-						self:setstate(4);
+			if isPumpMode then
+				if param.StepsType then
+					sString = THEME:GetString("StepsDisplay StepsType",ToEnumShortString(param.StepsType));
+					if sString == "Single" then
+						if param.Steps:IsAnEdit() then
+							self:setstate(4);
+						else
+							self:setstate(0);
+						end
+						self:x(customx+3.2);
+					elseif sString == "Double" then
+						self:setstate(1);
+						self:x(customx+2.2);
+					elseif sString == "SinglePerformance" or sString == "Half-Double" then
+						self:setstate(2);
+						self:x(customx+3.2);
+					elseif sString == "DoublePerformance" or sString == "Routine" then
+						self:setstate(3);
+						self:x(customx+2.2);	
 					else
-						self:setstate(0);
-					end
+						self:setstate(5);
+					end;
+				end;
+			else
+				if param.Steps then
+					local diff = ToEnumShortString(param.Steps:GetDifficulty())
 					self:x(customx+3.2);
-				elseif sString == "Double" then
-					self:setstate(1);
-					self:x(customx+2.2);
-				elseif sString == "SinglePerformance" or sString == "Half-Double" then
-					self:setstate(2);
-					self:x(customx+3.2);
-				elseif sString == "DoublePerformance" or sString == "Routine" then
-					self:setstate(3);
-					self:x(customx+2.2);	
-				else
-					self:setstate(5);
+					self:setstate(danceToRIOColors[diff])
 				end;
 			end;
 		end;
@@ -54,7 +84,7 @@ t[#t+1] = Def.ActorFrame{
 		end;
 	};
 
--- NEW LABEL
+	-- NEW LABEL
 	LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
 		Text="";
 		InitCommand=cmd(zoom,0.4; maxwidth,120;skewx,-0.05;x,-8;y,-17);--draworder,151;);
@@ -73,7 +103,7 @@ t[#t+1] = Def.ActorFrame{
 		end;
 	};
 	
--- DESC LABEL	
+	-- DESC LABEL	
 	LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
 		Text="";
 		InitCommand=cmd(zoom,0.4; maxwidth,120;skewx,-0.05;x,-8;y,22);--draworder,151;);
@@ -86,59 +116,9 @@ t[#t+1] = Def.ActorFrame{
 				local stepdiff = steps:GetDifficulty();
 			end;
 			local label = ""
-			local blacklist = {
-			"C.Cortes",
-			"A.Vitug",
-			"C.Rivera",
-			"J.España",
-			"Anbia",
-			"C.Guzman",
-			"C.Sacco",
-			"A.DiPasqua",
-			"A.Bruno",
-			"P.Silva",
-			"P. Silva",
-			"M.Oliveira",
-			"M.Oliveria",
-			"W.Fitts",
-			"Z.Elyuk",
-			"P.Cardoso",
-			"A.Perfetti",
-			"S.Hanson",
-			"D.Juarez",
-			"P.Shanklin",
-			"P. Shanklin",
-			"S.Cruz",
-			"C.Valdez",
-			"E.Muciño",
-			"V.Kim",
-			"V. Kim",
-			"V.Rusfandy",
-			"T.Lee",
-			"M.Badilla",
-			"P.Agam",
-			"P. Agam",
-			"B.Speirs",
-			"N.Codesal",
-			"F.Keint",
-			"F.Rodriguez",
-			"T.Rodriguez",
-			"B.Mahardika",
-			"A.Sofikitis",
-			"Furqon",
-			"Blank",
-			};
-
-			local IsStepMakerName = false;
-
-			for i=1,#blacklist do
- 				if string.find(descrp, blacklist[i]) ~= nil then
-  					IsStepMakerName = true;
-        			break;
-				end;
-			end;
-
-			if IsStepMakerName then
+			
+			--If string in description is in the STEPMAKER_NAMES_BLACKLIST table
+			if has_value(STEPMAKER_NAMES_BLACKLIST, descrp) then
   				label = ""
 			else
   				label = descrp;

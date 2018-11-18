@@ -79,7 +79,6 @@ local t = Def.ActorFrame{
 local hearts = GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer();
 groups = {};
 local shine_index = 1;
-local Banners = {};
 local names = SONGMAN:GetSongGroupNames()
 
 selection = 1;
@@ -151,17 +150,42 @@ t[#t+1] = Def.Actor{
 	end;
 	
 	
-	StartSelectingSongMessageCommand=function(self,params)
+	--Moved to GENRE SOUNDS actor.
+	--[[StartSelectingSongMessageCommand=function(self,params)
+
+	end;]]
+	
+	StartSelectingGroupMessageCommand=function(self,params)
+		SOUND:DimMusic(0.3,65536);
+		MESSAGEMAN:Broadcast("GroupChange");
+	end;
+};
+
+-- GENRE SOUNDS
+t[#t+1] = LoadActor(THEME:GetPathS("","nosound.ogg"))..{
+	InitCommand=cmd(stop);
+	StartSelectingSongMessageCommand=function(self)
 		SOUND:DimMusic(1,65536);
 		SCREENMAN:GetTopScreen():GetMusicWheel():ChangeSort('SortOrder_Group');
 		SCREENMAN:GetTopScreen():GetMusicWheel():SetOpenSection(groups[selection]);
 		SCREENMAN:GetTopScreen():PostScreenMessage( 'SM_SongChanged', 0.5 );
 		state = 1;
-	end;
-	
-	StartSelectingGroupMessageCommand=function(self,params)
-		SOUND:DimMusic(0.3,65536);
-		MESSAGEMAN:Broadcast("GroupChange");
+		--SCREENMAN:SystemMessage(SONGMAN:GetSongGroupBannerPath(getenv("cur_group")))
+		
+		--It works... But only if there's a banner.
+		local fir = SONGMAN:GetSongGroupBannerPath(getenv("cur_group"));
+		if not fir then
+			return;
+		end;
+		self:load(soundext(gisub(fir,'banner.png','info/sound')));
+		--Unreliable, current song doesn't update fast enough.
+		--[[if SONGMAN:WasLoadedFromAdditionalSongs(GAMESTATE:GetCurrentSong()) then
+			self:load(soundext("/AdditionalSongs/"..getenv("cur_group").."/info/sound"));
+		else
+			self:load(soundext("/Songs/"..getenv("cur_group").."/info/sound"));
+		end]]
+		self:play();
+		self:play();
 	end;
 };
 
@@ -200,32 +224,28 @@ for k = 1, #groups do
 	
 end;
 --]]
---[
+
+local Banners = {};
 for k = 1, #groups do
 	
 	banner = "/"..SONGMAN:GetSongGroupBannerPath(groups[k]);
 	
 	if FILEMAN:DoesFileExist(banner) == false then
-		banner = THEME:GetPathG("","_NoBanner");
+		banner = THEME:GetPathG("common fallback","group");
 	end;
 	
-	Banners[#Banners+1] =
+	Banners[#Banners+1] = Def.ActorFrame{
+		--[[Def.Quad{
+			InitCommand=cmd(setsize,300,300)
+		};]]
 		LoadActor( banner )..{
-		InitCommand=cmd(scaletoclipped,500,375;zoom,0;diffusealpha,0;);
+			InitCommand=cmd(scaletofit,-500,-150,500,150;);
+		};
 	};
 	
 end;
---]]
 
--- GENRE SOUNDS
-	t[#t+1] = LoadActor(THEME:GetPathS("","nosound.ogg"))..{
-		InitCommand=cmd(stop);
-		StartSelectingSongMessageCommand=function(self)
-			self:load(soundext("/Songs/"..getenv("cur_group").."/info/sound"));
-			self:play();
-			self:play();
-		end;
-	};
+
 
 t[#t+1] =
 	Def.ActorScroller {
@@ -278,7 +298,7 @@ t[#t+1] =
 			self:rotationy( ry );
 		end;
 		children = Banners;
-		};
+	};
 
 	--Current Group/Playlist
 t[#t+1] = LoadActor("current_group")..{

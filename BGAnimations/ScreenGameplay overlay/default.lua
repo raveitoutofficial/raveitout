@@ -64,6 +64,7 @@ if PREFSMAN:GetPreference("Center1Player") and GAMESTATE:GetNumSidesJoined() == 
 	stats_y = -SCREEN_HEIGHT+45;
 elseif stepsp1 ~= "StepsType_Pump_Single" or stepsp2 ~= "StepsType_Pump_Single" then
 	stats_y = -SCREEN_HEIGHT+59;
+	stats_x = 5;
 else
 	stats_x = 5;
 	stats_y = -SCREEN_HEIGHT+50;

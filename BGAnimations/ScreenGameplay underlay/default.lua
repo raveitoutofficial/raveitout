@@ -102,15 +102,23 @@ function SetupScreen()
 	local p1meter = GAMESTATE:GetCurrentSteps(PLAYER_1):GetMeter()
 	local p2meter = GAMESTATE:GetCurrentSteps(PLAYER_2):GetMeter()
 	local meterhighest = math.max(p1meter,p2meter)
-	local sttype = GAMESTATE:GetCurrentStyle():GetStepsType()
-	if 		sttype == "StepsType_Pump_Single" 		then cstyle = "S"
-	elseif	sttype == "StepsType_Pump_Halfdouble"	then cstyle = "H"
-	elseif	sttype == "StepsType_Pump_Double"		then cstyle = "D"
-	elseif	sttyle == "StepsType_Pump_Routine"		then cstyle = "R"
+	
+	-- StepsType_Dance_Couple --> Dance_Couple --> ["Dance","Couple"]
+	local sttype = split("_",ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStepsType()))
+	local gamemode = sttype[1]
+	local style = sttype[2]
+	
+	--SCREENMAN:SystemMessage(gamemode.." "..style)
+	if style == "Halfdouble"	then cstyle = "H"
+	elseif	style == "Double"		then cstyle = "D"
+	elseif	sttype == "Routine"		then cstyle = "R"
+	else style = "S"
 	end;
+	
 	local filepath = songdir..cstyle..meterhighest..".txt"
 	local missvalue = ""
 
+	--TODO: I don't think this actually works
 	if FILEMAN:DoesFileExist(filepath) then
 		missvalue = File.Read(filepath);
 		setenv("BreakCombo",missvalue);
@@ -146,7 +154,7 @@ elseif activeModP1 == "Dark" or activeModP2 == "Dark" then
 end;
 for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 	local negativeOffset = (pn == PLAYER_1) and -1 or 1;
-	local barposX = (pn == PLAYER_1) and 55 or SCREEN_RIGHT-55;
+	local barposX = (pn == PLAYER_1) and 25*PREFSMAN:GetPreference("DisplayAspectRatio") or SCREEN_RIGHT-(25*PREFSMAN:GetPreference("DisplayAspectRatio"));
 	--setenv("BarPosX",barposX);
 	t[#t+1] = LoadActor("lifebar", pn)..{
 		InitCommand=cmd(xy,barposX+(negativeOffset*100),SCREEN_CENTER_Y;rotationz,-90;);

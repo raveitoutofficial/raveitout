@@ -27,6 +27,50 @@ RIO_FOLDER_NAMES = {
 	}
 }
 
+-- These names will not show up over the difficulty icons.
+STEPMAKER_NAMES_BLACKLIST = {
+	"C.Cortes",
+	"A.Vitug",
+	"C.Rivera",
+	"J.España",
+	"Anbia",
+	"C.Guzman",
+	"C.Sacco",
+	"A.DiPasqua",
+	"A.Bruno",
+	"P.Silva",
+	"P. Silva",
+	"M.Oliveira",
+	"M.Oliveria",
+	"W.Fitts",
+	"Z.Elyuk",
+	"P.Cardoso",
+	"A.Perfetti",
+	"S.Hanson",
+	"D.Juarez",
+	"P.Shanklin",
+	"P. Shanklin",
+	"S.Cruz",
+	"C.Valdez",
+	"E.Muciño",
+	"V.Kim",
+	"V. Kim",
+	"V.Rusfandy",
+	"T.Lee",
+	"M.Badilla",
+	"P.Agam",
+	"P. Agam",
+	"B.Speirs",
+	"N.Codesal",
+	"F.Keint",
+	"F.Rodriguez",
+	"T.Rodriguez",
+	"B.Mahardika",
+	"A.Sofikitis",
+	"Furqon",
+	"Blank",
+};
+
 --Called from ScreenSelectPlayMode to pick a random group and the GroupWheel to show available groups
 function getAvailableGroups()
 	local groups = SONGMAN:GetSongGroupNames();

@@ -9,7 +9,7 @@ return Def.ActorFrame{
 			local aspectRatio = round(GetScreenAspectRatio(),2);
 			if aspectRatio == 1.78 then
 				self:settext("DISPLAY TYPE: HD");
-			elseif aspectRatio < 1.78 then
+			elseif aspectRatio == 1.33 then
 				self:settext("DISPLAY TYPE: SD");
 			else
 				self:settext("DISPLAY TYPE: ???");

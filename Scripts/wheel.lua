@@ -13,3 +13,31 @@ function RioWheel(self,offsetFromCenter,itemIndex,numItems)
             --self:zoom(1);
     end;
 end;
+
+local gsCodes = {
+	-- steps
+	GroupSelect1 = {
+		default = "Up",
+		--dance = "Up",
+		pump = "UpLeft",
+	},
+	GroupSelect2 = {
+		default = "Down",
+		--dance = "Down",
+		pump = "UpRight",
+	},
+	OptionList = {
+		default = "Left,Right,Left,Right",
+		pump = "DownLeft,DownRight,DownLeft,DownRight,DownLeft,DownRight"
+	}
+};
+
+local function CurGameName()
+	return GAMESTATE:GetCurrentGame():GetName()
+end
+
+function MusicSelectMappings(codeName)
+	local gameName = string.lower(CurGameName())
+	local inputCode = gsCodes[codeName]
+	return inputCode[gameName] or inputCode["default"]
+end
