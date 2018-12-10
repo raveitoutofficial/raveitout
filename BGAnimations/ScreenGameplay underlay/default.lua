@@ -98,10 +98,12 @@ local iOldCombo = 0;
 -- Aqui se pueden tomar varias decisiones referentes al comportamiento del gameplay
 -- si agregamos misiones este es el mejor lugar para poner ciertos requisitos
 function SetupScreen()
-	-- LimitBreak finetuning system by NeobeatIKK and ROAD24
+	--TODO: This isn't implemented yet
+	--[[-- LimitBreak finetuning system by NeobeatIKK and ROAD24
 	local p1meter = GAMESTATE:GetCurrentSteps(PLAYER_1):GetMeter()
 	local p2meter = GAMESTATE:GetCurrentSteps(PLAYER_2):GetMeter()
 	local meterhighest = math.max(p1meter,p2meter)
+	
 	
 	-- StepsType_Dance_Couple --> Dance_Couple --> ["Dance","Couple"]
 	local sttype = split("_",ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStepsType()))
@@ -112,17 +114,16 @@ function SetupScreen()
 	if style == "Halfdouble"	then cstyle = "H"
 	elseif	style == "Double"		then cstyle = "D"
 	elseif	sttype == "Routine"		then cstyle = "R"
-	else style = "S"
+	else cstyle = "S"
 	end;
 	
 	local filepath = songdir..cstyle..meterhighest..".txt"
 	local missvalue = ""
 
-	--TODO: I don't think this actually works
 	if FILEMAN:DoesFileExist(filepath) then
 		missvalue = File.Read(filepath);
 		setenv("BreakCombo",missvalue);
-	end;
+	end;]]
 
 	
 	iOldCombo = getenv("BreakCombo"); -- Guardo el misscombo
