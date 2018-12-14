@@ -37,6 +37,15 @@ if LastSongPlayedArtist == "Kanye West" and LastStageAccuracyHighest >= 90 then
 	end;
 	LoadSpecialTransition = getSpecialRandom()
 	SpecialTransition = true
+elseif LastSongPlayedArtist == "Ariana Grande" and LastStageAccuracyHighest >= 90 then
+	function getSpecialRandom()
+		local sImagesPath = THEME:GetPathB("","_SpecialTransitions/ArtistArianaGrande");
+		local sRandomWalls = FILEMAN:GetDirListing(sImagesPath.."/",false,true);
+		math.randomseed(Hour()*3600+Second());
+		return sRandomWalls[math.random(#sRandomWalls)];
+	end;
+	LoadSpecialTransition = getSpecialRandom()
+	SpecialTransition = true
 --	ShowRIOLogo = false
 elseif LastSongPlayedArtist == "Logic feat. Alessia Cara & Khalid" then
 	function getSpecialRandom()
