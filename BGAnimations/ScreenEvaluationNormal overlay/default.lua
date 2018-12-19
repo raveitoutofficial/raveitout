@@ -131,6 +131,9 @@ t[#t+1] = Def.ActorFrame{
 
 for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 	NumHeartsLeft[pn] = NumHeartsLeft[pn]-GetNumHeartsForSong()
+	if GAMESTATE:GetNumStagesLeft(pn) =< 0 and NumHeartsLeft[pn] > 0 then
+		GAMESTATE:AddStageToPlayer(pn) --Hack to make sure SM5 doesn't think there are no stages left
+	end;
 end;
 
 t[#t+1] = LoadActor(THEME:GetPathG("","USB_stuff"))..{};
