@@ -68,7 +68,7 @@ function Setup()
 	PREFSMAN:SetPreference("ShowDancingCharacters","ShowDancingCharacters_Off");
 	PREFSMAN:SetPreference("ShowBeginnerHelper",false);
 	PREFSMAN:SetPreference("NumBackgrounds",5);
-	PREFSMAN:SetPreference("UseUnlockSystem",THEME:GetMetric("CustomRIO","LockSongs"));	--Linked with metrics so we can execute debug from commandline.
+	--PREFSMAN:SetPreference("UseUnlockSystem",THEME:GetMetric("CustomRIO","LockSongs"));	--Linked with metrics so we can execute debug from commandline.
 			--Graphic/Sound options
 	PREFSMAN:SetPreference("SmoothLines",true);
 	PREFSMAN:SetPreference("CelShadeModels",false);
@@ -78,7 +78,8 @@ function Setup()
 	PREFSMAN:SetPreference("ShowNativeLanguage",true);
 	PREFSMAN:SetPreference("ShowSongOptions","Yes"); --Only visible when in Debug mode
 			--Advanced Options
-	PREFSMAN:SetPreference("AllowW1","AllowW1_Everywhere");
+	--AllowW1 gets overridden during mode select anyway.
+	--PREFSMAN:SetPreference("AllowW1","AllowW1_Everywhere");
 	PREFSMAN:SetPreference("HiddenSongs",false);
 	PREFSMAN:SetPreference("EasterEggs",true);
 	PREFSMAN:SetPreference("AutogenSteps",false);
@@ -95,6 +96,24 @@ function Setup()
 
 	--no sirve, aun con esto aun hay que relanzar el programa para que disablesong tenga efecto.
 	--GAMESTATE:SaveLocalData();	--nope
+	
+	--Init PIU_HEARTS_SYSTEM
+	HeartsPerPlay = tonumber(ReadPrefFromFile("HeartsPerPlay"))
+	if not HeartsPerPlay then
+		--SCREENMAN:SystemMessage("HeartsPerPlay initialized.");
+		HeartsPerPlay = 6;
+		WritePrefToFile("HeartsPerPlay",6);
+	end;
+	NumHeartsLeft = {
+		PlayerNumber_P1 = HeartsPerPlay,
+		PlayerNumber_P2 = HeartsPerPlay
+	};
+	BonusHeartsAdded = {
+		PlayerNumber_P1 = 0,
+		PlayerNumber_P2 = 0
+	};
+	
+	--Reset PlayerOptions
 	ActiveModifiers = {
 		P1 = table.shallowcopy(PlayerDefaults),
 		P2 = table.shallowcopy(PlayerDefaults),

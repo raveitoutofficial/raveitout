@@ -74,7 +74,7 @@ local function PlayerName(player)
 	};
 end
 
-t = Def.ActorFrame {
+local t = Def.ActorFrame {
 
 	InitCommand=cmd(x,50);
 	OnCommand=cmd(visible,GAMESTATE:IsSideJoined(PLAYER_1));
@@ -181,40 +181,49 @@ t = Def.ActorFrame {
 	};
 	
 }
-local total = GetMaxLife();
 
-local diff = total*1.66;
+local diff = HeartsPerPlay*1.66;
 
 --P1 HEARTS
-for i=1,total do
+for i=1,HeartsPerPlay do
 	t[#t+1] = LoadActor("heart_background") .. {
 		InitCommand=cmd(zoom,0.5;x,120-diff+i*16;y,SCREEN_BOTTOM-15;horizalign,right;visible,GAMESTATE:IsSideJoined(PLAYER_1));
 		OnCommand=cmd(visible,GAMESTATE:IsSideJoined(PLAYER_1));
 	};
 end;
 
-for i=1,GAMESTATE:GetNumStagesLeft(PLAYER_1) do
+for i=1,NumHeartsLeft[PLAYER_1] do
 	t[#t+1] = LoadActor("heart_foreground") .. {
-		InitCommand=cmd(zoom,0.5;x,120-diff+i*16;y,SCREEN_BOTTOM-15;horizalign,right;visible,GAMESTATE:IsSideJoined(PLAYER_1);playcommand,"Blink");
-		BlinkCommand=cmd(diffuseshift;effectcolor1,color("#7e7e7e");effectcolor2,color("#FFFFFF"););
-		OnCommand=cmd(visible,GAMESTATE:IsSideJoined(PLAYER_1));
+		--The order of diffuseshift matters! Make sure you put it BEFORE effectcolor1 and effectcolor2!
+		InitCommand=cmd(zoom,0.5;x,120-diff+i*16;y,SCREEN_BOTTOM-15;horizalign,right;diffuseshift;effectcolor1,color("#FFFFFF");effectcolor2,color("#FFFFFF");visible,GAMESTATE:IsSideJoined(PLAYER_1));
+		--[[OnCommand=function(self)
+			--Don't pulse the hearts anywhere else
+			if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectMusic" then
+				self:playcommand("CurrentSongChangedMessage");
+			end
+		end;]]
+		CurrentSongChangedMessageCommand=function(self)
+			if i > NumHeartsLeft[PLAYER_1]-GetNumHeartsForSong() then
+				self:effectcolor1(color("#7e7e7e"))
+			else
+				self:effectcolor1(color("#FFFFFF"))
+			end;
+		end;
 	};
 end;	
 
 
 --P2 HEARTS
-for i=1,total do
+for i=1,HeartsPerPlay do
 	t[#t+1] = LoadActor("heart_background") .. {
 		InitCommand=cmd(zoom,0.5;x,SCREEN_CENTER_X+205+diff-i*16;y,SCREEN_BOTTOM-15;horizalign,left;visible,GAMESTATE:IsSideJoined(PLAYER_2));
-		OnCommand=cmd(visible,GAMESTATE:IsSideJoined(PLAYER_2));
 	};
 end;
 
-for i=1,GAMESTATE:GetNumStagesLeft(PLAYER_2) do
+for i=1,NumHeartsLeft[PLAYER_2] do
 	t[#t+1] = LoadActor("heart_foreground") .. {
 		InitCommand=cmd(zoom,0.5;x,SCREEN_CENTER_X+205+diff-i*16;y,SCREEN_BOTTOM-15;horizalign,left;visible,GAMESTATE:IsSideJoined(PLAYER_2);playcommand,"Blink");
 		BlinkCommand=cmd(diffuseshift;effectcolor1,color("#7e7e7e");effectcolor2,color("#FFFFFF"););
-		OnCommand=cmd(visible,GAMESTATE:IsSideJoined(PLAYER_2));
 	};
 end;	
 

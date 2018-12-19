@@ -187,20 +187,22 @@ Branch = {
 		if GAMESTATE:IsCourseMode() then
 			return "ScreenProfileSave"
 		else
-			local maxStages = PREFSMAN:GetPreference("SongsPerPlay")
-			local stagesLeft = GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer()
+			local maxHearts = HeartsPerPlay
+			local heartsLeft = GetSmallestNumHeartsLeftForAnyHumanPlayer();
 			local allFailed = STATSMAN:GetCurStageStats():AllFailed()
 			local song = GAMESTATE:GetCurrentSong()
-
-			if GAMESTATE:IsEventMode() or stagesLeft >= 1 then
+			SCREENMAN:SystemMessage(heartsLeft);
+			if GAMESTATE:IsEventMode() or heartsLeft >= 1 then
 				return "ScreenProfileSave"
-			elseif song:IsLong() and maxStages <= 2 and stagesLeft < 1 and allFailed then
+			elseif song:IsLong() and maxHearts <= 4 and heartsLeft < 1 and allFailed then
 				return "ScreenProfileSaveSummary"
-			elseif song:IsMarathon() and maxStages <= 3 and stagesLeft < 1 and allFailed then
+			elseif song:IsMarathon() and maxHearts <= 6 and heartsLeft < 1 and allFailed then
 				return "ScreenProfileSaveSummary"
-			elseif maxStages >= 2 and stagesLeft < 1 and allFailed then
+			elseif maxHearts >= 4 and heartsLeft < 1 and allFailed then
 				return "ScreenProfileSaveSummary"
 			elseif allFailed then
+				return "ScreenProfileSaveSummary"
+			elseif heartsLeft <= 0 then
 				return "ScreenProfileSaveSummary"
 			else
 				return "ScreenProfileSave"

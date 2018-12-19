@@ -129,6 +129,10 @@ t[#t+1] = Def.ActorFrame{
 	};
 };
 
+for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+	NumHeartsLeft[pn] = NumHeartsLeft[pn]-GetNumHeartsForSong()
+end;
+
 t[#t+1] = LoadActor(THEME:GetPathG("","USB_stuff"))..{};
 
 return t;

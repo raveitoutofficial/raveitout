@@ -13,13 +13,13 @@ local stagemaxscore = 100000000*GAMESTATE:GetNumStagesForCurrentSongAndStepsOrCo
 
 
 -- players stage data
-local p1holdstr	=	css1:GetTapNoteScores("TapNoteScore_CheckpointHit")		--RAVIN (HOLD STREAM)
-local p1w1 =		css1:GetTapNoteScores("TapNoteScore_W1")				--RAVIN
+local p1holdstr	=	css1:GetTapNoteScores("TapNoteScore_CheckpointHit")		--AMAZING (HOLD STREAM)
+local p1w1 =		css1:GetTapNoteScores("TapNoteScore_W1")				--AMAZING
 local p1nomine =	css1:GetTapNoteScores("TapNoteScore_AvoidMine")			--Avoided Mines
-local p1w2 =		css1:GetTapNoteScores("TapNoteScore_W2")				--CRAZY
+local p1w2 =		css1:GetTapNoteScores("TapNoteScore_W2")				--RAVIN'
 local p1w3 =		css1:GetTapNoteScores("TapNoteScore_W3")				--COOL
 local p1w4 =		css1:GetTapNoteScores("TapNoteScore_W4")				--OKAY
-local p1miss =		css1:GetTapNoteScores("TapNoteScore_Miss")				--MISS
+local p1misses =		css1:GetTapNoteScores("TapNoteScore_Miss")				--MISS
 local p1holdmiss =	css1:GetTapNoteScores("TapNoteScore_CheckpointMiss")	--MISS (HOLD STREAM)
 local p1minest =	css1:GetTapNoteScores("TapNoteScore_HitMine")			--MISS (MINE HIT)
 local maxcp1 =		css1:MaxCombo()											--Max Combo for this stage
@@ -42,9 +42,11 @@ local p1kcal = tonumber(string.format("%.1f",css1:GetCaloriesBurned()))
 if THEME:GetMetric("Gameplay","AvoidMineIncrementsCombo") then
 	p1ravins =		p1holdstr+p1w1+p1nomine
 end;
+
 if THEME:GetMetric("Gameplay","MineHitIncrementsMissCombo") then
-	p1misses =		p1miss+p1holdmiss+p1minest
+	p1misses =		p1misses+p1holdmiss+p1minest
 end;
+
 local p1none =		css1:GetTapNoteScores("TapNoteScore_None")				--No step (DDR1st Hard mode)
 --
 
@@ -262,7 +264,7 @@ if STATSMAN:GetCurStageStats():GetPlayerStageStats(player):IsDisqualified()==fal
 
 	if MonthOfYear() == 11 then
 		t[#t+1] = LoadActor("xmas_hat")..{
-			InitCommand=cmd(visible,visp1;x,p1initx+15;y,p1inity-45;draworder,100;diffusealpha,0;zoom,initzoomp1/1.5;sleep,3;linear,.2;diffusealpha,1;zoom,initzoomp1-0.25;linear,.3;zoom,finalzoomp1/1.5);
+			InitCommand=cmd(x,p1initx+15;y,p1inity-45;draworder,100;diffusealpha,0;zoom,initzoomp1/1.5;sleep,3;linear,.2;diffusealpha,1;zoom,initzoomp1-0.25;linear,.3;zoom,finalzoomp1/1.5);
 		};
 	end;
 

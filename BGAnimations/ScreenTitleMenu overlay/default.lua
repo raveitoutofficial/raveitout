@@ -16,6 +16,16 @@ return Def.ActorFrame{
 			end;
 		end;
 	};
+	LoadFont("common normal")..{
+		InitCommand=cmd(xy,5,25;horizalign,left;vertalign,top;zoom,.5;Stroke,Color("Black"));
+		OnCommand=function(self)
+			if PREFSMAN:GetPreference("AllowExtraStage") then
+				self:settext("HEARTS PER PLAY: "..HeartsPerPlay.."+");
+			else
+				self:settext("HEARTS PER PLAY: "..HeartsPerPlay);
+			end;
+		end;
+	};
 
 
 	LoadFont("Common normal")..{	--Unlock status data

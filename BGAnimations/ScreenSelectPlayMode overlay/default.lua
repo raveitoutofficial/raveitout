@@ -130,8 +130,9 @@ t[#t+1] = Def.ActorFrame{
 			PREFSMAN:SetPreference("AllowW1",'AllowW1_Everywhere');
 			--[[WritePrefToFile("UserPrefProtimingP1",false);
 			WritePrefToFile("UserPrefProtimingP2",false);]]
-			ActiveModifiers["P1"]["BGAMode"] = "Off"
-			ActiveModifiers["P2"]["BGAMode"] = "Off"
+			--This saves to profile and it's annoying as fuck
+			--[[ActiveModifiers["P1"]["BGAMode"] = "Off"
+			ActiveModifiers["P2"]["BGAMode"] = "Off"]]
 			for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 				GAMESTATE:ApplyGameCommand( "mod,3x,rhythm;", pn );
 			end
@@ -167,7 +168,7 @@ for i=1,#Choices do
 	Name=Choices[i];
 	InitCommand=function(self)
 		local ragesound_file = self:get()
-		ragesound_file:volume(0.4)
+		ragesound_file:volume(1)
 		self:sleep(1)
 		self:queuecommand("IntroCheck")
 	end;

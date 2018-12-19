@@ -279,10 +279,10 @@ function OptionRowJudgmentGraphic()
 					found = true;
 				end;
 			end;
-			if not found then
+			--[[if not found then
 				list[1] = true;
 				assert(found, "Should have defaulted to S2 judgement, but none was found")
-			end;
+			end;]]
 		end,
 		SaveSelections = function(self, list, pn)
 			local pName = ToEnumShortString(pn)
@@ -299,4 +299,133 @@ function OptionRowJudgmentGraphic()
 	};
 	setmetatable(t, t)
 	return t
+end
+
+--By Alisson, I don't think this function is used though
+function SpeedMods()
+	local t = {
+		Name = "UserPrefSpeedMods";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = false;
+		ExportOnChange = false;
+		Choices = { "+0.25", "+0.5","+0.75"};
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("UserPrefSpeedMods") == nil then
+				list[1] = true;
+				--WritePrefToFile("UserPrefSpeedMods","+0.25");
+			else
+
+				if GetUserPref("UserPrefSpeedMods") == "+0.25" then
+					list[1] = true;
+				end
+
+				if GetUserPref("UserPrefSpeedMods") == "+0.5" then
+					list[2] = true;
+				end
+
+				if GetUserPref("UserPrefSpeedMods") == "+0.75" then
+					list[3] = true;
+
+				end
+
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+				if list[1] then
+					--WritePrefToFile("UserPrefSpeedMods","+0.25");
+					local speed = (math.ceil(GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():XMod()*100)/100)+0.25;
+					GAMESTATE:ApplyGameCommand("mod,"..speed.."x",pn);
+				end
+
+				if list[2] then
+					--WritePrefToFile("UserPrefSpeedMods","+0.5");
+					local speed = (math.ceil(GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():XMod()*100)/100)+0.5;
+					GAMESTATE:ApplyGameCommand("mod,"..speed.."x",pn);
+				end
+
+				if list[3] then
+					--WritePrefToFile("UserPrefSpeedMods","+0.75");
+					local speed = (math.ceil(GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():XMod()*100)/100)+0.75;
+					GAMESTATE:ApplyGameCommand("mod,"..speed.."x",pn);
+				end
+				MESSAGEMAN:Broadcast("SpeedModChange");
+		end
+	};
+	setmetatable( t, t );
+	return t;
+end
+
+function adjustPlayerMMod(pn, amount)
+	--SCREENMAN:SystemMessage(playerState);
+	local playerState = GAMESTATE:GetPlayerState(pn);
+	--This returns an instance of playerOptions, you need to set it back to the original
+	local playerOptions = playerState:GetPlayerOptions("ModsLevel_Preferred")
+	--SCREENMAN:SystemMessage(PlayerState:GetPlayerOptionsString("ModsLevel_Current"));
+	assert(playerOptions:MMod(),"NO MMOD SET!!!!")
+	if amount+playerOptions:MMod() < 100 then
+		playerOptions:MMod(800);
+	elseif amount+playerOptions:MMod() > 1000 then
+		playerOptions:MMod(100);
+	else
+		playerOptions:MMod(playerOptions:MMod()+amount);
+	end;
+	GAMESTATE:GetPlayerState(pn):SetPlayerOptions('ModsLevel_Preferred', playerState:GetPlayerOptionsString("ModsLevel_Preferred"));
+	SCREENMAN:SystemMessage(GAMESTATE:GetPlayerState(pn):GetPlayerOptionsString("ModsLevel_Preferred"));
+end
+
+--MMod only
+function SpeedMods2()
+	local t = {
+		Name = "UserPrefSpeedMods";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = false;
+		ExportOnChange = true;
+		Choices = { "OFF", "ON", "AV -100", "AV -10","AV +10", "AV +100"};
+		LoadSelections = function(self, list, pn)
+			if GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
+				list[2] = true
+			else
+				list[1] = true
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+				if list[1] then
+					GAMESTATE:ApplyGameCommand("mod,2x",pn);
+				elseif list[2] then
+					if not GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
+						GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod(200)
+						--SCREENMAN:SystemMessage("New MMod: "..GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod())
+					end;
+				else
+					if not GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod() then
+						local playerState = GAMESTATE:GetPlayerState(pn);
+						--This returns an instance of playerOptions, you need to set it back to the original
+						local playerOptions = playerState:GetPlayerOptions("ModsLevel_Preferred")
+						playerOptions:MMod(200)
+						GAMESTATE:GetPlayerState(pn):SetPlayerOptions('ModsLevel_Preferred', playerState:GetPlayerOptionsString("ModsLevel_Preferred"));
+					end;
+					if list[3] then
+						adjustPlayerMMod(pn,-100)
+					elseif list[4] then
+						adjustPlayerMMod(pn,-10)
+					elseif list[5] then
+						adjustPlayerMMod(pn,10)
+					elseif list[6] then
+						adjustPlayerMMod(pn,100)
+					end;
+					
+					--Hacky shit so it will say Auto Velocity ON in the main menu
+					for i=1,#list do
+						list[i] = false
+					end
+					list[2] = true
+					--SCREENMAN:SystemMessage("New MMod: "..GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod())
+				end
+				MESSAGEMAN:Broadcast("SpeedModChange");
+		end
+	};
+	setmetatable( t, t );
+	return t;
 end

@@ -45,9 +45,17 @@ local sectionB = {
 	"Karl Chavarria",
 }
 
+local sectionC = {
+	"Step Artist - Gio Shawn",
+	"Step Artist - Akira Sora",
+	"Programming - Accelerator",
+	"Programming - Jose Varela"
+}
+
 local sections = {
 	{ "Rave It Out (project lead)", sectionA },
 	{ "The RIO crew", sectionB },
+	{ "Season 2 Team", sectionC },
 }
 
 -- To add people or sections modify the above.
@@ -91,7 +99,7 @@ end;
 
 return Def.ActorFrame{
 
-	LoadActor("Jazzy Elevator Music")..{OnCommand=cmd(play)};
+	LoadActor(THEME:GetPathS("","Credits Music (loop)"))..{OnCommand=cmd(play)};
 	creditScroller..{
 		InitCommand=cmd(x,_screen.cx-(_screen.cx*0.5);y,SCREEN_BOTTOM-64),
 	},

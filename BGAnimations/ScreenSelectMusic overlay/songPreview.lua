@@ -156,7 +156,7 @@ return Def.ActorFrame{
 		LoadFont("monsterrat/_montserrat semi bold 60px")..{
 			InitCommand=cmd(horizalign,left;x,_screen.cx-95;y,_screen.cy+74;zoom,0.3;);
 			CurrentSongChangedMessageCommand=function(self)
-				self:settext("X"..GAMESTATE:GetNumStagesForCurrentSongAndStepsOrCourse()*GAMESTATE:GetNumSidesJoined());
+				self:settext("X"..GetNumHeartsForSong());
 				(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.2;skewx,-0.2)) (self)
 			end;
 		};
