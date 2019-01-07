@@ -25,7 +25,7 @@ return Def.ActorFrame{
 				end;
 			end;
 			Load2Command=function(self)
-				self:Load(GAMESTATE:GetCurrentSong():GetBackgroundPath()):zoomto(384,232);
+				self:LoadFromCurrentSongBackground():zoomto(384,232);
 				self:linear(.2):diffusealpha(1);
 			end;
 		};

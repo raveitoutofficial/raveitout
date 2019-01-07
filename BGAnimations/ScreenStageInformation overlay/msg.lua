@@ -42,6 +42,7 @@ local stayat = 5-inanit-inefft		--stay still animation time
 local outtwt = 0.25		--out tweening time
 local itemy = 13		--item list y separation
 local MessageFont = "Common normal"
+
 return Def.ActorFrame{
 	Def.ActorFrame{	--main
 		--bg

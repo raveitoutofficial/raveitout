@@ -204,3 +204,37 @@ function soundext(filename)
 	return file_path
 end
 
+
+--Override the function to support RIO's SongBackgrounds folder.
+function Sprite:LoadFromCurrentSongBackground()
+	local song = GAMESTATE:GetCurrentSong();
+	if not song then
+		local trail = GAMESTATE:GetCurrentTrail(GAMESTATE:GetMasterPlayerNumber())
+		local e = trail:GetTrailEntries()
+		if #e > 0 then
+			song = e[1]:GetSong()
+		end
+	end
+
+	if not song then return self end
+	
+	local path = split("/",GAMESTATE:GetCurrentSong():GetSongDir())
+	path = path[#path-1];
+	--SCREENMAN:SystemMessage(song:GetSongDir().." -> "..strArrayToString(path).." "..folderName)
+	if IsUsingWideScreen() then
+		path = "/SongBackgrounds/HD/"..path.."-bg.png";
+		if FILEMAN:DoesFileExist(path) then
+			self:Load(path)
+		else
+			self:LoadFromSongBackground(song)
+		end;
+	else
+		path = "/SongBackgrounds/SD/"..path.." (SD)-bg.png";
+		if FILEMAN:DoesFileExist(path) then
+			self:Load(path)
+		else
+			self:LoadFromSongBackground(song)
+		end;
+	end;
+	return self;
+end;

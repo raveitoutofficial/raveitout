@@ -104,6 +104,7 @@ function Setup()
 		HeartsPerPlay = 6;
 		WritePrefToFile("HeartsPerPlay",6);
 	end;
+	PREFSMAN:SetPreference("SongsPerPlay",math.ceil(HeartsPerPlay/2));
 	NumHeartsLeft = {
 		PlayerNumber_P1 = HeartsPerPlay,
 		PlayerNumber_P2 = HeartsPerPlay

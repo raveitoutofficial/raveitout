@@ -1,3 +1,36 @@
+function rectGen(width, height, lineSize, bgColor)
+    return Def.ActorFrame{
+    
+        --Background transparency
+        Def.Quad{
+            InitCommand=cmd(setsize,width, height;diffuse,bgColor);
+            
+        };
+        --Bottom line
+        Def.Quad{
+            InitCommand=cmd(setsize,width + lineSize, lineSize;addy,height/2;--[[horizalign,0;vertalign,2]]);
+            
+        };
+        --Top line
+        Def.Quad{
+            InitCommand=cmd(setsize,width + lineSize, lineSize;addy,-height/2;--[[horizalign,2;vertalign,0]]); --2 = right aligned
+            
+        };
+        --Left line
+        Def.Quad{
+            InitCommand=cmd(setsize,lineSize, height + lineSize;addx,-width/2;--[[vertalign,0;horizalign,2]]); --2 = right aligned
+            
+        };
+        --Right line
+        Def.Quad{
+            InitCommand=cmd(setsize,lineSize, height + lineSize;addx,width/2;--[[vertalign,2;horizalign,0]]); --2 = bottom aligned
+            
+        };
+        
+
+    };
+end;
+
 return Def.ActorFrame{
 	LoadFont("common normal")..{
 		Text=SysInfo["InternalName"].."-"..SysInfo["Version"];
@@ -26,6 +59,27 @@ return Def.ActorFrame{
 			end;
 		end;
 	};
+	
+	--[[Def.ActorFrame{
+	
+		InitCommand=cmd(xy,120,100;);
+		
+		rectGen(220,100,2,color("0,0,0,.5"))..{
+		};
+		
+		LoadFont("facu/_zona pro bold 40px")..{
+			Text="Update Available";
+			InitCommand=cmd(addy,-38;zoom,.5;skewx,-0.125);
+		};
+		Def.Quad{
+			InitCommand=cmd(setsize,180,2;fadeleft,.2;faderight,.2;addy,-25);
+		};
+		
+		LoadFont("facu/_zona pro bold 40px")..{
+			Text="There is an update available.\nRestart the machine to apply it.";
+			InitCommand=cmd(zoom,.3);
+		};
+	};]]
 
 
 	LoadFont("Common normal")..{	--Unlock status data
@@ -61,6 +115,21 @@ return Def.ActorFrame{
 	]]
 	LoadFont("Common normal")..{	--Songs played (machine profile)
 		InitCommand=cmd(visible,DoDebug;x,SCREEN_LEFT+10;y,_screen.cy+180;zoom,0.5;horizalign,left;settext,"Songs played (machine profile): "..PROFILEMAN:GetMachineProfile():GetNumTotalSongsPlayed(););
+	};
+	
+	-- Memory cards
+	
+	LoadActor(THEME:GetPathG("", "USB icon"))..{
+		InitCommand=cmd(horizalign,left;vertalign,bottom;xy,SCREEN_LEFT+5,SCREEN_BOTTOM;zoom,.2);
+		OnCommand=cmd(visible,ToEnumShortString(MEMCARDMAN:GetCardState(PLAYER_1)) == 'ready');
+		StorageDevicesChangedMessageCommand=cmd(playcommand,"On");
+	};
+	
+	LoadActor(THEME:GetPathG("", "USB icon"))..{
+		InitCommand=cmd(horizalign,right;vertalign,bottom;xy,SCREEN_RIGHT-5,SCREEN_BOTTOM;zoom,.2);
+		--OnCommand=cmd(visible,true);
+		OnCommand=cmd(visible,ToEnumShortString(MEMCARDMAN:GetCardState(PLAYER_2)) == 'ready');
+		StorageDevicesChangedMessageCommand=cmd(playcommand,"On");
 	};
 
 };

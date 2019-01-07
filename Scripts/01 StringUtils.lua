@@ -24,6 +24,7 @@ end
 
 --From https://stackoverflow.com/a/19263313
 --This does not work with periods for some mysterious reason
+--Usage: "something here":split(",")
 function string:split( inSplitPattern, outResults )
   if not outResults then
     outResults = { }
@@ -63,4 +64,12 @@ function gisub(s, pat, repl, n)
     else
         return string.gsub(s, pat, repl)
     end
+end
+
+function strArrayToString(a)
+	local s = "";
+	for i = 1, #a do
+		s = s..a[i]..",";
+	end
+	return s;
 end
