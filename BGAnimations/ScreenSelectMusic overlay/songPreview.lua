@@ -126,13 +126,18 @@ return Def.ActorFrame{
 				-- ROAD24: more checks,
 				-- TODO: decide what to do if no song is chosen, ignore or hide ??
 				if song then
-					local rawbpm = GAMESTATE:GetCurrentSong():GetDisplayBpms();
-					local lobpm = math.ceil(rawbpm[1]);
-					local hibpm = math.ceil(rawbpm[2]);
-					if lobpm == hibpm then
-						speedvalue = hibpm
+					local speedvalue;
+					if song:IsDisplayBpmRandom() then
+						speedvalue = "???";
 					else
-						speedvalue = lobpm.." - "..hibpm
+						local rawbpm = GAMESTATE:GetCurrentSong():GetDisplayBpms();
+						local lobpm = math.ceil(rawbpm[1]);
+						local hibpm = math.ceil(rawbpm[2]);
+						if lobpm == hibpm then
+							speedvalue = hibpm
+						else
+							speedvalue = lobpm.." - "..hibpm
+						end;
 					end;
 					self:settext(speedvalue);
 					(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.2;)) (self)

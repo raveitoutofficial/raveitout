@@ -4,8 +4,8 @@ Implementation: Hearts are removed during ScreenEvaluation init. If a player got
 ]]
 MAX_SECONDS_FOR_SHORTCUT = 95
 --Using builtin functions
---MIN_SECONDS_FOR_LONG = 180
---MIN_SECONDS_FOR_MARATHON = 240
+--MIN_SECONDS_FOR_LONG = PREFSMAN:GetPreference("LongVerSongSeconds")
+--MIN_SECONDS_FOR_MARATHON = PREFSMAN:GetPreference("MarathonVerSongSeconds")
 
 --Pref is loaded in InitGame.
 HeartsPerPlay = 0;

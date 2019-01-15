@@ -2,29 +2,24 @@ local function PlayerLevel(player)
 	--return LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
 	return LoadFont("common normal")..{
 		SetCommand=function(self)
-		local profile = PROFILEMAN:GetProfile(player);
-		local level = profile:GetTotalNumSongsPlayed();
-		local uplevelfactor = 25;
-		local maxlevelnum = 99;
-		
-			if player == PLAYER_1 then
-			currentplayer = "p1"
-			else
-			currentplayer = "p2"
-			end
+			local profile = PROFILEMAN:GetProfile(player);
+			local level = profile:GetTotalNumSongsPlayed();
+			local uplevelfactor = 25;
+			local maxlevelnum = 99;
+			local currentplayer = pname(player) -- PLAYER_1 -> P1
 		
 		--	if MEMCARDMAN:GetCardState(player) == 'MemoryCardState_none' then
 			--	setenv("level_"..currentplayer,"??");
 			--else
 			
-				--level = 4951;
-				if level < uplevelfactor*10 then
-					setenv("level_"..currentplayer,"0"..math.ceil(level/uplevelfactor));
-				elseif level > uplevelfactor*maxlevelnum then
-					setenv("level_"..currentplayer,"??");
-				else
-					setenv("level_"..currentplayer,math.ceil(level/uplevelfactor));
-				end			
+			--[[if currentplayer == "P1" then
+				SCREENMAN:SystemMessage("level_p1: "..string.format("%02d",math.ceil(level/uplevelfactor)).." ("..level.." songs played / "..uplevelfactor.." level factor)")
+			end]]
+			if level > uplevelfactor*maxlevelnum then
+				setenv("level_"..currentplayer,"??");
+			else
+				setenv("level_"..currentplayer, string.format("%02d",math.ceil(level/uplevelfactor)) );
+			end
 			--end
 			
 			if DevMode() then
@@ -210,20 +205,38 @@ for i=1,NumHeartsLeft[PLAYER_1] do
 			end;
 		end;
 	};
-end;	
+end;
 
 
 --P2 HEARTS
 for i=1,HeartsPerPlay do
 	t[#t+1] = LoadActor("heart_background") .. {
-		InitCommand=cmd(zoom,0.5;x,SCREEN_CENTER_X+205+diff-i*16;y,SCREEN_BOTTOM-15;horizalign,left;visible,GAMESTATE:IsSideJoined(PLAYER_2));
+		InitCommand=cmd(zoom,0.5;xy,SCREEN_CENTER_X+90+diff+i*16,SCREEN_BOTTOM-15;horizalign,left;visible,GAMESTATE:IsSideJoined(PLAYER_2));
 	};
 end;
 
 for i=1,NumHeartsLeft[PLAYER_2] do
-	t[#t+1] = LoadActor("heart_foreground") .. {
+	--[[t[#t+1] = LoadActor("heart_foreground") .. {
 		InitCommand=cmd(zoom,0.5;x,SCREEN_CENTER_X+205+diff-i*16;y,SCREEN_BOTTOM-15;horizalign,left;visible,GAMESTATE:IsSideJoined(PLAYER_2);playcommand,"Blink");
 		BlinkCommand=cmd(diffuseshift;effectcolor1,color("#7e7e7e");effectcolor2,color("#FFFFFF"););
+	};]]
+	t[#t+1] = LoadActor("heart_foreground") .. {
+		--The order of diffuseshift matters! Make sure you put it BEFORE effectcolor1 and effectcolor2!
+		InitCommand=cmd(zoom,0.5;xy,SCREEN_CENTER_X+90+diff+i*16,SCREEN_BOTTOM-15;horizalign,left;diffuseshift;effectcolor1,color("#FFFFFF");effectcolor2,color("#FFFFFF");visible,GAMESTATE:IsSideJoined(PLAYER_2));
+
+		--[[OnCommand=function(self)
+			--Don't pulse the hearts anywhere else
+			if SCREENMAN:GetTopScreen():GetName() == "ScreenSelectMusic" then
+				self:playcommand("CurrentSongChangedMessage");
+			end
+		end;]]
+		CurrentSongChangedMessageCommand=function(self)
+			if i > NumHeartsLeft[PLAYER_2]-GetNumHeartsForSong() then
+				self:effectcolor1(color("#7e7e7e"))
+			else
+				self:effectcolor1(color("#FFFFFF"))
+			end;
+		end;
 	};
 end;	
 
