@@ -13,7 +13,7 @@ return Def.ActorFrame{
 		OnCommand=cmd(decelerate,0.75;diffusealpha,0;zoomy,0);
 	};
 
-	LoadActor(THEME:GetPathG("","_BGMovies/Title.mp4"))..{
+	LoadActor(THEME:GetPathG("","_BGMovies/title.mpeg"))..{
 		InitCommand=cmd(diffusealpha,0;Cover;);
 		OnCommand=cmd(accelerate,1;diffusealpha,1;);
 	};
