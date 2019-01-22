@@ -36,10 +36,8 @@ end;
 
 local UseNextStage = true;
 
-if GAMESTATE:IsSideJoined(PLAYER_1) and GAMESTATE:GetNumStagesLeft(PLAYER_1) > 0 then
-	UseNextStage = true;
-elseif GAMESTATE:IsSideJoined(PLAYER_2) and GAMESTATE:GetNumStagesLeft(PLAYER_2) > 2 then
-	UseNextStage = true;
+if GetSmallestNumHeartsLeftForAnyHumanPlayer() > 0 then
+	--pass, already true
 else
 	NextStageSleepTime = 0;
 	UseNextStage = false;

@@ -27,41 +27,27 @@ function getRandomWall()
 	return sRandomWalls[math.random(#sRandomWalls)];
 end;
 
+function getSpecialRandom(path)
+	local sImagesPath = THEME:GetPathB("",path);
+	local sRandomWalls = FILEMAN:GetDirListing(sImagesPath.."/",false,true);
+	math.randomseed(Hour()*3600+Second());
+	return sRandomWalls[math.random(#sRandomWalls)];
+end;
+
 --//set conditions
+local SpecialTransition = nil;
 if LastSongPlayedArtist == "Kanye West" and LastStageAccuracyHighest >= 90 then
-	function getSpecialRandom()
-		local sImagesPath = THEME:GetPathB("","_SpecialTransitions/ArtistKanyeWest");
-		local sRandomWalls = FILEMAN:GetDirListing(sImagesPath.."/",false,true);
-		math.randomseed(Hour()*3600+Second());
-		return sRandomWalls[math.random(#sRandomWalls)];
-	end;
-	LoadSpecialTransition = getSpecialRandom()
-	SpecialTransition = true
+	SpecialTransition = getSpecialRandom("_SpecialTransitions/ArtistKanyeWest")
 elseif LastSongPlayedArtist == "Ariana Grande" and LastStageAccuracyHighest >= 90 then
-	function getSpecialRandom()
-		local sImagesPath = THEME:GetPathB("","_SpecialTransitions/ArtistArianaGrande");
-		local sRandomWalls = FILEMAN:GetDirListing(sImagesPath.."/",false,true);
-		math.randomseed(Hour()*3600+Second());
-		return sRandomWalls[math.random(#sRandomWalls)];
-	end;
-	LoadSpecialTransition = getSpecialRandom()
-	SpecialTransition = true
+	SpecialTransition = getSpecialRandom("_SpecialTransitions/ArtistArianaGrande")
 --	ShowRIOLogo = false
 elseif LastSongPlayedArtist == "Logic feat. Alessia Cara & Khalid" then
-	function getSpecialRandom()
-		local sImagesPath = THEME:GetPathB("","_SpecialTransitions/SuicidePrevention");
-		local sRandomWalls = FILEMAN:GetDirListing(sImagesPath.."/",false,true);
-		math.randomseed(Hour()*3600+Second());
-		return sRandomWalls[math.random(#sRandomWalls)];
-	end;
-	LoadSpecialTransition = getSpecialRandom()
-	SpecialTransition = true
-else
-	SpecialTransition = false
+	SpecialTransition = getSpecialRandom("_SpecialTransitions/SuicidePrevention")
 end;
+
 if SpecialTransition then		--load wallpaper or special transition
 	t[#t+1] = Def.ActorFrame{
-		LoadActor(LoadSpecialTransition)..{
+		LoadActor(SpecialTransition)..{
 			InitCommand=cmd();	--leave at x,0;y,0; if the file loaded is an animation, check if is an image and resolve in the OnCommand function -NeobeatIKK
 			OnCommand=function(self)
 				local fPath = LoadSpecialTransition

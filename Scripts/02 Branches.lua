@@ -191,7 +191,7 @@ Branch = {
 			local heartsLeft = GetSmallestNumHeartsLeftForAnyHumanPlayer();
 			local allFailed = STATSMAN:GetCurStageStats():AllFailed()
 			local song = GAMESTATE:GetCurrentSong()
-			SCREENMAN:SystemMessage(heartsLeft);
+			--SCREENMAN:SystemMessage(heartsLeft);
 			if GAMESTATE:IsEventMode() or heartsLeft >= 1 then
 				return "ScreenProfileSave"
 			elseif song:IsLong() and maxHearts <= 4 and heartsLeft < 1 and allFailed then
