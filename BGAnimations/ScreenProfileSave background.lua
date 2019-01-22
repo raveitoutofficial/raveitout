@@ -50,7 +50,7 @@ if SpecialTransition then		--load wallpaper or special transition
 		LoadActor(SpecialTransition)..{
 			InitCommand=cmd();	--leave at x,0;y,0; if the file loaded is an animation, check if is an image and resolve in the OnCommand function -NeobeatIKK
 			OnCommand=function(self)
-				local fPath = LoadSpecialTransition
+				local fPath = SpecialTransition
 				local fFormat = {".jpg",".png",".jpeg"};	--search for these matches in filepath
 				for i = 1,#fFormat,1 do					--find formats and switch IsImage if file found
 					if string.match(fPath,fFormat[i]) == fFormat[i] then
