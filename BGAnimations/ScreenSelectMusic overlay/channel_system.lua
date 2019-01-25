@@ -352,7 +352,7 @@ t[#t+1] = LoadFont("monsterrat/_montserrat light 60px")..{
 		self:finishtweening();
 		self:linear(0.3);
 		self:diffusealpha(1);
-		songcounter = "There are "..(#SONGMAN:GetSongsInGroup(getenv("cur_group"))-1).." songs inside this setlist"
+		songcounter = string.format(THEME:GetString("ScreenSelectGroup","SongCount"),#SONGMAN:GetSongsInGroup(getenv("cur_group"))-1)
 		foldercounter = string.format("%02i",selection).." / "..string.format("%02i",#groups)
 		self:settext(songcounter.."\n"..foldercounter);
 	end;

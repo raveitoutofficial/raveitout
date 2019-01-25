@@ -17,12 +17,14 @@ local Choices = {
 	"special",
 };
 
+
+--Sorry about this
 local ChoiceText = {
-	"Easiest Choice. Specially selected songs for those new to rhythm games.",
-	"Standard Choice. Choose from over 200 popular tracks.",
-	"Advanced Choice. Timing will be stricter. Great for competitive play.",
-	"Play through various sets of songs with no breaks in between.",
-	"Simple songs aren't enough... let's try some weird stuff...",
+	THEME:GetString("ScreenSelectPlayMode","Easy"),
+	THEME:GetString("ScreenSelectPlayMode","Standard"),
+	THEME:GetString("ScreenSelectPlayMode","Pro"),
+	THEME:GetString("ScreenSelectPlayMode","Mixtape"),
+	THEME:GetString("ScreenSelectPlayMode","Special"),
 };
 
 local t = Def.ActorFrame{}
@@ -34,7 +36,7 @@ local Static = Def.ActorFrame{
 		LoadActor("top")..{ InitCommand=function(self) self:valign(0):zoom(0.6) end; };		
 		LoadActor("layer")..{ InitCommand=function(self) self:y(2):valign(0):zoom(0.66); end; };
 		LoadFont("monsterrat/_montserrat light 60px")..{	
-			Text="SELECT YOUR GAMEMODE",
+			Text=THEME:GetString("ScreenSelectPlayMode","SELECT YOUR GAMEMODE"),
 			InitCommand=function(self) self:y(11):zoom(0.35):skewx(-.15) end;  };
 	};
 };

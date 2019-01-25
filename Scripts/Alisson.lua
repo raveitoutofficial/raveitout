@@ -17,40 +17,40 @@ function getcurstage()
 end
 
 function GetBGAPreviewPath(tag)
-local song = GAMESTATE:GetCurrentSong();
-if song then
-local sscfile = GAMESTATE:GetCurrentSteps(GAMESTATE:GetMasterPlayerNumber()):GetFilename();
-if FILEMAN:DoesFileExist(sscfile) then
-	local sscpath = sscfile
-	local file = File.Read( sscpath )
-		if not file then return "" end
-	local fnd = string.find(file , "#"..tag..":")
-		if not fnd then return "" end
-	local last = string.find(file , ";" , fnd)
-	local previewvid = string.sub(file,fnd,last)
-		previewvid = string.gsub(previewvid, "\r", "")
-		previewvid = string.gsub(previewvid, "\n", "")
-		previewvid = string.gsub(previewvid, "#"..tag..":", "")
-		previewvid = string.gsub(previewvid, ";", "")
-		
-		total_random_vid = FILEMAN:GetDirListing("/RandomMovies/");
-		
-		if previewvid ~= "" then
-			if FILEMAN:DoesFileExist(song:GetSongDir().."/"..previewvid) then
-				return song:GetSongDir().."/"..previewvid
-			elseif FILEMAN:DoesFileExist("/SongPreviews/"..previewvid) then
-				return "/SongPreviews/"..previewvid
+	local song = GAMESTATE:GetCurrentSong();
+	if song then
+		local sscfile = GAMESTATE:GetCurrentSteps(GAMESTATE:GetMasterPlayerNumber()):GetFilename();
+		if FILEMAN:DoesFileExist(sscfile) then
+			local sscpath = sscfile
+			local file = File.Read( sscpath )
+			if not file then return "" end
+			local fnd = string.find(file , "#"..tag..":")
+			if not fnd then return "" end
+			local last = string.find(file , ";" , fnd)
+			local previewvid = string.sub(file,fnd,last)
+			previewvid = string.gsub(previewvid, "\r", "")
+			previewvid = string.gsub(previewvid, "\n", "")
+			previewvid = string.gsub(previewvid, "#"..tag..":", "")
+			previewvid = string.gsub(previewvid, ";", "")
+			
+			total_random_vid = FILEMAN:GetDirListing("/RandomMovies/");
+			
+			if previewvid ~= "" then
+				if FILEMAN:DoesFileExist(song:GetSongDir().."/"..previewvid) then
+					return song:GetSongDir().."/"..previewvid
+				elseif FILEMAN:DoesFileExist("/SongPreviews/"..previewvid) then
+					return "/SongPreviews/"..previewvid
+				else
+					return "/Backgrounds/bgaoff.avi" --temporarily using this because loading RandomMovies in ScreenSelectMusic causes lag due to large file size -Gio
+				end;
 			else
-				return "/Backgrounds/bgaoff.avi" --temporarily using this because loading RandomMovies in ScreenSelectMusic causes lag due to large file size -Gio
+				return "/Backgrounds/bgaoff.avi"
+				--return "/RandomMovies/"..total_random_vid[math.random(#total_random_vid)] --original code for future use
 			end;
 		else
-			return "/Backgrounds/bgaoff.avi"
-			--return "/RandomMovies/"..total_random_vid[math.random(#total_random_vid)] --original code for future use
-		end;
-else
-	return ""
-end
-end
+			return ""
+		end
+	end
 end;
 
 function IsRoutineMasterPlayer(p)
@@ -111,7 +111,8 @@ function ResetPreferences()
 	--SCREENMAN:SystemMessage("Preferences setted to default values.");
 end
 
-function GetNumlifeLeft()
+-- Depreciated, use PIU_HEARTS_SYSTEM instead.
+--[[function GetNumlifeLeft()
 	local life = GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer();
 	return life;
 end;
@@ -126,7 +127,7 @@ function ResetLife()
 			GAMESTATE:AddStageToPlayer(pn);
 		end
 	end
-end
+end]]
 
 
 function SetTagValue(file,tag)

@@ -48,6 +48,10 @@ end;
 if SpecialTransition then		--load wallpaper or special transition
 	t[#t+1] = Def.ActorFrame{
 		LoadActor(SpecialTransition)..{
+			InitCommand=cmd(Cover);
+		};
+		--Unneeded, we only have images in the folder.
+		--[[LoadActor(SpecialTransition)..{
 			InitCommand=cmd();	--leave at x,0;y,0; if the file loaded is an animation, check if is an image and resolve in the OnCommand function -NeobeatIKK
 			OnCommand=function(self)
 				local fPath = SpecialTransition
@@ -62,7 +66,7 @@ if SpecialTransition then		--load wallpaper or special transition
 					self:zoomto(SCREEN_WIDTH,SCREEN_HEIGHT);
 				end;
 			end;
-		};
+		};]]
 	};
 else
 	t[#t+1] = Def.ActorFrame{
