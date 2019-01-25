@@ -1,0 +1,35 @@
+Rave It Out uses its own structure for songs, so read carefully.
+
+The standard structure of a song is something like:
+/Songs/02-EDM/Shelter/
+	Shelter.ogg (Audio)
+	Shelter.ssc (Stepfile)
+	Shelter-banner.png (Banner)
+	jacket.png (Jacket)
+	Shelter-background.png (Background)
+
+However, in RIO things are different.
+Note: A directory starting with a "/" means the root of the stepmania directory, usually containing Songs, Data, Logs, Scripts, Cache, Themes, etc
+
+BANNERS:
+Rave it out does not use Banners at all (although our dev team refers to jackets as banners for some reason). The theme will search for jacket then banner using standard StepMania functions.
+
+JACKETS: RIO uses two jackets, an SD and an HD one.
+For the SD jacket:
+- Refer to BANNERS. Jackets are 300x300 usually.
+For the HD jacket:
+- If you are putting it in the song folder, it must be named "largejk.png".
+- If you are putting it in the /SongJacketsLarge folder, it must be named after the name of the folder and have the png extension.
+
+PREVIEWVID:
+Fill out the #PREVIEWVID tag in the .ssc of your song. It will search the song folder, then the /SongPreviews folder.
+There is no standardized naming scheme currently.
+
+BACKGROUND:
+The theme will search /SongBackgrounds/HD/ if using widescreen, else it will search /SongBackgrounds/SD/.
+HD backgrounds MUST be named after the song folder and have "-bg.png" at the end.
+SD backgrounds MUST be named after the song folder and have " (SD)-bg.png" at the end.
+If an HD/SD background is not found (Depending on your aspect ratio), the standard background in the #BACKGROUND tag of the .ssc will be checked using standard StepMania functions.
+
+SONGMOVIES:
+Just like StepMania, first the song folder will be checked then /SongMovies/ will be checked. However, the filename of your movie can have an optional "(HD)" at the end (Ex. Gangnam Style (HD).mp4", along with an optional second video in /SongMovies/SD/ for the SD video. If you have an HD and SD video, the one that matches your aspect ratio will be picked.

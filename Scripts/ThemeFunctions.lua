@@ -220,7 +220,7 @@ function Sprite:LoadFromCurrentSongBackground()
 	
 	local path = split("/",GAMESTATE:GetCurrentSong():GetSongDir())
 	path = path[#path-1];
-	--SCREENMAN:SystemMessage(song:GetSongDir().." -> "..strArrayToString(path).." "..folderName)
+	--SCREENMAN:SystemMessage(song:GetSongDir())
 	if IsUsingWideScreen() then
 		path = "/SongBackgrounds/HD/"..path.."-bg.png";
 		if FILEMAN:DoesFileExist(path) then
@@ -237,4 +237,26 @@ function Sprite:LoadFromCurrentSongBackground()
 		end;
 	end;
 	return self;
+end;
+
+
+function getLargeJacket()
+	local songdir  = GAMESTATE:GetCurrentSong():GetSongDir()
+	local path = split("/",songdir)
+	path = "/SongJacketsLarge/"..path[#path-1];
+	--SCREENMAN:SystemMessage(path)
+	if FILEMAN:DoesFileExist(path..".png") then
+		return path..".png"
+	elseif FILEMAN:DoesFileExist(path..".jpg") then
+		return path..".jpg"
+	elseif FILEMAN:DoesFileExist(path..".jpeg") then
+		return path..".jpeg"
+	elseif FILEMAN:DoesFileExist(songdir.."largejk.png") then
+		return songdir.."largejk.png"
+	elseif GAMESTATE:GetCurrentSong():HasJacket() then
+		return GAMESTATE:GetCurrentSong():GetJacketPath()
+	else
+		--self:LoadFromSongBanner(GAMESTATE:GetCurrentSong())
+		return song:GetBannerPath()
+	end;
 end;

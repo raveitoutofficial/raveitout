@@ -54,11 +54,12 @@ return Def.ActorFrame{
 		Def.Sprite{				--Song Jacket
 			InitCommand=cmd(x,_screen.cx;y,_screen.cy;zoom,10;diffusealpha,0;);
 			OnCommand=function(self)
-				if song:HasJacket() then
+				--[[if song:HasJacket() then
 					self:Load(song:GetJacketPath());
 				else
 					self:Load(song:GetBannerPath());
-				end
+				end]]
+				self:Load(getLargeJacket());
 				(cmd(accelerate,inanit;zoomto,300,300;diffusealpha,1;linear,inefft;zoomto,255,255;sleep,stayat))(self)
 			end;
 			OffCommand=cmd(decelerate,outtwt;rotationz,90*0.5;zoom,0.8;diffusealpha,0);
