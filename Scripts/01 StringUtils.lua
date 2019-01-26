@@ -55,6 +55,16 @@ function split( delimiter, text )
 	end
 	return list
 end
+--[[
+function split2(str, sep)
+   local result = {}
+   local regex = ("([^%s]+)"):format(sep)
+   for each in str:gmatch(regex) do
+      table.insert(result, each)
+   end
+   return result
+end]]
+
 --gsub ignore case
 function gisub(s, pat, repl, n)
     pat = string.gsub(pat, '(%a)', 

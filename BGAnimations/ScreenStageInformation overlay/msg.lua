@@ -1,39 +1,37 @@
-local IsP1On =		GAMESTATE:IsPlayerEnabled(PLAYER_1)	--Is player 1 present? BRETTY OBIOS :DDDD
-local IsP2On =		GAMESTATE:IsPlayerEnabled(PLAYER_2)	--Is player 2 present? BRETTY OBIOS :DDDD
+local phrases = {
+"Perfectionist Mode is best used for obtaining SS scores without wasting time. You won't regret it. Heh.",
+"Some modifiers will not affect certain charts. Use this to your advantage in 2 player head to head. Or just to be a dick in general. Fuck you.",
+"Report any bugs to \"http://facebook.com/raveitoutgame\". Make sure you report them in a very aggresive manner. Memes are appreciated but not mandatory.",
+"Make sure to hit hold heads accurately or you will be punished with worse judgements on following holds. Yea it is bullshit but who cares? Screw you.",
+"Check the options list for the Screen Filter feature. It will allow a BGA to be viewed without affecting any gameplay. Loser.",
+"Enjoying arcade mode? Give \"Mixtapes\" a try and blow your stamina away. That's if that feature doesn't crash during gameplay.",
+"If you already played for awhile, give \"Pro mode\" a whirl and test your timing skills. Also helps determine what is on and off sync.",
+"The cuter the song, the harder the charts will be. We guarantee it.",
+"Rave It Out is basically \"Pitbull: The Game\". Dale.",
+"Play a song that is by Kanye West by himself. Trust me.",
+"Playing Rave It Out during certain times of the year can cause weather changes in game.",
+"Quad and Quint arrow combinations are a norm in Rave It Out. Learning how to hit them will be to your benefit."
+};
 
-
+local message;
 if GAMESTATE:IsCourseMode() then
-	song = GAMESTATE:GetCurrentCourse(); -- Get current Course xD
-	songdir = song:GetCourseDir();--Get current course directory xD
+	message = GAMESTATE:GetCurrentCourse():GetDescription()
+	if message == "" then
+		message = phrases[math.random(#phrases)];
+	end;
 else
-	song = GAMESTATE:GetCurrentSong(); 	--Get current song lel
-	songdir = song:GetSongDir();--Get current song directory lel
+	local songmsgpath = 	songdir.."msg.txt";
+	local songhasmsg = 		FILEMAN:DoesFileExist(songmsgpath)
+	if songhasmsg then
+		file = File.Read(songmsgpath)
+		messages = file:split("\r\n");
+		SCREENMAN:SystemMessage(tostring(#messages).." "..strArrayToString(messages));
+		message = messages[math.random(#messages)];
+	else
+		message = phrases[math.random(#phrases)];
+	end;
 end
-local songmsgpath = 	songdir.."msg.txt"
 
-local songhasmsg = 		FILEMAN:DoesFileExist(songmsgpath)
-
-if GAMESTATE:IsCourseMode() and GetCourseDescription(GAMESTATE:GetCurrentCourse():GetCourseDir(),"DESCRIPTION") ~= "" then
-	coursehasmsg = true
-else  
-	coursehasmsg = false
-end;
-
-local songmsgtext =		File.Read(songmsgpath)
-local msgpath =			THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenStageInformation overlay/fallbacktext.txt"
-local fallbacktext =	File.Read(msgpath)
-local raw_random_text = GetCourseDescription(THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenStageInformation overlay/random_msg.txt","MSG"..math.random(1,10));
-local chars = string.len(raw_random_text);
-local random_text = GetCourseDescription(THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenStageInformation overlay/random_msg.txt","MSG"..math.random(1,10));
-
-if coursehasmsg == true then
-	message = GetCourseDescription(GAMESTATE:GetCurrentCourse():GetCourseDir(),"DESCRIPTION");
-elseif songhasmsg then
-	message = songmsgtext;
-else
-	--message = fallbacktext;
-	message = random_text;
-end;
 
 --animation controls
 local inanit = 0.5		--in animation time
@@ -95,14 +93,5 @@ return Def.ActorFrame{
 				end;
 			end;
 		};
-		--[[LoadFont(DebugFont)..{	--songmsgtext
-			InitCommand=cmd(xy,SCREEN_RIGHT,SCREEN_BOTTOM-(itemy*4);horizalign,right;zoom,0.5;settext,"songmsgtext"..songmsgtext);
-		};--]]
-		LoadFont(DebugFont)..{	--msgpath
-			InitCommand=cmd(xy,SCREEN_RIGHT,SCREEN_BOTTOM-(itemy*5);horizalign,right;zoom,0.5;settext,"msgpath"..msgpath);
-		};
-		--[[LoadFont(DebugFont)..{	--fallbacktext
-			InitCommand=cmd(xy,SCREEN_RIGHT,SCREEN_BOTTOM-(itemy*6);horizalign,right;zoom,0.5;settext,"fallbacktext"..fallbacktext);
-		};--]]
 	};
 };
