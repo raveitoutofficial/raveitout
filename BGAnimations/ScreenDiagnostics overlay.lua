@@ -26,8 +26,9 @@ local t = Def.ActorFrame{
 	
 	LoadFont("Common Normal")..{
 		Text="Press start or center step to exit.";
-		InitCommand=cmd(xy,SCREEN_CENTER_X,SCREEN_HEIGHT-50);
+		InitCommand=cmd(xy,SCREEN_CENTER_X,SCREEN_HEIGHT-50;diffusealpha,0);
 		OnCommand=function(self)
+			self:sleep(3):linear(1):diffusealpha(1);
 			--self:settext(getRandomBackgroundDebug("_random wallpapers"));
 		end;
 	
@@ -140,6 +141,10 @@ local t = Def.ActorFrame{
 			self:settext(self:GetText().." | "..RIO_FOLDER_NAMES["SpecialFolder"])
 		end;
 	};
+	--[[LoadFont("Common Normal")..{
+		Text="asdadadsassadasdad: "..#SONGMAN:GetSongsInGroup("test");
+		InitCommand=cmd(xy,20,375;horizalign,left);
+	};]]
 	
 	LoadFont("Common Normal")..{
 		--Text="Uptime: "..SecondsToHHMMSS(GetTimeSinceStart(););

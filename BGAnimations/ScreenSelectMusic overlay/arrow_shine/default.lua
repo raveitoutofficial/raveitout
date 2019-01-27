@@ -1,5 +1,8 @@
 local t = Def.ActorFrame{}	
 local playmode = getenv("PlayMode");
+if playmode == "Special" or playmode == "Mixtape" then
+	playmode = "Pro"
+end;
 if not playmode then
 	SCREENMAN:SystemMessage("Error: playmode environment not set!");
 	playmode = "Arcade";

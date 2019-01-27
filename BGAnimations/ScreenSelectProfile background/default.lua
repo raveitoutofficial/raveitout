@@ -89,7 +89,45 @@ t[#t+1] = 	Def.ActorFrame{
 			Text="TIME";
 			InitCommand=cmd(x,SCREEN_CENTER_X-25;y,SCREEN_BOTTOM-92;zoom,0.6;skewx,-0.2);
 		};
+		
+
 };
+
+--This was a test, ignore it
+--[[
+local MenuTimer;
+local playAt;
+
+local function round(num, numDecimalPlaces)
+  local mult = 10^(numDecimalPlaces or 0)
+  return math.floor(num * mult + 0.5) / mult
+end
+
+t[#t+1] = Def.ActorFrame{
+
+	--Update command
+	LoadActor(THEME:GetPathS("MenuTimer", "warn"))..{
+		OnCommand=function(self)
+			name = SCREENMAN:GetTopScreen():GetName();
+			--SCREENMAN:SystemMessage(name)
+			playAt = THEME:GetMetric(THEME:GetMetric(name,"TimerMetricsGroup"),"WarningBeepStart")
+			if playAt > 0 then
+				MenuTimer = SCREENMAN:GetTopScreen():GetChild("Timer");
+				self:queuecommand("CheckTimer");
+			end;
+		end;
+		
+		--I think this is the only way to check the timer
+		CheckTimerCommand=function(self)
+			--SCREENMAN:SystemMessage(MenuTimer:GetSeconds());
+			if round(MenuTimer:GetSeconds(), 0) == playAt then
+				self:play();
+			else
+				self:linear(1):queuecommand("CheckTimer");
+			end;
+		end;
+	};
+}]]
 
 
 

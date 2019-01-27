@@ -82,6 +82,12 @@ function getAvailableGroups()
 				table.remove(groups, k)
 			elseif v == RIO_FOLDER_NAMES["SpecialFolder"] then
 				table.remove(groups, k)
+			--Never display the internal group folder
+			elseif v == "00-Internal" then
+				table.remove(groups, k)
+			--TODO: This should be done on startup.
+			elseif (#SONGMAN:GetSongsInGroup(v))-1 < 1 then
+				table.remove(groups, k)
 			end;
 		end
 	end;

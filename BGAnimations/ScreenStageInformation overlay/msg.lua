@@ -14,18 +14,19 @@ local phrases = {
 };
 
 local message;
+local songhasmsg; --Declared here for debugging purposes.
 if GAMESTATE:IsCourseMode() then
 	message = GAMESTATE:GetCurrentCourse():GetDescription()
 	if message == "" then
 		message = phrases[math.random(#phrases)];
 	end;
 else
-	local songmsgpath = 	songdir.."msg.txt";
-	local songhasmsg = 		FILEMAN:DoesFileExist(songmsgpath)
+	local songmsgpath = GAMESTATE:GetCurrentSong():GetSongDir().."msg.txt";
+	songhasmsg = FILEMAN:DoesFileExist(songmsgpath)
 	if songhasmsg then
-		file = File.Read(songmsgpath)
+		local file = File.Read(songmsgpath)
 		messages = file:split("\r\n");
-		SCREENMAN:SystemMessage(tostring(#messages).." "..strArrayToString(messages));
+		--SCREENMAN:SystemMessage(tostring(#messages).." "..strArrayToString(messages));
 		message = messages[math.random(#messages)];
 	else
 		message = phrases[math.random(#phrases)];

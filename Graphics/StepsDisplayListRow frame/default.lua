@@ -74,8 +74,9 @@ t[#t+1] = Def.ActorFrame{
 		InitCommand=cmd(zoom,0.45;skewx,-0.15;x,-9.5;y,0.5);--draworder,150;);
 		SetMessageCommand=function(self,param)
 			local meter = param.Meter;
-			if meter > 99 then
-				self:settextf("%s","99+");
+			if meter >= 99 then
+				--self:settextf("%s","99+");
+				self:settext("??");
 			elseif meter >= 10 then
 				self:settextf("%d",meter);
 			else
@@ -112,19 +113,19 @@ t[#t+1] = Def.ActorFrame{
 			local descrp = param.Steps:GetDescription();
 			-- always check if for nil
 			local steps = GAMESTATE:GetCurrentSteps(GAMESTATE:GetMasterPlayerNumber());
-			if steps then
-				local stepdiff = steps:GetDifficulty();
-			end;
+			if not steps then return end;
 			local label = ""
 			
+			--Check for "DANGER!" before checking blacklist
+			if descrp == "DANGER!" then
+				label = descrp
 			--If string in description is in the STEPMAKER_NAMES_BLACKLIST table
-			if has_value(STEPMAKER_NAMES_BLACKLIST, descrp) then
-  				label = ""
+			elseif has_value(STEPMAKER_NAMES_BLACKLIST, descrp) then
+				--Do nothing, string is already empty.
+				--label = ""
 			else
-  				label = descrp;
+				label = descrp;
 			end
-			
-			if param.Steps:IsAnEdit() then label = "DANGER!"; end;
 			
 			self:settext(label);
 			
