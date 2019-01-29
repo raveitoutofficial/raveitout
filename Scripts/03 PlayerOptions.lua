@@ -21,7 +21,7 @@ PlayerDefaults = {
 	ScreenFilter = 0,
 	BGAMode = "On", --Options: Black, Off, Dark, On
 	ProfileIcon = nil, -- Technically not an OptionsList option, but it gets saved at ScreenProfileSave so it's here anyway.
-	JudgmentGraphic = "Season 2", --Judgment graphic
+	JudgmentGraphic = "Season2", --Judgment graphic
 }
 
 --PerfectionistMode should NEVER be written to profile, so it's not in the PlayerDefaults table.
@@ -262,7 +262,9 @@ function OptionRowDetailedPrecision()
 end;
 
 function OptionRowJudgmentGraphic()
-	local judgementNames = { "Season 1", "Season 2"}
+	--The true name of the graphic is stored in ActiveModifiers to make it easier to load.
+	local judgementFileNames = { "Season1", "Season2", "Montserrat"}
+	local judgementNames = {"Season 1", "Season 2", "Montserrat"}
 	local t = {
 		Name="JudgmentType",
 		LayoutType = "ShowAllInRow",
@@ -271,26 +273,26 @@ function OptionRowJudgmentGraphic()
 		ExportOnChange = false,
 		Choices = judgementNames,
 		LoadSelections = function(self, list, pn)
-			local pName = ToEnumShortString(pn)
 			local found = false;
 			for i=1,#list do
-				if judgementNames[i] == ActiveModifiers[pName]["JudgmentGraphic"] then
+				if judgementFileNames[i] == ActiveModifiers[pname(pn)]["JudgmentGraphic"] then
 					list[i] = true;
 					found = true;
 				end;
 			end;
-			--[[if not found then
-				list[1] = true;
+			if not found then
+				list[2] = true;
+				--Need to replace the setting in the modifiers table too
+				ActiveModifiers[pname(pn)]["JudgmentGraphic"] = judgementFileNames[2]
 				assert(found, "Should have defaulted to S2 judgement, but none was found")
-			end;]]
+			end;
 		end,
 		SaveSelections = function(self, list, pn)
-			local pName = ToEnumShortString(pn)
 			local found = false
 			for i=1,#list do
 				if not found then
 					if list[i] == true then
-						ActiveModifiers[pName]["JudgmentGraphic"] = judgementNames[i];
+						ActiveModifiers[pname(pn)]["JudgmentGraphic"] = judgementFileNames[i];
 						found = true
 					end
 				end

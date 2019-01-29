@@ -99,11 +99,7 @@ local ptinfdy = 30		--protiming information difference Y axis
 local ptbposy = 27		--protiming bar position Y axis
 
 local t = Def.ActorFrame {};
---Either Season2 or Normal.
-local judgmentToLoad = "Season2";
-if ActiveModifiers[pname(player)]["JudgmentGraphic"] == "Season 1" then
-	judgmentToLoad = "Normal";
-end;
+local judgmentToLoad = ActiveModifiers[pname(player)]["JudgmentGraphic"];
 t[#t+1] = Def.ActorFrame {
 	LoadActor(THEME:GetPathG("Judgment",judgmentToLoad)) .. {
 		Name="Judgment";	--\nJudgmentOnCommand en metrics

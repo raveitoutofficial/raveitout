@@ -135,9 +135,9 @@ t[#t+1] = Def.ActorFrame{
 			--This saves to profile and it's annoying as fuck
 			--[[ActiveModifiers["P1"]["BGAMode"] = "Off"
 			ActiveModifiers["P2"]["BGAMode"] = "Off"]]
-			for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+			--[[for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 				GAMESTATE:ApplyGameCommand( "mod,3x,rhythm;", pn );
-			end
+			end]]
 		elseif SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber()) == 3 then
 			-- Mixtapes Mode
 			setenv("PlayMode","Mixtapes");

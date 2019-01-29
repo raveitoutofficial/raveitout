@@ -3,29 +3,6 @@ local t = Def.ActorFrame {
 		state = 1;
 	end
 };
-local function MsgScroll()
-	local index = 1
-	return LoadActor("help_info/msg_1")..{
-		SetCommand=function(self)
-			index = index+1
-			path = THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectMusic overlay/help_info/";
-			total = #FILEMAN:GetDirListing(path)-3
-			if getenv("PlayMode") == "Easy" then
-				path = THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectMusic overlay/help_info/easy/";
-				total = #FILEMAN:GetDirListing(path)
-			end
-			if index > total then index = 1 end
-			
-			self:Load(path.."msg_"..index..".png");
-			self:linear(0.2);
-			self:diffusealpha(1);
-			self:sleep(2);
-			self:linear(0.2)
-			self:diffusealpha(0);
-			self:queuecommand("Set");
-		end;
-	}		
-end;
 
 --HAS THIS GUY EVER HEARD OF METRICS???
 local stage =		GAMESTATE:GetCurrentStage()
@@ -88,8 +65,32 @@ t[#t+1] = Def.ActorFrame {
 		InitCommand=cmd(x,_screen.cx;y,SCREEN_BOTTOM-50;zoomx,0.9;zoomy,0.65);
 	};
 	
-	MsgScroll()..{
-		InitCommand=cmd(x,_screen.cx;y,SCREEN_BOTTOM-50;zoom,0.6;queuecommand,"Set");
+	Def.Sprite{
+		--Yeah I dunno why I have to specify the full path
+		Texture=THEME:GetPathB("ScreenSelectMusic","overlay/help_info/messages 1x4.png");
+		InitCommand=function(self)
+			(cmd(x,_screen.cx;y,SCREEN_BOTTOM-50;zoom,.6;animate,false;setstate,0))(self);
+			if getenv("PlayMode") == "Easy" then
+				self:Load(THEME:GetPathB("ScreenSelectMusic","overlay/help_info/easymessages 1x4.png"));
+			end;
+		end;
+		OnCommand=cmd(queuecommand,"Set");
+		SetCommand=function(self)
+			--I know hard coding stuff is bad, but there will only ever be 4 states...
+			--And also, hide the setlist prompt if we're in Special mode, since there are no folders
+			--in special mode.
+			if self:GetState()+1 >= 4 or (getenv("PlayMode") == "Special" and self:GetState() == 2) then
+				self:setstate(0);
+			else
+				self:setstate(self:GetState()+1);
+			end;
+			self:linear(0.2);
+			self:diffusealpha(1);
+			self:sleep(2);
+			self:linear(0.2)
+			self:diffusealpha(0);
+			self:queuecommand("Set");
+		end;
 	};
 	
 	--TIME

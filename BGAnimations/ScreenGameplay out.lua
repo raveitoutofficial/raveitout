@@ -23,11 +23,9 @@ return Def.ActorFrame{
 			self:sleep(3-animt);
 			self:decelerate(animt);
 			self:x(_screen.cx-(_screen.w*ratio/2));
-			if GAMESTATE:IsEventMode() or DevMode() then ResetLife(); end;
 		end;
 		
 		OffCommand=function(self)
-			if GAMESTATE:IsEventMode() or DevMode() then ResetLife(); end;
 			setenv("nextstage_name",stages_names[curstage]);
 		end;
 	};

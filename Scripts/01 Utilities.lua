@@ -99,6 +99,73 @@ function Actor:Cover()
 	self:scaletocover(0,0,SCREEN_RIGHT,SCREEN_BOTTOM);
 end;
 
+function Resize(width,height,setwidth,sethight)
+    if height >= sethight and width >= setwidth then
+        if height*(setwidth/sethight) >= width then
+            return sethight/height
+        else
+            return setwidth/width
+        end
+    elseif height >= sethight then
+        return sethight/height
+    elseif width >= setwidth then
+        return setwidth/width
+    else 
+        return 1
+    end
+end
+
+
+
+--NO IT DOESN'T FUCKING WORK GO FUCK YOURSELF
+--[[function Actor:ScaleToHeight(height)
+	if height >= self:GetHeight() then
+		self:SetWidth(self:GetWidth()*(height/self:GetHeight()))
+	else
+		self:SetWidth(self:GetWidth()*(self:GetHeight()/height))
+	end;
+	self:SetHeight(height)
+end;
+
+function Actor:ScaleToWidth(width)
+	if width/self:GetWidth() > 1 then
+		self:SetHeight(self:GetHeight()*(width/self:GetWidth()))
+	else
+		self:SetHeight(self:GetHeight()*(self:GetWidth()/width))
+	end;
+	self:SetWidth(width)
+end;
+
+function testScaleToHeight(origWidth, origHeight, height)
+	if height/origHeight > origHeight/height then
+		return origWidth*(height/origHeight)
+	else
+		return origWidth*(origHeight/height)
+	end;
+
+end;
+
+function testScaleToWidth(origWidth, origHeight, width)
+	if width > origWidth then
+		return origHeight*(width/origWidth)
+	else
+		return origHeight*(origWidth/width)
+	end;
+
+end;]]
+
 function returnLastElement(arr)
 	return arr[#arr]
+end
+
+function ListActorChildren(frame)
+	if frame:GetNumChildren() == 0 then
+		return "No children in frame.";
+	end
+	local list = frame:GetNumChildren().." children: ";
+	local children = frame:GetChildren()
+	for key,value in pairs(children) do
+		list = list..key..", ";
+	end
+	return list;
 end

@@ -42,7 +42,7 @@ t[#t+1] = Def.ActorFrame{
 				if param.StepsType then
 					sString = THEME:GetString("StepsDisplay StepsType",ToEnumShortString(param.StepsType));
 					if sString == "Single" then
-						if param.Steps:IsAnEdit() then
+						if param.Steps:GetDescription() == "DANGER!" then
 							self:setstate(4);
 						else
 							self:setstate(0);

@@ -62,11 +62,11 @@ local aot2b = 0			--Alpha value during out 2 animation, both items
 local aot2j = aot2b		--Alpha value during out 2 animation, judgement
 local aot2c = aot2b		--Alpha value during out 2 animation, combo
 
-Comboanijudge = cmd(finishtweening;skewx,skj;x,ixj;y,iyj;diffusealpha,iaj;
+Comboanijudge = cmd(finishtweening;--[[skewx,skj;]]x,ixj;y,iyj;diffusealpha,iaj;
 				   zoom,izmj;decelerate,cbin;x,rxj;y,ryj;zoom,rzmj;sleep,cbwt;
 				   decelerate,cbot1;x,xof1j;diffusealpha,aot1j;
 				   accelerate,cbot2;x,xof2j;diffusealpha,aot2j);
-Comboanicombo = cmd(finishtweening;skewx,skc;x,ixc;y,iyc;diffusealpha,iac;
+Comboanicombo = cmd(finishtweening;--[[skewx,skc;]]x,ixc;y,iyc;diffusealpha,iac;
 				  zoom,izmc;decelerate,cbin;x,rxc;y,ryc;zoom,rzmc;sleep,cbwt;
 				  decelerate,cbot1;x,xof1c;diffusealpha,aot1c;
 				  accelerate,cbot2;x,xof2c;diffusealpha,aot2c;);

@@ -1,82 +1,80 @@
---==========================
---Item Scroller. Must be defined at the top to have 'scroller' var accessible to the rest of the lua.
---==========================
-local scroller = setmetatable({disable_wrapping= false}, item_scroller_mt)
-local numWheelItems = 15
+--=======================================================
+--Input handler. Brought to you by PIU Delta NEX Rebirth.
+--=======================================================
+local function inputs(event)
+	
+	local pn= event.PlayerNumber
+	local button = event.button
+	-- If the PlayerNumber isn't set, the button isn't mapped.  Ignore it.
+	--Also we only want it to activate when they're NOT selecting the difficulty.
+	if not pn or not SCREENMAN:get_input_redirected(pn) then return end
 
---Item scroller starts at 0, duh.
-local currentItemIndex = 0;
+	-- If it's a release, ignore it.
+	if event.type == "InputEventType_Release" then return end
+	
+	if button == "Center" or button == "Start" then
+		SCREENMAN:set_input_redirected(PLAYER_1, false);
+		SCREENMAN:set_input_redirected(PLAYER_2, false);
+		MESSAGEMAN:Broadcast("StartSelectingSong");
+	elseif button == "DownLeft" or button == "Left" then
+		--scroller:scroll_by_amount(-1);
+		SOUND:PlayOnce(THEME:GetPathS("MusicWheel", "change"), true);
+		MESSAGEMAN:Broadcast("PreviousGroup");
+	elseif button == "DownRight" or button == "Right" then
+		--scroller:scroll_by_amount(1);
+		SOUND:PlayOnce(THEME:GetPathS("MusicWheel", "change"), true);
+		MESSAGEMAN:Broadcast("NextGroup");
+	elseif button == "Back" then
+		SCREENMAN:set_input_redirected(PLAYER_1, false);
+		SCREENMAN:set_input_redirected(PLAYER_2, false);
+		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen");
+	else
+		--SCREENMAN:SystemMessage(button);
+	end;
+	
+end;
 
--- Scroller function thingy
-local item_mt= {
-  __index= {
-	-- create_actors must return an actor.  The name field is a convenience.
-	create_actors= function(self, params)
-	  self.name= params.name
-		return Def.ActorFrame{		
-			InitCommand= function(subself)
-				-- Setting self.container to point to the actor gives a convenient
-				-- handle for manipulating the actor.
-		  		self.container= subself
-		  		subself:SetDrawByZPosition(true);
-		  		--subself:zoom(.75);
-			end;
-				
-			--[[Def.BitmapText{
-				Name= "text",
-				Font= "Common Normal",
-				InitCommand=cmd(addy,100);
-			};]]
-			
-			Def.Sprite{
-				Name="banner";
-				--InitCommand=cmd(scaletofit,0,0,1,1;);
-			};
-		};
-	end,
-	-- item_index is the index in the list, ranging from 1 to num_items.
-	-- is_focus is only useful if the disable_wrapping flag in the scroller is
-	-- set to false.
-	transform= function(self, item_index, num_items, is_focus)
-		local offsetFromCenter = item_index-math.floor(numWheelItems/2)
-		--PrimeWheel(self.container,offsetFromCenter,item_index,numWheelItems)
-		self.container:stoptweening();
-		if math.abs(offsetFromCenter) < 4 then
-			self.container:decelerate(.5);
-			self.container:visible(true);
+local isPickingDifficulty = false;
+local musicwheel; --Need a handle on the MusicWheel to work around a StepMania bug
+local t = Def.ActorFrame{
+	OnCommand=function(self)
+		SCREENMAN:GetTopScreen():AddInputCallback(inputs);
+		musicwheel = SCREENMAN:GetTopScreen():GetChild('MusicWheel');
+	end;
+
+	SongChosenMessageCommand=function(self)
+		isPickingDifficulty = true;
+	end;
+	TwoPartConfirmCanceledMessageCommand=cmd(sleep,.1;queuecommand,"PickingSong");
+	SongUnchosenMessageCommand=cmd(sleep,.1;queuecommand,"PickingSong");
+	
+	PickingSongCommand=function(self)
+		isPickingDifficulty = false;
+	end;
+	
+	CodeMessageCommand=function(self,param)
+		local codeName = param.Name		-- code name, matches the one in metrics
+		--player is not needed
+		--local pn = param.PlayerNumber	-- which player entered the code
+		if codeName == "GroupSelect1" or codeName == "GroupSelect2" then
+			if isPickingDifficulty then return end; --Don't want to open the group select if they're picking the difficulty.
+			MESSAGEMAN:Broadcast("StartSelectingGroup");
+			--SCREENMAN:SystemMessage("Group select opened.");
+			--No need to check if both players are present... Probably.
+			SCREENMAN:set_input_redirected(PLAYER_1, true);
+			SCREENMAN:set_input_redirected(PLAYER_2, true);
+			musicwheel:Move(0);
 		else
-			self.container:visible(false);
+			--Debugging only
+			--SCREENMAN:SystemMessage(codeName);
 		end;
-		self.container:x(offsetFromCenter*500)
-		--self.container:rotationy(offsetFromCenter*-45);
-		self.container:zoom(math.cos(offsetFromCenter*math.pi/6)*.8)
-		
-		--[[if offsetFromCenter == 0 then
-			self.container:diffuse(Color("Red"));
-		else
-			self.container:diffuse(Color("White"));
-		end;]]
-	end,
-	-- info is one entry in the info set that is passed to the scroller.
-	set= function(self, info)
-		--self.container:GetChild("text"):settext(info)
-		local banner = SONGMAN:GetSongGroupBannerPath(info);
-		if banner == "" then
-			self.container:GetChild("banner"):Load(THEME:GetPathG("common","fallback group"));
-			--self.container:GetChild("text"):visible(true);
-  		else
-  			self.container:GetChild("banner"):Load(banner);
-  			--self.container:GetChild("text"):visible(false);
-		end;
-		self.container:GetChild("banner"):scaletofit(-500,-200,500,200);
-	end,
-	--[[gettext=function(self)
-		return self.container:GetChild("text"):gettext()
-	end,]]
-}}
+	end;
+
+
+}		
 
 --==========================
---Calculate groups and such
+--Group select
 --==========================
 local hearts = GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer();
 groups = {};
@@ -129,116 +127,39 @@ for key,value in pairs(groups) do
 end;
 setenv("cur_group",groups[selection]);
 
---=======================================================
---Input handler. Brought to you by PIU Delta NEX Rebirth.
---=======================================================
-local function inputs(event)
-	
-	local pn= event.PlayerNumber
-	local button = event.button
-	-- If the PlayerNumber isn't set, the button isn't mapped.  Ignore it.
-	--Also we only want it to activate when they're NOT selecting the difficulty.
-	if not pn or not SCREENMAN:get_input_redirected(pn) then return end
+t[#t+1] = Def.Actor{
 
-	-- If it's a release, ignore it.
-	if event.type == "InputEventType_Release" then return end
-	
-	if button == "Center" or button == "Start" then
-		SCREENMAN:set_input_redirected(PLAYER_1, false);
-		SCREENMAN:set_input_redirected(PLAYER_2, false);
-		MESSAGEMAN:Broadcast("StartSelectingSong");
-	elseif button == "DownLeft" or button == "Left" then
-		SOUND:PlayOnce(THEME:GetPathS("MusicWheel", "change"), true);
-		if selection == 1 then
-			selection = #groups;
-		else
-			selection = selection - 1 ;
-		end;
-		scroller:scroll_by_amount(-1);
-		setenv("cur_group",groups[selection]);
-		MESSAGEMAN:Broadcast("GroupChange");
-		
-	elseif button == "DownRight" or button == "Right" then
-		SOUND:PlayOnce(THEME:GetPathS("MusicWheel", "change"), true);
+	NextGroupMessageCommand=function(self,params)
 		if selection == #groups then
 			selection = 1;
 		else
 			selection = selection + 1
 		end
-		scroller:scroll_by_amount(1);
 		setenv("cur_group",groups[selection]);
 		MESSAGEMAN:Broadcast("GroupChange");
-	elseif button == "Back" then
-		SCREENMAN:set_input_redirected(PLAYER_1, false);
-		SCREENMAN:set_input_redirected(PLAYER_2, false);
-		SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen");
-	elseif button == "MenuDown" then
-		--[[local curItem = scroller:get_actor_item_at_focus_pos().container:GetChild("banner");
-		local scaledHeight = testScaleToWidth(curItem:GetWidth(), curItem:GetHeight(), 500);
-		SCREENMAN:SystemMessage(curItem:GetWidth().."x"..curItem:GetHeight().." -> 500x"..scaledHeight);]]
-		
-		--local curItem = scroller:get_actor_item_at_focus_pos();
-		--SCREENMAN:SystemMessage(ListActorChildren(curItem.container));
-	else
-		--SCREENMAN:SystemMessage(button);
-	end;
-	
-end;
 
-local isPickingDifficulty = false;
-local musicwheel; --Need a handle on the MusicWheel to work around a StepMania bug
-local t = Def.ActorFrame{
-	
-	InitCommand=cmd(diffusealpha,0);
-	OnCommand=function(self)
-		SCREENMAN:GetTopScreen():AddInputCallback(inputs);
-		musicwheel = SCREENMAN:GetTopScreen():GetChild('MusicWheel');
-		scroller:set_info_set(groups, 1);
-		scroller:scroll_by_amount(selection-1)
 	end;
-
-	SongChosenMessageCommand=function(self)
-		isPickingDifficulty = true;
-	end;
-	TwoPartConfirmCanceledMessageCommand=cmd(sleep,.1;queuecommand,"PickingSong");
-	SongUnchosenMessageCommand=cmd(sleep,.1;queuecommand,"PickingSong");
-	
-	PickingSongCommand=function(self)
-		isPickingDifficulty = false;
-	end;
-	
-	CodeMessageCommand=function(self,param)
-		local codeName = param.Name		-- code name, matches the one in metrics
-		--player is not needed
-		--local pn = param.PlayerNumber	-- which player entered the code
-		if codeName == "GroupSelect1" or codeName == "GroupSelect2" then
-			if isPickingDifficulty then return end; --Don't want to open the group select if they're picking the difficulty.
-			MESSAGEMAN:Broadcast("StartSelectingGroup");
-			--SCREENMAN:SystemMessage("Group select opened.");
-			--No need to check if both players are present... Probably.
-			SCREENMAN:set_input_redirected(PLAYER_1, true);
-			SCREENMAN:set_input_redirected(PLAYER_2, true);
-			musicwheel:Move(0);
+	PreviousGroupMessageCommand=function(self,params)
+		if selection == 1 then
+			selection = #groups;
 		else
-			--Debugging only
-			--SCREENMAN:SystemMessage(codeName);
+			selection = selection - 1 ;
 		end;
+		setenv("cur_group",groups[selection]);
+		MESSAGEMAN:Broadcast("GroupChange");
 	end;
+	
+	
+	--Moved to GENRE SOUNDS actor.
+	--[[StartSelectingSongMessageCommand=function(self,params)
+
+	end;]]
 	
 	StartSelectingGroupMessageCommand=function(self,params)
-		local curItem = scroller:get_actor_item_at_focus_pos();
-		--SCREENMAN:SystemMessage(ListActorChildren(curItem.container));
-		curItem.container:GetChild("banner"):stoptweening():scaletofit(-500,-200,500,200);
-		self:stoptweening():linear(.5):diffusealpha(1);
 		SOUND:DimMusic(0.3,65536);
 		MESSAGEMAN:Broadcast("GroupChange");
 	end;
-
-	StartSelectingSongMessageCommand=function(self)
-		self:linear(.3):diffusealpha(0);
-		scroller:get_actor_item_at_focus_pos().container:GetChild("banner"):linear(.3):zoom(0);
-	end;
-}
+};
 
 -- GENRE SOUNDS
 t[#t+1] = LoadActor(THEME:GetPathS("","nosound.ogg"))..{
@@ -285,7 +206,99 @@ t[#t+1] = Def.Quad{
 	StartSelectingSongMessageCommand=cmd(stoptweening;diffusealpha,1;linear,0.3;diffusealpha,0);
 };
 
-t[#t+1] = scroller:create_actors("foo", numWheelItems, item_mt, SCREEN_CENTER_X, SCREEN_CENTER_Y);
+
+--CENTER BANNER
+--[[
+for k = 1, #groups do
+	
+	if FILEMAN:DoesFileExist("/Songs/"..groups[k].."/banner.png") then
+		banner = "/Songs/"..groups[k].."/banner.png";
+	else
+		banner = THEME:GetPathG("","_NoBanner");
+	end;
+	
+	Banners[#Banners+1] =
+		LoadActor( banner )..{
+		InitCommand=cmd(stoptweening;linear,0.3;zoom,0;diffusealpha,0;scaletoclipped,500,375);
+	};
+	
+end;
+--]]
+
+local Banners = {};
+for k = 1, #groups do
+	
+	banner = "/"..SONGMAN:GetSongGroupBannerPath(groups[k]);
+	
+	if FILEMAN:DoesFileExist(banner) == false then
+		banner = THEME:GetPathG("common fallback","group");
+	end;
+	
+	Banners[#Banners+1] = Def.ActorFrame{
+		--[[Def.Quad{
+			InitCommand=cmd(setsize,300,300)
+		};]]
+		LoadActor( banner )..{
+			InitCommand=cmd(scaletofit,-500,-150,500,150;);
+		};
+	};
+	
+end;
+
+
+
+t[#t+1] =
+	Def.ActorScroller {
+		Name="GroupsBannersScroller";
+		NumItemsToDraw=1;
+		SecondsPerItem=0.1;
+		InitCommand = function(self)
+			self:Center();
+			self:diffusealpha(0);
+			self:SetLoop(true);
+			for i=1,#groups do
+				if GAMESTATE:GetCurrentSong():GetGroupName() == names[i] or GAMESTATE:GetPreferredSongGroup() == names[i] then 
+					selection = i; 
+				end
+			end;
+			self:SetCurrentAndDestinationItem(selection-1);
+			self:zoom(0);
+		end;
+		
+		StartSelectingGroupMessageCommand=cmd(stoptweening;linear,0.35;zoom,1;diffusealpha,1);
+		StartSelectingSongMessageCommand=cmd(stoptweening;linear,0.3;zoom,0;diffusealpha,0);
+		
+		PreviousGroupMessageCommand=function(self,params)
+		(cmd(stoptweening;zoom,1;decelerate,.05;zoom,1.03;linear,.3;zoom,1))(self);
+			if self:GetDestinationItem() == 0 then
+				self:SetCurrentAndDestinationItem(self:GetNumChildren()-1)
+			else
+				self:SetCurrentAndDestinationItem(self:GetCurrentItem()-1)
+			end
+		end;
+		
+		NextGroupMessageCommand=function(self,params)
+			(cmd(stoptweening;zoom,1;decelerate,.05;zoom,1.03;linear,.3;zoom,1))(self);
+			if self:GetDestinationItem() == self:GetNumChildren()-1 then
+				self:SetCurrentAndDestinationItem(0)
+			else
+				self:SetCurrentAndDestinationItem(self:GetCurrentItem()+1)
+			end
+		end;
+		
+		OffCommand=function(self)
+			selection = self:GetCurrentItem();
+		end;
+		
+		TransformFunction = function (self,offsetFromCenter,itemIndex,numItems)
+			local x = offsetFromCenter * 310;
+			local ry = clamp( offsetFromCenter, 0,0) * 90;
+			self:x( x );
+			self:z((-clamp(math.abs(offsetFromCenter),0,0)*280)-math.abs(offsetFromCenter));
+			self:rotationy( ry );
+		end;
+		children = Banners;
+	};
 
 	--Current Group/Playlist
 t[#t+1] = LoadActor("current_group")..{

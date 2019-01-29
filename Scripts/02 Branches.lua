@@ -121,7 +121,6 @@ Branch = {
 	AfterProfileSave = function()
 		-- Might be a little too broken? -- Midiman
 		if GAMESTATE:IsEventMode() then
-			ResetLife();
 			return SelectMusicOrCourse()
 		elseif STATSMAN:GetCurStageStats():AllFailed() or GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() <= 0 then
 			return "ScreenGameOver"
