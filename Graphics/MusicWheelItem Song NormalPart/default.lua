@@ -11,20 +11,23 @@ return Def.ActorFrame{
 		InitCommand=cmd(addy,(scah/2)+8;rotationx,180;diffusealpha,0.5;croptop,ctop;fadetop,ftop);
 	};
 
-	Def.Banner{		--Normal song banner item
+	Def.Sprite{		--Normal song banner item
 		Name="SongBanner";
 		InitCommand=cmd(scaletoclipped,scaw,scah);
 		SetMessageCommand=function(self,param)
 			local song = param.Song
 			if song then
-				path = song:GetJacketPath();
-				--self:scaletoclipped(180,180);
-				if not path then
+				local path = song:GetJacketPath();
+				if path then
+					self:LoadFromCached("Jacket",path);
+				else
 					path = song:GetBannerPath();
-					--self:scaletoclipped(250,177);
+					if path then
+						self:LoadFromCached("Banner",path);
+					else
+						self:Load(THEME:GetPathG("Common","fallback banner"))
+					end;
 				end;
-				if not path then path = THEME:GetPathG("Common","fallback banner") end
-				self:Load(path);
 			else
 				self:Load(THEME:GetPathG("Common fallback","banner")) --// load the fallback banner if we panic
 			end;

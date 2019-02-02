@@ -32,9 +32,9 @@ return Def.ActorFrame{
 		Def.Sprite{
 			--Name = "BGAPreview";
 			InitCommand=cmd(x,_screen.cx;y,_screen.cy-30);
-			CurrentSongChangedMessageCommand=cmd(stoptweening;queuecommand,"PlayVid");
-			PlayVidCommand=function(self)
-				self:Load(nil);
+			CurrentSongChangedMessageCommand=cmd(stoptweening;Load,nil;sleep,.1;queuecommand,"PlayVid2");
+			PlayVid2Command=function(self)
+				--self:Load(nil);
 				local song = GAMESTATE:GetCurrentSong()
 				path = GetBGAPreviewPath("PREVIEWVID");
 				--path = song:GetBannerPath();
