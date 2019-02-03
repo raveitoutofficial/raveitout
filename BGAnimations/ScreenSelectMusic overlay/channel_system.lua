@@ -1,3 +1,5 @@
+local musicwheel; --Need a handle on the MusicWheel to work around a StepMania bug. Also needed to get the folders.
+
 --==========================
 --Item Scroller. Must be defined at the top to have 'scroller' var accessible to the rest of the lua.
 --==========================
@@ -132,6 +134,7 @@ setenv("cur_group",groups[selection]);
 --=======================================================
 --Input handler. Brought to you by PIU Delta NEX Rebirth.
 --=======================================================
+local button_history = {"none", "none", "none", "none"};
 local function inputs(event)
 	
 	local pn= event.PlayerNumber
@@ -168,6 +171,9 @@ local function inputs(event)
 		scroller:scroll_by_amount(1);
 		setenv("cur_group",groups[selection]);
 		MESSAGEMAN:Broadcast("GroupChange");
+	--elseif button == "UpLeft" or button == "UpRight" then
+		--SCREENMAN:AddNewScreenToTop("ScreenSelectSort");
+	
 	elseif button == "Back" then
 		SCREENMAN:set_input_redirected(PLAYER_1, false);
 		SCREENMAN:set_input_redirected(PLAYER_2, false);
@@ -180,13 +186,27 @@ local function inputs(event)
 		--local curItem = scroller:get_actor_item_at_focus_pos();
 		--SCREENMAN:SystemMessage(ListActorChildren(curItem.container));
 	else
-		--SCREENMAN:SystemMessage(button);
+		button_history[1] = button_history[2]
+		button_history[2] = button_history[3]
+		button_history[3] = button_history[4]
+		button_history[4] = button
+		if button_history[1] == "UpLeft" and button_history[2] == "UpRight" and button_history[3] == "UpLeft" and button_history[4] == "UpRight" then
+			SCREENMAN:AddNewScreenToTop("ScreenSelectSort");
+		end;
+		--SCREENMAN:SystemMessage(strArrayToString(button_history));
+		--musicwheel:SetOpenSection("");
+		--SCREENMAN:SystemMessage(musicwheel:GetNumItems());
+		--[[local wheelFolders = {};
+		for i = 1,7,1 do
+			wheelFolders[#wheelFolders+1] = musicwheel:GetWheelItem(i):GetText();
+		end;
+		SCREENMAN:SystemMessage(strArrayToString(wheelFolders));]]
+		--SCREENMAN:SystemMessage(musicwheel:GetWheelItem(0):GetText());
 	end;
 	
 end;
 
 local isPickingDifficulty = false;
-local musicwheel; --Need a handle on the MusicWheel to work around a StepMania bug
 local t = Def.ActorFrame{
 	
 	InitCommand=cmd(diffusealpha,0);

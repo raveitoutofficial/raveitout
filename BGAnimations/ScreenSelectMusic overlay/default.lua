@@ -91,6 +91,36 @@ t[#t+1] = Def.ActorFrame {
 			self:diffusealpha(0);
 			self:queuecommand("Set");
 		end;
+		
+		TwoPartConfirmCanceledMessageCommand=cmd(playcommand,"PickingSong");
+		SongUnchosenMessageCommand=cmd(playcommand,"PickingSong");
+		PickingSongCommand=cmd(stoptweening;linear,.2;diffusealpha,1;sleep,2;linear,.2;diffusealpha,0;queuecommand,"Set");
+		SongChosenMessageCommand=cmd(stoptweening;linear,.2;diffusealpha,0);
+	};
+	
+	Def.Sprite{
+		Texture=THEME:GetPathB("ScreenSelectMusic","overlay/help_info/difficulty_messages 1x4.png");
+		InitCommand=cmd(x,_screen.cx;y,SCREEN_BOTTOM-50;zoom,.6;animate,false;setstate,0;diffusealpha,0);
+		SetCommand=function(self)
+			--I know hard coding stuff is bad, but there will only ever be 4 states...
+			--And also, hide the command window info if we're in Easy mode.
+			if self:GetState()+1 >= 4 or (getenv("PlayMode") == "Easy" and self:GetState() == 2) then
+				self:setstate(0);
+			else
+				self:setstate(self:GetState()+1);
+			end;
+			self:linear(0.2);
+			self:diffusealpha(1);
+			self:sleep(2);
+			self:linear(0.2)
+			self:diffusealpha(0);
+			self:queuecommand("Set");
+		end;
+		TwoPartConfirmCanceledMessageCommand=cmd(playcommand,"PickingSong");
+		SongUnchosenMessageCommand=cmd(playcommand,"PickingSong");
+		PickingSongCommand=cmd(stoptweening;linear,.2;diffusealpha,0);
+		SongChosenMessageCommand=cmd(stoptweening;linear,.2;diffusealpha,1;sleep,2;linear,.2;diffusealpha,0;queuecommand,"Set");
+	
 	};
 	
 	--TIME
@@ -545,11 +575,6 @@ t[#t+1] = Def.ActorFrame{
 	};]]
 };
 
-for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
-	t[#t+1] = LoadActor("DifficultySelectObjects", pn, infx, infy);
-end;
---t[#t+1] = LoadActor("DifficultySelectObjects", PLAYER_1, infx, infy);
-
 t[#t+1] = Def.ActorFrame{			
 	LoadActor("tab-step")..{		--This is my big surprise secret remodel lmfao -Gio
 			InitCommand=cmd(zoom,0.35;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y-125;diffusealpha,0);
@@ -568,124 +593,135 @@ t[#t+1] = Def.ActorFrame{
 	};
 }
 
---Difficulty List Orbs Shadows
-for i=1,12 do
-	t[#t+1] = LoadActor("DifficultyList/background_orb") .. {
-		InitCommand=cmd(diffusealpha,0.5;zoom,0.7;x,_screen.cx-245+i*35;y,_screen.cy+107;horizalign,left);
+for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+	t[#t+1] = LoadActor("DifficultySelectObjects", pn, infx, infy);
+end;
+
+if getenv("PlayMode") == "Easy" then
+	t[#t+1] = LoadActor("EasyDifficultyList")..{
+		InitCommand=cmd(Center;addy,107;zoom,.4);
+	};
+else
+
+	--Difficulty List Orbs Shadows
+	for i=1,12 do
+		t[#t+1] = LoadActor("DifficultyList/background_orb") .. {
+			InitCommand=cmd(diffusealpha,0.5;zoom,0.7;x,_screen.cx-245+i*35;y,_screen.cy+107;horizalign,left);
+		};
+	end;
+	--Difficulty List Orbs
+	t[#t+1] = Def.ActorFrame{			
+		LoadActor("DifficultyList")..{
+			OnCommand=cmd(finishtweening;sleep,0.1;playcommand,"Update");
+			UpdateCommand=function(self)
+				local song = GAMESTATE:GetCurrentSong();
+				if song then
+					self:stoptweening();
+					self:rotationz(270);
+					self:linear(0.1);
+					self:x(_screen.cx-187);
+					self:y(_screen.cy+105);
+					self:zoom(0.7);
+				end;
+			end;
+			TwoPartConfirmCanceledMessageCommand=cmd(finishtweening;playcommand,"SongUnchosenMessage");
+			SongUnchosenMessageCommand=cmd(stoptweening;decelerate,0.1;playcommand,"Update");
+			PlayerJoinedMessageCommand=cmd(finishtweening;playcommand,"Update");
+			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Update");
+			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Update");
+			CurrentSongChangedMessageCommand=cmd(finishtweening;playcommand,"Update");
+
+		};
+	}
+
+	t[#t+1] = Def.ActorFrame{		--OpList
+			CodeMessageCommand = function(self, params)
+				if params.Name == 'OptionList' then
+					SCREENMAN:GetTopScreen():OpenOptionsList(params.PlayerNumber)
+				end;
+			end;
+		Def.ActorFrame{		--PLAYER 1 OpList
+			Def.Quad{			--Fondo difuminado
+				InitCommand=cmd(draworder,998;diffuse,0,0,0,0.75;xy,SCREEN_LEFT-olwid,_screen.cy;zoomto,olwid,olhei;horizalign,left
+								fadetop,oltfad;fadebottom,olbfad);
+				OptionsListOpenedMessageCommand=function(self,params)
+					if params.Player == PLAYER_1 then
+						setenv("currentplayer",PLAYER_1);
+						self:decelerate(olania);
+						self:x(SCREEN_LEFT);
+					end
+				end;
+				OptionsListClosedMessageCommand=function(self,params)
+					if params.Player == PLAYER_1 then
+			--			setenv("currentplayer",PLAYER_1);	--I think setting it again isn't necessary -NIKK
+						self:stoptweening();
+						self:accelerate(olanib);
+						self:x(SCREEN_LEFT-olwid);
+					end;
+				end;
+			};
+			LoadFont("bebas/_bebas neue bold 90px")..{	--Texto "OPTION LIST"
+				Text="OPTION LIST";
+				InitCommand=cmd(draworder,999;x,SCREEN_LEFT-olwid;y,_screen.cy-(olhei/2.25)+20;zoom,0.35;);
+				OptionsListOpenedMessageCommand=function(self,params)
+					if params.Player == PLAYER_1 then
+						setenv("currentplayer",PLAYER_1);
+						self:decelerate(olania);
+						self:x(SCREEN_LEFT+(olwid/2));
+					end;
+				end;
+				OptionsListClosedMessageCommand=function(self,params)
+					if params.Player == PLAYER_1 then
+			--			setenv("currentplayer",PLAYER_1);	--I think setting it again isn't necessary -NIKK
+						self:stoptweening();
+						self:accelerate(olanib);
+						self:x(SCREEN_LEFT-(olwid/2));
+					end
+				end;
+			};
+		};
+		Def.ActorFrame{		--PLAYER 2 OpList
+			Def.Quad{			--Fondo difuminado
+				InitCommand=cmd(draworder,998;diffuse,0,0,0,0.75;xy,SCREEN_RIGHT+olwid,_screen.cy;zoomto,olwid,olhei;horizalign,right
+								fadetop,oltfad;fadebottom,olbfad);
+				OptionsListOpenedMessageCommand=function(self,params)
+					if params.Player == PLAYER_2 then
+						setenv("currentplayer",PLAYER_2);
+						self:decelerate(olania);
+						self:x(SCREEN_RIGHT);
+					end;
+				end;
+				OptionsListClosedMessageCommand=function(self,params)
+					if params.Player == PLAYER_2 then
+			--			setenv("currentplayer",PLAYER_2);	--I think setting it again isn't necessary -NIKK
+						self:stoptweening();
+						self:accelerate(olanib);
+						self:x(SCREEN_RIGHT+olwid);
+					end;
+				end;
+			};
+			LoadFont("bebas/_bebas neue bold 90px")..{	--Texto "OPTION LIST"
+				Text="OPTION LIST";
+				InitCommand=cmd(draworder,999;x,SCREEN_RIGHT+olwid;y,_screen.cy-(olhei/2.25)+20;zoom,0.35;);
+				OptionsListOpenedMessageCommand=function(self,params)
+					if params.Player == PLAYER_2 then
+						setenv("currentplayer",PLAYER_2);
+						self:decelerate(olania);
+						self:x(SCREEN_RIGHT-(olwid/2));
+					end;
+				end;
+				OptionsListClosedMessageCommand=function(self,params)
+					if params.Player == PLAYER_2 then
+			--			setenv("currentplayer",PLAYER_2);	--I think setting it again isn't necessary -NIKK
+						self:stoptweening();
+						self:accelerate(olanib);
+						self:x(SCREEN_RIGHT+(olwid/2));
+					end;
+				end;
+			};
+		};
 	};
 end;
---Difficulty List Orbs
-t[#t+1] = Def.ActorFrame{			
-	LoadActor("DifficultyList")..{
-		OnCommand=cmd(finishtweening;sleep,0.1;playcommand,"Update");
-		UpdateCommand=function(self)
-			local song = GAMESTATE:GetCurrentSong();
-			if song then
-				self:stoptweening();
-				self:rotationz(270);
-				self:linear(0.1);
-				self:x(_screen.cx-187);
-				self:y(_screen.cy+105);
-				self:zoom(0.7);
-			end;
-		end;
-		TwoPartConfirmCanceledMessageCommand=cmd(finishtweening;playcommand,"SongUnchosenMessage");
-		SongUnchosenMessageCommand=cmd(stoptweening;decelerate,0.1;playcommand,"Update");
-		PlayerJoinedMessageCommand=cmd(finishtweening;playcommand,"Update");
-		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Update");
-		CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Update");
-		CurrentSongChangedMessageCommand=cmd(finishtweening;playcommand,"Update");
-
-	};
-}
-
-t[#t+1] = Def.ActorFrame{		--OpList
-		CodeMessageCommand = function(self, params)
-			if params.Name == 'OptionList' then
-				SCREENMAN:GetTopScreen():OpenOptionsList(params.PlayerNumber)
-			end;
-		end;
-	Def.ActorFrame{		--PLAYER 1 OpList
-		Def.Quad{			--Fondo difuminado
-			InitCommand=cmd(draworder,998;diffuse,0,0,0,0.75;xy,SCREEN_LEFT-olwid,_screen.cy;zoomto,olwid,olhei;horizalign,left
-							fadetop,oltfad;fadebottom,olbfad);
-			OptionsListOpenedMessageCommand=function(self,params)
-				if params.Player == PLAYER_1 then
-					setenv("currentplayer",PLAYER_1);
-					self:decelerate(olania);
-					self:x(SCREEN_LEFT);
-				end
-			end;
-			OptionsListClosedMessageCommand=function(self,params)
-				if params.Player == PLAYER_1 then
-		--			setenv("currentplayer",PLAYER_1);	--I think setting it again isn't necessary -NIKK
-					self:stoptweening();
-					self:accelerate(olanib);
-					self:x(SCREEN_LEFT-olwid);
-				end;
-			end;
-		};
-		LoadFont("bebas/_bebas neue bold 90px")..{	--Texto "OPTION LIST"
-			Text="OPTION LIST";
-			InitCommand=cmd(draworder,999;x,SCREEN_LEFT-olwid;y,_screen.cy-(olhei/2.25)+20;zoom,0.35;);
-			OptionsListOpenedMessageCommand=function(self,params)
-				if params.Player == PLAYER_1 then
-					setenv("currentplayer",PLAYER_1);
-					self:decelerate(olania);
-					self:x(SCREEN_LEFT+(olwid/2));
-				end;
-			end;
-			OptionsListClosedMessageCommand=function(self,params)
-				if params.Player == PLAYER_1 then
-		--			setenv("currentplayer",PLAYER_1);	--I think setting it again isn't necessary -NIKK
-					self:stoptweening();
-					self:accelerate(olanib);
-					self:x(SCREEN_LEFT-(olwid/2));
-				end
-			end;
-		};
-	};
-	Def.ActorFrame{		--PLAYER 2 OpList
-		Def.Quad{			--Fondo difuminado
-			InitCommand=cmd(draworder,998;diffuse,0,0,0,0.75;xy,SCREEN_RIGHT+olwid,_screen.cy;zoomto,olwid,olhei;horizalign,right
-							fadetop,oltfad;fadebottom,olbfad);
-			OptionsListOpenedMessageCommand=function(self,params)
-				if params.Player == PLAYER_2 then
-					setenv("currentplayer",PLAYER_2);
-					self:decelerate(olania);
-					self:x(SCREEN_RIGHT);
-				end;
-			end;
-			OptionsListClosedMessageCommand=function(self,params)
-				if params.Player == PLAYER_2 then
-		--			setenv("currentplayer",PLAYER_2);	--I think setting it again isn't necessary -NIKK
-					self:stoptweening();
-					self:accelerate(olanib);
-					self:x(SCREEN_RIGHT+olwid);
-				end;
-			end;
-		};
-		LoadFont("bebas/_bebas neue bold 90px")..{	--Texto "OPTION LIST"
-			Text="OPTION LIST";
-			InitCommand=cmd(draworder,999;x,SCREEN_RIGHT+olwid;y,_screen.cy-(olhei/2.25)+20;zoom,0.35;);
-			OptionsListOpenedMessageCommand=function(self,params)
-				if params.Player == PLAYER_2 then
-					setenv("currentplayer",PLAYER_2);
-					self:decelerate(olania);
-					self:x(SCREEN_RIGHT-(olwid/2));
-				end;
-			end;
-			OptionsListClosedMessageCommand=function(self,params)
-				if params.Player == PLAYER_2 then
-		--			setenv("currentplayer",PLAYER_2);	--I think setting it again isn't necessary -NIKK
-					self:stoptweening();
-					self:accelerate(olanib);
-					self:x(SCREEN_RIGHT+(olwid/2));
-				end;
-			end;
-		};
-	};
-};
  
 t[#t+1] = LoadActor("code_detector.lua")..{};
 --t[#t+1] = LoadActor("PlayerMods")..{};
@@ -714,53 +750,60 @@ t[#t+1] = LoadActor("ready")..{		-- 1 PLAYER JOINED READY
 			StepsUnchosenMessageCommand=cmd(visible,false);
 			SongUnchosenMessageCommand=cmd(visible,false);
 		};
-		
-t[#t+1] = Def.ActorFrame{
 
-	--PLAYER 1
-	LoadActor("DifficultyList/background_orb")..{
-		InitCommand=cmd(visible,false;horizalign,center;zoom,0.7;x,SCREEN_WIDTH/7;y,SCREEN_CENTER_Y+107);
-		OnCommand = function(self, params)
-			if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_1) then self:visible(true); end;
-		end;
-		OffCommand=function(self,param)
-			self:linear(0.3);
-			self:Load(THEME:GetPathG("","_white"));
-		end;
-	};
+--TODO: Refactor it eventually since it's a waste of code
+if getenv("PlayMode") == "Easy" then
+	if GAMESTATE:IsSideJoined(PLAYER_1) then
+		t[#t+1] = Def.ActorFrame{
+
+			InitCommand=cmd(x,SCREEN_WIDTH/4;y,SCREEN_CENTER_Y+150);
+			--PLAYER 1
+			LoadActor("DifficultyList/background_orb")..{
+				InitCommand=cmd(horizalign,center;zoom,0.7;);
+				OffCommand=function(self,param)
+					self:linear(0.3);
+					self:Load(THEME:GetPathG("","_white"));
+				end;
+			};
+			
+			LoadFont("facu/_zona pro bold 20px")..{
+				InitCommand=cmd(uppercase,true;horizalign,center;zoom,0.45;);
+				OnCommand = function(self, params)
+					self:settext("Speed:\n"..GAMESTATE:GetPlayerState(PLAYER_1):GetCurrentPlayerOptions():XMod().."x");
+				end;
+				CodeMessageCommand = function(self, params)
+					self:playcommand("On");
+				end;
+			};
+			
+		};
+	end;
+	if GAMESTATE:IsSideJoined(PLAYER_2) then
+		t[#t+1] = Def.ActorFrame{
+		
+			InitCommand=cmd(x,SCREEN_WIDTH*.75;y,SCREEN_CENTER_Y+150);
+			--PLAYER 2
+			LoadActor("DifficultyList/background_orb")..{
+				InitCommand=cmd(horizalign,center;zoom,0.7;);
+				OffCommand=function(self,param)
+					self:linear(0.3);
+					self:Load(THEME:GetPathG("","_white"));
+				end;
+			};
+			
+			LoadFont("facu/_zona pro bold 20px")..{
+				InitCommand=cmd(uppercase,true;horizalign,center;zoom,0.45;);
+				OnCommand = function(self, params)
+					self:settext("Speed:\n"..GAMESTATE:GetPlayerState(PLAYER_2):GetCurrentPlayerOptions():XMod().."x");
+				end;
+				CodeMessageCommand = function(self, params)
+					self:playcommand("On");
+				end;
+			};
+		};
+	end;
+end;
 	
-	LoadFont("facu/_zona pro bold 20px")..{
-		InitCommand=cmd(uppercase,true;visible,false;horizalign,center;zoom,0.45;x,SCREEN_WIDTH/7;y,SCREEN_CENTER_Y+107);
-		OnCommand = function(self, params)
-			if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_1) then self:settext("Speed:\n"..GAMESTATE:GetPlayerState(PLAYER_1):GetCurrentPlayerOptions():XMod().."x"); self:visible(true); end;
-		end;
-		CodeMessageCommand = function(self, params)
-			if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_1) then self:settext("Speed:\n"..GAMESTATE:GetPlayerState(PLAYER_1):GetCurrentPlayerOptions():XMod().."x"); self:visible(true); end;
-		end;
-	};
-	
-	--PLAYER 2
-	LoadActor("DifficultyList/background_orb")..{
-		InitCommand=cmd(visible,false;horizalign,center;zoom,0.7;x,SCREEN_RIGHT-SCREEN_WIDTH/7;y,SCREEN_CENTER_Y+107);
-		OnCommand = function(self, params)
-			if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_2) then self:visible(true); end;
-		end;
-		OffCommand=function(self,param)
-			self:linear(0.3);
-			self:Load(THEME:GetPathG("","_white"));
-		end;
-	};
-	
-	LoadFont("facu/_zona pro bold 20px")..{
-		InitCommand=cmd(uppercase,true;visible,false;horizalign,center;zoom,0.45;x,SCREEN_RIGHT-SCREEN_WIDTH/7;y,SCREEN_CENTER_Y+107);
-		OnCommand = function(self, params)
-			if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_2) then self:settext("Speed:\n"..GAMESTATE:GetPlayerState(PLAYER_2):GetCurrentPlayerOptions():XMod().."x"); self:visible(true); end;
-		end;
-		CodeMessageCommand = function(self, params)
-			if getenv("PlayMode") == "Easy" and GAMESTATE:IsSideJoined(PLAYER_2) then self:settext("Speed:\n"..GAMESTATE:GetPlayerState(PLAYER_2):GetCurrentPlayerOptions():XMod().."x"); self:visible(true); end;
-		end;
-	};
-};
 
 --[[
 

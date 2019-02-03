@@ -149,9 +149,7 @@ activeModP2 = ActiveModifiers["P2"]["BGAMode"]
 if activeModP1 == "Black" or activeModP2 == "Black" then
 	t[#t+1] = Def.Quad{InitCommand=cmd(setsize,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color("Black");Center)};
 elseif activeModP1 == "Off" or activeModP2 == "Off" then
-	t[#t+1] = LoadActor(THEME:GetPathG("","_BGMovies/bgaoff"))..{InitCommand=cmd(zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;Center)}
-elseif activeModP1 == "Dark" or activeModP2 == "Dark" then
-	t[#t+1] = Def.Quad{InitCommand=cmd(setsize,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color("0,0,0,.3");Center)};
+	t[#t+1] = LoadActor(THEME:GetPathG("","_BGMovies/BGAOFF/"..getenv("PlayMode").."HD"))..{InitCommand=cmd(Cover;Center)}
 end;
 for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 	local negativeOffset = (pn == PLAYER_1) and -1 or 1;

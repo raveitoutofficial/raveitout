@@ -178,17 +178,15 @@ function OptionRowBGAMode() --BGAMode v2 by Rhythm Lunatic, original by Alisson 
 		--individually selectable. The order of preference is first to last, so Black Screen overrides No BGA.
 		OneChoiceForAllPlayers = false;
 		ExportOnChange = true;
-		Choices = { "Black", "No BGA", "Darkened", "BGA On"};
+		Choices = { "Black", "Generic BGA", "BGA On"};
 		LoadSelections = function(self, list, pn)
 			local bgaMode = ActiveModifiers[pname(pn)]["BGAMode"]
 			if bgaMode == "Black" then
 				list[1] = true
 			elseif bgaMode == "Off" then
 				list[2] = true
-			elseif bgaMode == "Dark" then
-				list[3] = true
 			else
-				list[4] = true
+				list[3] = true
 			end;
 		end;
 		SaveSelections = function(self, list, pn)
@@ -196,8 +194,6 @@ function OptionRowBGAMode() --BGAMode v2 by Rhythm Lunatic, original by Alisson 
 				ActiveModifiers[pname(pn)]["BGAMode"] = "Black"
 			elseif list[2] then
 				ActiveModifiers[pname(pn)]["BGAMode"] = "Off"
-			elseif list[3] then
-				ActiveModifiers[pname(pn)]["BGAMode"] = "Dark"
 			else
 				ActiveModifiers[pname(pn)]["BGAMode"] = "On";
 			end;
