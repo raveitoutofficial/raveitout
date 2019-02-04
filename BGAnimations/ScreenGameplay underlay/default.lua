@@ -148,7 +148,7 @@ activeModP1 = ActiveModifiers["P1"]["BGAMode"]
 activeModP2 = ActiveModifiers["P2"]["BGAMode"]
 if activeModP1 == "Black" or activeModP2 == "Black" then
 	t[#t+1] = Def.Quad{InitCommand=cmd(setsize,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color("Black");Center)};
-elseif activeModP1 == "Off" or activeModP2 == "Off" then
+elseif activeModP1 == "Off" or activeModP2 == "Off" or (ReadPrefFromFile("StreamSafeEnabled") == "true" and has_value(STREAM_UNSAFE_VIDEO, GAMESTATE:GetCurrentSong():GetDisplayFullTitle())) then
 	t[#t+1] = LoadActor(THEME:GetPathG("","_BGMovies/BGAOFF/"..getenv("PlayMode").."HD"))..{InitCommand=cmd(Cover;Center)}
 end;
 for pn in ivalues(GAMESTATE:GetHumanPlayers()) do

@@ -259,8 +259,8 @@ end;
 
 function OptionRowJudgmentGraphic()
 	--The true name of the graphic is stored in ActiveModifiers to make it easier to load.
-	local judgementFileNames = { "Season1", "Season2", "Montserrat"}
-	local judgementNames = {"Season 1", "Season 2", "Montserrat"}
+	local judgementFileNames = { "Season1", "Season2", "Montserrat", "None"}
+	local judgementNames = {"Season 1", "Season 2", "Montserrat", "None"}
 	local t = {
 		Name="JudgmentType",
 		LayoutType = "ShowAllInRow",

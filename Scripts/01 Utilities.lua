@@ -71,6 +71,19 @@ STEPMAKER_NAMES_BLACKLIST = {
 	"Blank",
 };
 
+
+--List of songs that will get your recording blocked worldwide
+STREAM_UNSAFE_AUDIO = {
+	"Breaking The Habit",
+	"She Wolf (Falling to Pieces)",
+	"Face My Fears"
+};
+
+--List of BGAs that will get your recording blocked worldwide
+STREAM_UNSAFE_VIDEO = {
+	"Good Feeling",
+	"I Wanna Go"
+};
 --Called from ScreenSelectPlayMode to pick a random group and the GroupWheel to show available groups
 function getAvailableGroups()
 	local groups = SONGMAN:GetSongGroupNames();
@@ -115,7 +128,15 @@ function Resize(width,height,setwidth,sethight)
     end
 end
 
+function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
 
+    return false
+end
 
 --NO IT DOESN'T FUCKING WORK GO FUCK YOURSELF
 --[[function Actor:ScaleToHeight(height)

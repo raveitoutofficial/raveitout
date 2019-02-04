@@ -47,7 +47,8 @@ function VideoMode()		--ScreenFilter (requested by Cortes)		by NeobeatIKK, based
 	setmetatable( t, t );
 	return t;
 end;
-
+--Depreciated
+--[[
 function CustomSongsPerPlay() -- by Alisson A2 (Alisson de Oliveira)
 	local t = {
 		Name = "SongsPerPlay";
@@ -98,7 +99,7 @@ function CustomSongsPerPlay() -- by Alisson A2 (Alisson de Oliveira)
 	setmetatable( t, t );
 	return t;
 end;
-
+]]
 
 --By Accelerator
 function MixtapeModeConfig()
@@ -160,6 +161,39 @@ function SpecialModeConfig()
 				WritePrefToFile("SpecialModeEnabled","true");
 			else
 				WritePrefToFile("SpecialModeEnabled","false");
+			end;
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end;
+
+function StreamSafeConfig()
+	local t = {
+		Name = "StreamSafeConfig";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		--False exports on screen exit
+		ExportOnChange = false;
+		--Get the text for the choices from language files (en.ini, es.ini, etc)
+		Choices = {"Off", "On"};
+		
+		-- Used internally, this will set the selection on the screen when it is loaded.
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("StreamSafeEnabled") == "false" then
+				list[1] = true;
+			else
+				list[2] = true;
+			end;
+		end;
+		
+		
+		SaveSelections = function(self, list, pn)
+			if list[2] then
+				WritePrefToFile("StreamSafeEnabled","true");
+			else
+				WritePrefToFile("StreamSafeEnabled","false");
 			end;
 		end;
 	};

@@ -1,4 +1,6 @@
 local shine_index = 0;
+local streamSafeMode = (ReadPrefFromFile("StreamSafeEnabled") == "true");
+
 return Def.ActorFrame{
 	
 		Def.Sprite{
@@ -49,6 +51,24 @@ return Def.ActorFrame{
 					self:diffusealpha(1);
 				end
 			end;
+		};
+		
+		Def.ActorFrame{
+			InitCommand=cmd(x,_screen.cx;y,_screen.cy-30;visible,false);
+			CurrentSongChangedMessageCommand=function(self)
+				if streamSafeMode and has_value(STREAM_UNSAFE_AUDIO, GAMESTATE:GetCurrentSong():GetDisplayFullTitle()) then
+					self:visible(true);
+				else
+					self:visible(false);
+				end;
+			end;
+			Def.Quad{
+				InitCommand=cmd(setsize,384,232;diffuse,color("0,0,0,.9"));
+			};
+			LoadFont("Common Normal")..{
+				Text=THEME:GetString("ScreenSelectMusic","StreamUnsafe");
+				InitCommand=cmd(wrapwidthpixels,380);
+			};
 		};
 	
 		LoadActor("preview_songinfo")..{
