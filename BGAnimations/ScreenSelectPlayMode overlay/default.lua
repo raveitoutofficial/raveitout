@@ -12,7 +12,6 @@ local Choices = {
 	"easy",
 	"arcade",
 	"pro",
-	-- placeholder as there's no sound yet
 	"mixtapes",
 	"special",
 };

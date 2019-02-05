@@ -41,10 +41,10 @@ function GetBGAPreviewPath(tag)
 				elseif FILEMAN:DoesFileExist("/SongPreviews/"..previewvid) then
 					return "/SongPreviews/"..previewvid
 				else
-					return "/Backgrounds/bgaoff.avi" --temporarily using this because loading RandomMovies in ScreenSelectMusic causes lag due to large file size -Gio
+					return nil
 				end;
 			else
-				return "/Backgrounds/bgaoff.avi"
+				return nil
 				--return "/RandomMovies/"..total_random_vid[math.random(#total_random_vid)] --original code for future use
 			end;
 		else

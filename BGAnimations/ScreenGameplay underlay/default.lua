@@ -149,7 +149,48 @@ activeModP2 = ActiveModifiers["P2"]["BGAMode"]
 if activeModP1 == "Black" or activeModP2 == "Black" then
 	t[#t+1] = Def.Quad{InitCommand=cmd(setsize,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color("Black");Center)};
 elseif activeModP1 == "Off" or activeModP2 == "Off" or (ReadPrefFromFile("StreamSafeEnabled") == "true" and has_value(STREAM_UNSAFE_VIDEO, GAMESTATE:GetCurrentSong():GetDisplayFullTitle())) then
-	t[#t+1] = LoadActor(THEME:GetPathG("","_BGMovies/BGAOFF/"..getenv("PlayMode").."HD"))..{InitCommand=cmd(Cover;Center)}
+	local BGAOffcolors = {
+		["Mixtape"] = "#C771F3",
+		["Special"] = "#F3CE71",
+		["Pro"] = "#F3718D",
+		["Easy"] = "#86f482",
+		["Arcade"] = "#717ff3"
+	}
+	t[#t+1] = LoadActor(THEME:GetPathG("","_BGMovies/BGAOFF"))..{
+		InitCommand=cmd(Cover;Center;)
+	}
+	--Color BGA
+	t[#t+1] = Def.Quad{
+			InitCommand=cmd(setsize,SCREEN_WIDTH,SCREEN_HEIGHT;vertalign,top;horizalign,left;diffuse,color(BGAOffcolors[getenv("PlayMode")]);blend,"BlendMode_WeightedMultiply")
+	};
+	--Left side
+	t[#t+1] = LoadActor("scrollingText")..{
+		InitCommand=cmd(customtexturerect,0,0,2,1;zoomto,463*2,100;texcoordvelocity,.25,0;vertalign,top;horizalign,right;addx,-10;rotationz,-90;diffuse,color(BGAOffcolors[getenv("PlayMode")]);diffusealpha,.8;);
+	};
+	t[#t+1] = LoadActor("BGAOFF_"..getenv("PlayMode").."Text")..{
+		InitCommand=cmd(customtexturerect,0,0,2,1;zoomto,400*2,27;texcoordvelocity,.2,0;vertalign,top;horizalign,right;addx,90;rotationz,-90;diffuse,color(BGAOffcolors[getenv("PlayMode")]);diffusealpha,.8;);
+	
+	}
+	t[#t+1] = Def.Quad{
+		InitCommand=cmd(setsize,15,SCREEN_HEIGHT;vertalign,top;horizalign,left;addx,90+27;diffuse,color(BGAOffcolors[getenv("PlayMode")]);faderight,1;diffusealpha,.8);
+	};
+	--Right side
+	t[#t+1] = LoadActor("scrollingText")..{
+		InitCommand=cmd(customtexturerect,0,0,2,1;zoomto,463*2,100;texcoordvelocity,.25,0;vertalign,top;horizalign,left;x,SCREEN_RIGHT+10;rotationz,90;diffuse,color(BGAOffcolors[getenv("PlayMode")]);diffusealpha,.8;);
+	};
+	t[#t+1] = LoadActor("BGAOFF_"..getenv("PlayMode").."Text")..{
+		InitCommand=cmd(customtexturerect,0,0,2,1;zoomto,400*2,27;texcoordvelocity,.2,0;vertalign,top;horizalign,left;x,SCREEN_RIGHT-90;rotationz,90;diffuse,color(BGAOffcolors[getenv("PlayMode")]);diffusealpha,.8;);
+	
+	}
+	t[#t+1] = Def.Quad{
+		InitCommand=cmd(setsize,15,SCREEN_HEIGHT;vertalign,top;horizalign,right;x,SCREEN_RIGHT-90-27;diffuse,color(BGAOffcolors[getenv("PlayMode")]);fadeleft,1;diffusealpha,.8);
+	};
+	--color mixing test
+	--[[for i = 1, 10 do
+		t[#t+1] = Def.Quad{
+			InitCommand=cmd(setsize,SCREEN_WIDTH/10,SCREEN_HEIGHT;vertalign,top;horizalign,left;x,SCREEN_WIDTH/10*i-SCREEN_WIDTH/10;diffuse,color(BGAOffcolors[getenv("PlayMode")]);blend,BlendMode:Reverse()[i])
+		};
+	end;]]
 end;
 for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 	local negativeOffset = (pn == PLAYER_1) and -1 or 1;
