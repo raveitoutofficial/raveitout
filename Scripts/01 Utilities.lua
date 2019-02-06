@@ -88,7 +88,7 @@ STREAM_UNSAFE_VIDEO = {
 function getAvailableGroups()
 	local groups = SONGMAN:GetSongGroupNames();
 
-	if not DevMode() then
+	if not DoDebug then
 		--Remove easy and special folder from the group select
 		for k,v in pairs(groups) do
 			if v == RIO_FOLDER_NAMES["EasyFolder"] then

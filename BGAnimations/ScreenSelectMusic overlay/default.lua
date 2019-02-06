@@ -174,7 +174,7 @@ t[#t+1] = Def.ActorFrame{
 			local stageNum=GAMESTATE:GetCurrentStageIndex()
 			if stageNum < 10 then stg = "0"..stageNum+1 else stg = stageNum+1 end;
 			
-			if DevMode() then curstage = "DevMode - Stage: "..stg
+			if DoDebug then curstage = "DevMode - Stage: "..stg
 			elseif GAMESTATE:IsEventMode() then curstage = "Event Mode - "..stageNum.."th Stage"
 			elseif 		stage == "Stage_1st"		then curstage = "1st Stage"
 			elseif	stage == "Stage_2nd"		then curstage = "2nd Stage"

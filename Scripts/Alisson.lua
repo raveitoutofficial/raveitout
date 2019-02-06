@@ -97,12 +97,6 @@ function EasyOrArcade()
 end;
 
 
-function DevMode()
-return THEME:GetMetric("CustomRIO","DevMode")
-end;
-
-
-
 function ResetPreferences()
 	PREFSMAN:SetPreference("AllowW1",'AllowW1_Never');
 	WriteGamePrefToFile("DefaultFail","Off");

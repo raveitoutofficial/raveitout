@@ -98,21 +98,7 @@ function Setup()
 	--GAMESTATE:SaveLocalData();	--nope
 	
 	--Init PIU_HEARTS_SYSTEM
-	HeartsPerPlay = tonumber(ReadPrefFromFile("HeartsPerPlay"))
-	if not HeartsPerPlay then
-		--SCREENMAN:SystemMessage("HeartsPerPlay initialized.");
-		HeartsPerPlay = 6;
-		WritePrefToFile("HeartsPerPlay",6);
-	end;
-	PREFSMAN:SetPreference("SongsPerPlay",math.ceil(HeartsPerPlay/2));
-	NumHeartsLeft = {
-		PlayerNumber_P1 = HeartsPerPlay,
-		PlayerNumber_P2 = HeartsPerPlay
-	};
-	BonusHeartsAdded = {
-		PlayerNumber_P1 = 0,
-		PlayerNumber_P2 = 0
-	};
+	Reset_PIU_Hearts();
 	
 	--Reset PlayerOptions
 	ActiveModifiers = {

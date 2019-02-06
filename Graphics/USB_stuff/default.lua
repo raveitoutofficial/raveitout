@@ -1,3 +1,7 @@
+
+--If player got a bonus heart, show a message to congratulate them.
+local showP1BonusMessage, showP2BonusMessage = ...
+
 local function PlayerLevel(player)
 	--return LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
 	return LoadFont("common normal")..{
@@ -22,7 +26,7 @@ local function PlayerLevel(player)
 			end
 			--end
 			
-			if DevMode() then
+			if DoDebug then
 				self:settext(" ∞");
 			else
 				--self:settext("Lv."..getenv("level_"..currentplayer).." / Life: "..string.format("%02i",GAMESTATE:GetNumStagesLeft(player)));
@@ -263,6 +267,20 @@ else
 			Text="x"..NumHeartsLeft[PLAYER_2];
 			InitCommand=cmd(zoom,.5;horizalign,left;addx,7);
 		};
+	};
+end;
+
+--Yeah yeah I'll move it later
+if showP1BonusMessage then
+	t[#t+1] = LoadFont("Common Normal")..{
+		Text=THEME:GetString("ScreenEvaluation", "AchievedBonusHeart");
+		InitCommand=cmd(xy,heartXPos,SCREEN_BOTTOM-27;zoom,.5);
+	};
+end;
+if showP2BonusMessage then
+	t[#t+1] = LoadFont("Common Normal")..{
+		Text=THEME:GetString("ScreenEvaluation", "AchievedBonusHeart");
+		InitCommand=cmd(xy,(SCREEN_RIGHT-heartXPos),SCREEN_BOTTOM-27;zoom,.5);
 	};
 end;
 

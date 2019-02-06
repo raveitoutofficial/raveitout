@@ -11,22 +11,6 @@ t[#t+1] = LoadActor("Music (loop)")..{						--The original coder made the music 
 		PlaySoundCommand=cmd(play);
 		OffCommand=cmd(stop)
 	};
-	--BACKGROUND
-	t[#t+1] = LoadActor(THEME:GetPathG("","_BGMovies/dancegrade"))..{
-		InitCommand=cmd(diffusealpha,0;x,5;zoomx,1.02;zoomy,0.998;Center;linear,1;diffusealpha,1;);
-	};
-
-	t[#t+1] = Def.Sprite {
-		OnCommand=cmd(stoptweening;playcommand,"Banner";);
-		BannerCommand=function(self)
-			if GAMESTATE:IsCourseMode() then
-				self:Load(GAMESTATE:GetCurrentCourse():GetBannerPath());
-			else
-				self:Load(GAMESTATE:GetCurrentSong():GetBannerPath());
-			end;
-			(cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffusealpha,0;sleep,1;linear,2;diffusealpha,0.1)) (self)
-		end;
-	};
 --songinfo
 local cursong =		GAMESTATE:GetCurrentSong()
 local song =		cursong:GetDisplayMainTitle()
@@ -131,13 +115,16 @@ t[#t+1] = Def.ActorFrame{
 
 if not GAMESTATE:IsEventMode() then
 	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
-		NumHeartsLeft[pn] = NumHeartsLeft[pn]-GetNumHeartsForSong()
+		RemoveHearts(pn, GetNumHeartsForSong());
+		if PREFSMAN:GetPreference("AllowExtraStage") and PlayerAchievedBonusHeart(pn) and GetNumHeartsForSong() >= 2 then
+			GiveBonusHeart(pn)
+		end;
 		if GAMESTATE:GetNumStagesLeft(pn) <= 0 and NumHeartsLeft[pn] > 0 then
 			GAMESTATE:AddStageToPlayer(pn) --Hack to make sure SM5 doesn't think there are no stages left
 		end;
 	end;
 end;
 
-t[#t+1] = LoadActor(THEME:GetPathG("","USB_stuff"))..{};
+t[#t+1] = LoadActor(THEME:GetPathG("","USB_stuff"), PlayerAchievedBonusHeart(PLAYER_1), PlayerAchievedBonusHeart(PLAYER_2))..{};
 
 return t;

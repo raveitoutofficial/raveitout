@@ -4,7 +4,7 @@ local ani =		FadeOutTween	--animation time
 
 return Def.Quad{
 	OnCommand=function(self)
-		if GAMESTATE:IsEventMode() or DevMode() then ResetLife(); end;
+		if GAMESTATE:IsEventMode() or DoDebug then ResetLife(); end;
 	end;
 };]]
 return Def.ActorFrame{};

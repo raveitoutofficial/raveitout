@@ -131,14 +131,18 @@ local t = Def.ActorFrame{
 		Text="Special Group: ";
 		InitCommand=cmd(xy,20,350;horizalign,left);
 		OnCommand=function(self)
-			if SONGMAN:DoesSongGroupExist(RIO_FOLDER_NAMES["SpecialFolder"]) == false then
-				self:settext(self:GetText().." Missing!");
-				self:diffuse(Color("Red"));
+			if ReadPrefFromFile("SpecialModeEnabled") == "true" then
+				if SONGMAN:DoesSongGroupExist(RIO_FOLDER_NAMES["SpecialFolder"]) == false then
+					self:settext(self:GetText().." Missing!");
+					self:diffuse(Color("Red"));
+				else
+					self:settext(self:GetText().." Ok! | "..#SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["SpecialFolder"]).." songs");
+					self:diffuse(Color("Green"));
+				end;
+				self:settext(self:GetText().." | "..RIO_FOLDER_NAMES["SpecialFolder"])
 			else
-				self:settext(self:GetText().." Ok! | "..#SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["SpecialFolder"]).." songs");
-				self:diffuse(Color("Green"));
+				self:settext(self:GetText().." Special mode is disabled.");
 			end;
-			self:settext(self:GetText().." | "..RIO_FOLDER_NAMES["SpecialFolder"])
 		end;
 	};
 	--[[LoadFont("Common Normal")..{

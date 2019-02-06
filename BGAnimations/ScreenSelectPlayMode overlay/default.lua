@@ -7,37 +7,16 @@ else
 	default_width = SCREEN_WIDTH
 end;
 
+--SCREENMAN:SystemMessage(tostring(#getPlayModeChoices():split(",")).." "..getPlayModeChoices())
 -- Game Mode Choices
-local Choices = {
-	"easy",
-	"arcade",
-	"pro",
-	"mixtapes",
-	"special",
-};
-
-
---Sorry about this
-local ChoiceText = {
-	THEME:GetString("ScreenSelectPlayMode","Easy"),
-	THEME:GetString("ScreenSelectPlayMode","Standard"),
-	THEME:GetString("ScreenSelectPlayMode","Pro"),
-	THEME:GetString("ScreenSelectPlayMode","Mixtape"),
-	THEME:GetString("ScreenSelectPlayMode","Special"),
-};
+--Ex. "Easy,Arcade,Pro" -> {"Easy","Arcade","Pro"}
+local Choices = getPlayModeChoices():split(",");
+local numChoices = #Choices --Precalculate it instead of iterating every time
 
 local t = Def.ActorFrame{}
 
 local Static = Def.ActorFrame{
 	LoadActor("fade")..{ InitCommand=function(self) self:FullScreen() end; };
-
-	Def.ActorFrame{ OnCommand=function(self) self:CenterX() end;
-		LoadActor("top")..{ InitCommand=function(self) self:valign(0):zoom(0.6) end; };		
-		LoadActor("layer")..{ InitCommand=function(self) self:y(2):valign(0):zoom(0.66); end; };
-		LoadFont("monsterrat/_montserrat light 60px")..{	
-			Text=THEME:GetString("ScreenSelectPlayMode","SELECT YOUR GAMEMODE"),
-			InitCommand=function(self) self:y(11):zoom(0.35):skewx(-.15) end;  };
-	};
 };
 
 t[#t+1] = Static;
@@ -58,16 +37,19 @@ t[#t+1] = Def.ActorFrame{
 
 	OffCommand=function(self)
 		
-		PREFSMAN:SetPreference("AllowW1",'AllowW1_Never');
+		local choice = Choices[SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber())+1]
 		WriteGamePrefToFile("DefaultFail","");
-		for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
-			GAMESTATE:ApplyGameCommand( "mod,3x,rio,30% mini;", pn );
-		end
 		setenv("StageBreak",true);
-		--[[WritePrefToFile("UserPrefProtimingP1",false);
-		WritePrefToFile("UserPrefProtimingP2",false);]]
+		
+		if choice ~= "Pro" then
+			PREFSMAN:SetPreference("AllowW1",'AllowW1_Never');
+			for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+				GAMESTATE:ApplyGameCommand( "mod,3x,rio,30% mini;", pn );
+			end
+		end;
 
-		if SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber()) == 0 then
+		--Don't hardcode the positions of the items.
+		if choice == "Easy" then
 			-- Easy Mode
 			setenv("PlayMode","Easy");
 			setenv("HeaderTitle","SELECT MUSIC");
@@ -76,7 +58,7 @@ t[#t+1] = Def.ActorFrame{
 			randomSong = folder[math.random(1,#folder)]
 			GAMESTATE:SetCurrentSong(randomSong);
 			GAMESTATE:SetPreferredSong(randomSong);
-		elseif SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber()) == 1 then
+		elseif choice == "Arcade" then
 			-- Arcade Mode
 			setenv("PlayMode","Arcade");
 			setenv("HeaderTitle","SELECT MUSIC");
@@ -102,7 +84,7 @@ t[#t+1] = Def.ActorFrame{
 			else
 				GAMESTATE:SetCurrentSong(lastPlayedSong);
 			end;
-		elseif SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber()) == 2 then
+		elseif choice == "Pro" then
 			-- Pro Mode
 			setenv("HeaderTitle","SELECT MUSIC");
 			setenv("PlayMode","Pro");
@@ -129,18 +111,10 @@ t[#t+1] = Def.ActorFrame{
 			end;
 			
 			PREFSMAN:SetPreference("AllowW1",'AllowW1_Everywhere');
-			--[[WritePrefToFile("UserPrefProtimingP1",false);
-			WritePrefToFile("UserPrefProtimingP2",false);]]
-			--This saves to profile and it's annoying as fuck
-			--[[ActiveModifiers["P1"]["BGAMode"] = "Off"
-			ActiveModifiers["P2"]["BGAMode"] = "Off"]]
-			--[[for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
-				GAMESTATE:ApplyGameCommand( "mod,3x,rhythm;", pn );
-			end]]
-		elseif SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber()) == 3 then
+		elseif choice == "Mixtapes" then
 			-- Mixtapes Mode
 			setenv("PlayMode","Mixtapes");
-		elseif SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber()) == 4 then
+		elseif choice == "Special" then
 			-- Special Mode
 			local folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["SpecialFolder"]);
 			local randomSong = folder[math.random(1,#folder)]
@@ -156,35 +130,51 @@ t[#t+1] = Def.ActorFrame{
 local SoundBank = Def.ActorFrame{ OnCommand=function(self) SBank = self; MESSAGEMAN:Broadcast("RefreshOption") end };
 local ItemChoices = Def.ActorFrame{
 	InitCommand=cmd(x,SCREEN_LEFT;y,SCREEN_BOTTOM+500;);
-	OnCommand=cmd(sleep,0.3;decelerate,0.5;x,distance/2;y,SCREEN_CENTER_Y);
+	OnCommand=cmd(sleep,0.3;decelerate,0.5;x,0;y,SCREEN_CENTER_Y);
 };
 ChoiceIntroPlayed = false
 SOUND:PlayOnce( THEME:GetPathS("","PlayModes/select_game_mode") )
 
-for i=1,#Choices do
+for i=1,numChoices do
 	-- Choice Sound
 	SoundBank[#SoundBank+1] = Def.Sound{
-	Condition=FILEMAN:DoesFileExist( THEME:GetPathS("","PlayModes/"..Choices[i]) );
-	File=THEME:GetPathS("","PlayModes/"..Choices[i]);
-	Name=Choices[i];
-	InitCommand=function(self)
-		local ragesound_file = self:get()
-		ragesound_file:volume(1)
-		self:sleep(1)
-		self:queuecommand("IntroCheck")
-	end;
-	IntroCheckCommand=function(self) ChoiceIntroPlayed = true end;
-	--[[RefreshOptionMessageCommand=function(self)
-		local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber());
-		if ChoiceIntroPlayed then
-			SBank:GetChild( Choices[sel+1] ):play()
-		end
-	end;]]
+		Condition=FILEMAN:DoesFileExist( THEME:GetPathS("","PlayModes/"..Choices[i]) );
+		File=THEME:GetPathS("","PlayModes/"..Choices[i]);
+		Name=Choices[i];
+		InitCommand=function(self)
+			local ragesound_file = self:get()
+			ragesound_file:volume(1)
+			self:sleep(1)
+			self:queuecommand("IntroCheck")
+		end;
+		IntroCheckCommand=function(self) ChoiceIntroPlayed = true end;
+		--[[RefreshOptionMessageCommand=function(self)
+			local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber());
+			if ChoiceIntroPlayed then
+				SBank:GetChild( Choices[sel+1] ):play()
+			end
+		end;]]
 	};
 
 	-- Choice Selection Sprite
 	ItemChoices[#ItemChoices+1] = Def.ActorFrame{
-		OnCommand=function(self) self:xy( -distance+distance*i,0 ) end;
+		OnCommand=function(self)
+			if IsUsingWideScreen() then
+				self:x(SCREEN_WIDTH/numChoices*i-SCREEN_WIDTH/numChoices/2);
+			else
+				self:x(SCREEN_WIDTH/3*i-SCREEN_WIDTH/3/2)
+			end;
+		end;
+		RefreshOptionMessageCommand=function(self)
+			if not IsUsingWideScreen() then
+				local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber())+1
+				if sel > 3 then
+					self:stoptweening():decelerate(.15):x(SCREEN_WIDTH/3*(i-3)-SCREEN_WIDTH/3/2)
+				else
+					self:stoptweening():decelerate(.15):x(SCREEN_WIDTH/3*i-SCREEN_WIDTH/3/2)
+				end;
+			end;
+		end;
 
 		Def.Sprite{
 			Texture=THEME:GetPathG("","PlayModes/"..Choices[i]);
@@ -196,7 +186,7 @@ for i=1,#Choices do
 				self:stoptweening():stopeffect():decelerate(0.15)
 				
 				:zoom( sel == i and defaultzoom or 0.5 )
-				:diffusealpha( match and 1 or 0.45 )
+				:diffuse( match and color("1,1,1,1") or color(".45,.45,.45,1") )
 				if sel == i then
 					self:pulse():effectmagnitude(1,1.05,1):effectperiod(1);
 				end
@@ -228,6 +218,22 @@ end
 
 t[#t+1] = SoundBank;
 t[#t+1] = ItemChoices;
+
+--Arrow to indicate that there are more options
+if not IsUsingWideScreen() and numChoices > 3 then
+	t[#t+1] = LoadActor(THEME:GetPathG("Common", "Arrow"))..{
+		InitCommand=cmd(xy,SCREEN_RIGHT-25,SCREEN_CENTER_Y;bounce;effectmagnitude,5,0,0;rotationy,180);
+		RefreshOptionMessageCommand=function(self)
+			local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber())+1
+			self:stoptweening():decelerate(.15);
+			if sel > 3 then
+				self:x(SCREEN_LEFT+25):rotationy(0);
+			else
+				self:x(SCREEN_RIGHT-25):rotationy(180);
+			end;
+		end;
+	};
+end;
 
 -- ALL ACTIONS
 --TODO: Yes I know it's really stupid but I can't figure out why it's playing the sounds twice so I moved them here
@@ -294,7 +300,7 @@ t[#t+1] = Actions;
 
 -- Selector Sprite
 t[#t+1] = Def.ActorFrame{
-	InitCommand=cmd(y,SCREEN_BOTTOM+500;);
+	InitCommand=cmd(y,SCREEN_BOTTOM+500;draworder,0);
 	OnCommand=cmd(sleep,0.3;decelerate,0.5;y,SCREEN_CENTER_Y);
 		Def.Sprite{
 		Texture="border_ani 6x6";
@@ -308,7 +314,14 @@ t[#t+1] = Def.ActorFrame{
 			self:pulse();
 			self:effectmagnitude(1,1.05,1);
 			self:effectperiod(1);
-			self:x( distance*SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber())+86 )
+			local i = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber())+1
+			if IsUsingWideScreen() then
+				self:x(SCREEN_WIDTH/numChoices*i-SCREEN_WIDTH/numChoices/2)
+			else
+				--Widescreen scroll trick
+				if i > 3 then i = i - 3 end;
+				self:x(SCREEN_WIDTH/3*i-SCREEN_WIDTH/3/2)
+			end;
 			--self:queuecommand("Border");
 		end;
 	};
@@ -330,11 +343,20 @@ t[#t+1] = Def.ActorFrame{
 		OffCommand=cmd(decelerate,0.15;diffusealpha,0);
 		RefreshOptionMessageCommand=function(self)
 		local sel = SCREENMAN:GetTopScreen():GetSelectionIndex(GAMESTATE:GetMasterPlayerNumber())
-		self:settext( ChoiceText[sel+1] );
+		self:settext( THEME:GetString("ScreenSelectPlayMode",Choices[sel+1]) );
 		end;
 
 	};
 };
+
+t[#t+1] = Def.ActorFrame{
+	InitCommand=cmd(xy,SCREEN_CENTER_X,0);
+		LoadActor("top")..{ InitCommand=function(self) self:valign(0):zoom(0.6) end; };
+		LoadActor("layer")..{ InitCommand=function(self) self:y(2):valign(0):zoom(0.66); end; };	
+		LoadFont("monsterrat/_montserrat light 60px")..{	
+			Text=THEME:GetString("ScreenSelectPlayMode","SELECT YOUR GAMEMODE"),
+			InitCommand=function(self) self:y(11):zoom(0.35):skewx(-.15) end;  };
+}
 
 --loading splash
 t[#t+1] = LoadActor(THEME:GetPathG("","PlayModes/splash/Arcade"))..{

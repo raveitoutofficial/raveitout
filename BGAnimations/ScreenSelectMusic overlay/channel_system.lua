@@ -120,7 +120,7 @@ if hearts >= 4*GAMESTATE:GetNumSidesJoined() then
 	if GAMESTATE:GetCurrentSong():GetGroupName() == "81 Rave It Out (Rave)" then selection = total_arcade_folders+2; end;
 end;
 
-if DevMode() then groups = SONGMAN:GetSongGroupNames(); end]]
+if DoDebug then groups = SONGMAN:GetSongGroupNames(); end]]
 local groups = getAvailableGroups();
 assert(GAMESTATE:GetCurrentSong(), "The current song should have been set in ScreenSelectPlayMode!");
 local curGroup = GAMESTATE:GetCurrentSong():GetGroupName();

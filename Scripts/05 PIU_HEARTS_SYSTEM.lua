@@ -7,17 +7,36 @@ MAX_SECONDS_FOR_SHORTCUT = 95
 --MIN_SECONDS_FOR_LONG = PREFSMAN:GetPreference("LongVerSongSeconds")
 --MIN_SECONDS_FOR_MARATHON = PREFSMAN:GetPreference("MarathonVerSongSeconds")
 
---Pref is loaded in InitGame.
-HeartsPerPlay = 0;
---Initialized during InitGame.
-NumHeartsLeft = {
-	PlayerNumber_P1 = 0,
-	PlayerNumber_P2 = 0
-};
-BonusHeartsAdded = {
-	PlayerNumber_P1 = 0,
-	PlayerNumber_P2 = 0
-};
+
+--[[
+Called by InitGame. No need to define them anywhere since a variable
+without 'local' will become global.
+]]
+function Reset_PIU_Hearts()
+	HeartsPerPlay = tonumber(ReadPrefFromFile("HeartsPerPlay"))
+	if not HeartsPerPlay then
+		--SCREENMAN:SystemMessage("HeartsPerPlay initialized.");
+		HeartsPerPlay = 6;
+		WritePrefToFile("HeartsPerPlay",6);
+	end;
+	PREFSMAN:SetPreference("SongsPerPlay",math.ceil(HeartsPerPlay/2));
+	NumHeartsLeft = {
+		PlayerNumber_P1 = HeartsPerPlay,
+		PlayerNumber_P2 = HeartsPerPlay
+	};
+	BonusHeartsAdded = {
+		PlayerNumber_P1 = 0,
+		PlayerNumber_P2 = 0
+	};
+	NumHeartsRemoved = {
+		PlayerNumber_P1 = 0,
+		PlayerNumber_P2 = 0
+	}
+end
+
+function IsExtraStagePIU()
+	return NumHeartsRemoved[PLAYER_1] >= HeartsPerPlay or NumHeartsRemoved[PLAYER_2] >= HeartsPerPlay;
+end;
 
 function GetNumHeartsForSong()
 	local s = GAMESTATE:GetCurrentSong()
@@ -47,14 +66,25 @@ function GiveBonusHeart(player)
 	BonusHeartsAdded[player] = BonusHeartsAdded[player] + 1
 end;
 
+function RemoveHearts(player, hearts)
+	NumHeartsLeft[player] = NumHeartsLeft[player] - hearts;
+	NumHeartsRemoved[player] = NumHeartsRemoved[player] + hearts;
+end;
+
 
 function PlayerAchievedBonusHeart(player)
+	--Can only earn up to 2 bonus hearts.
+	if BonusHeartsAdded[player] >= 2 then
+		return false;
+	end;
 	local acc = getenv(pname(player).."_accuracy") or 0
-	local css1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(player);
+	--Old system was too hard
+	--[[local css1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(player);
 	local misses = css1:GetTapNoteScores("TapNoteScore_Miss")				--MISS
 	
 	if THEME:GetMetric("Gameplay","MineHitIncrementsMissCombo") then
 		misses = misses+css1:GetTapNoteScores("TapNoteScore_CheckpointMiss")+css1:GetTapNoteScores("TapNoteScore_HitMine")
 	end;
-	return (STATSMAN:GetCurStageStats():GetPlayerStageStats(player):IsDisqualified()==false and acc >= 96 and misses == 0 and css1:GetTapNoteScores("TapNoteScore_W4") == 0)
+	return (STATSMAN:GetCurStageStats():GetPlayerStageStats(player):IsDisqualified()==false and acc >= 96 and misses == 0 and css1:GetTapNoteScores("TapNoteScore_W4") == 0)]]
+	return (acc > 90);
 end;

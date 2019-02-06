@@ -1,10 +1,11 @@
 
 
+--DoDebug = THEME:GetMetric("CustomRIO","DevMode")
+DoDebug = true;
 --[[FIXED FONTS]]
 DebugFont =		"Common normal"
 
---[[ALIASES]]
-DoDebug =				THEME:GetMetric("CustomRIO","DoDebug")				--
+--[[ALIASES]]			--
 Enjoy1stStage = 		THEME:GetMetric("CustomRIO","Enjoy1stStage")		--
 Enjoy1stStagePMode = 	THEME:GetMetric("CustomRIO","Enjoy1stStagePMode")	--
 --[[GLOBAL VALUES]]
@@ -131,6 +132,19 @@ function getUSBProfileIcon(pn)
 	end
 end;
 
+--Get available choices for ScreenSelectPlayMode
+--TODO: Is ReadPrefFromFile slow? Need to check
+function getPlayModeChoices()
+	if ReadPrefFromFile("MixtapeModeEnabled") == "true" and ReadPrefFromFile("SpecialModeEnabled") == "true" then
+		return "Easy,Arcade,Pro,Mixtapes,Special";
+	elseif ReadPrefFromFile("MixtapeModeEnabled") == "true" then
+		return "Easy,Arcade,Pro,Mixtapes"
+	elseif ReadPrefFromFile("SpecialModeEnabled") == "true" then
+		return "Easy,Arcade,Pro,Special"
+	else
+		return "Easy,Arcade,Pro";
+	end;
+end;
 
 --Unlock functions
 function GetUnlockIndex( sEntryID )		--GetUnlockIndex	 by ROAD24 (Jose Jesus)		--HUGE thanks to him -NeobeatIKK
@@ -206,7 +220,7 @@ end
 
 
 --Override the function to support RIO's SongBackgrounds folder.
-function Sprite:LoadFromCurrentSongBackground()
+function GetSongBackground(return_nil_on_fail)
 	local song = GAMESTATE:GetCurrentSong();
 	if not song then
 		local trail = GAMESTATE:GetCurrentTrail(GAMESTATE:GetMasterPlayerNumber())
@@ -215,27 +229,31 @@ function Sprite:LoadFromCurrentSongBackground()
 			song = e[1]:GetSong()
 		end
 	end
-
-	if not song then return self end
-	
-	local path = split("/",GAMESTATE:GetCurrentSong():GetSongDir())
-	path = path[#path-1];
-	--SCREENMAN:SystemMessage(song:GetSongDir())
-	if IsUsingWideScreen() then
-		path = "/SongBackgrounds/HD/"..path.."-bg.png";
-		if FILEMAN:DoesFileExist(path) then
-			self:Load(path)
+	if song then
+		local path = split("/",GAMESTATE:GetCurrentSong():GetSongDir())
+		path = path[#path-1];
+		--SCREENMAN:SystemMessage(song:GetSongDir())
+		if IsUsingWideScreen() then
+			path = "/SongBackgrounds/HD/"..path.."-bg.png";
+			if FILEMAN:DoesFileExist(path) then
+				return path
+			end;
 		else
-			self:LoadFromSongBackground(song)
+			path = "/SongBackgrounds/SD/"..path.." (SD)-bg.png";
+			if FILEMAN:DoesFileExist(path) then
+				return path;
+			end;
 		end;
-	else
-		path = "/SongBackgrounds/SD/"..path.." (SD)-bg.png";
-		if FILEMAN:DoesFileExist(path) then
-			self:Load(path)
-		else
-			self:LoadFromSongBackground(song)
+		path = song:GetBackgroundPath()
+		if path then
+			return path;
 		end;
 	end;
+	return return_nil_on_fail and nil or THEME:GetPathG("Common","fallback background")
+end
+--Override the function to use above function.
+function Sprite:LoadFromCurrentSongBackground()
+	self:Load(GetSongBackground());
 	return self;
 end;
 

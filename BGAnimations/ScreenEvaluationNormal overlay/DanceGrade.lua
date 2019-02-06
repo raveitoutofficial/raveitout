@@ -267,6 +267,26 @@ if STATSMAN:GetCurStageStats():GetPlayerStageStats(player):IsDisqualified()==fal
 			InitCommand=cmd(x,p1initx+15;y,p1inity-45;draworder,100;diffusealpha,0;zoom,initzoomp1/1.5;sleep,3;linear,.2;diffusealpha,1;zoom,initzoomp1-0.25;linear,.3;zoom,finalzoomp1/1.5);
 		};
 	end;
+	
+	if DoDebug then
+		t[#t+1] = Def.ActorFrame{
+			InitCommand=cmd(x,p1initx+15;y,p1inity+100;zoom,.5);
+			--Must be OnCommand because hearts have to be subtracted first in default.lua
+			LoadFont("Common Normal")..{
+				OnCommand=cmd(settext,pname(player).." hearts left: "..NumHeartsLeft[player];);
+			};
+			LoadFont("Common Normal")..{
+				OnCommand=cmd(settext,pname(player).." hearts removed: "..NumHeartsRemoved[player];addy,20);
+			};
+			LoadFont("Common Normal")..{
+				OnCommand=cmd(settext,pname(player).." bonus hearts: "..BonusHeartsAdded[player];addy,40);
+			};
+			LoadFont("Common Normal")..{
+				OnCommand=cmd(settext,pname(player).." got bonus heart? "..boolToString(PlayerAchievedBonusHeart(player));addy,60);
+			};
+		
+		};
+	end;
 
 	t[#t+1] = LoadActor(THEME:GetPathS("","DanceGrade/male/RANK_"..gradep1))..{
 		OnCommand=cmd(sleep,2.75;queuecommand,'Play');
