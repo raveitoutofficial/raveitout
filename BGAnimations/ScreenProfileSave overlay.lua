@@ -8,10 +8,14 @@ local t = Def.ActorFrame{
 
 --NEXT STAGE
 local curstage = GAMESTATE:GetCurrentStage()
+if IsExtraStagePIU() then
+	curstage = "Stage_Extra1"
+elseif curstage == "Stage_Final" then
+	curstage = Stage[4];
+end;
 
 --Time until each video ends, I guess.
 local delay_time = {
-	Stage_Extra1 = 9;
 	Stage_1st = 8;
 	Stage_2nd = 8;
 	Stage_3rd = 7;
@@ -19,6 +23,7 @@ local delay_time = {
 	Stage_5th = 10;
 	Stage_6th = 10;
 	Stage_Final = 9;
+	Stage_Extra1 = 9;
 };
 
 local NextStageSleepTime = delay_time[curstage];
@@ -33,7 +38,6 @@ if curstage == 'Stage_Event' then
 	sound = THEME:GetPathS("","nextstage_"..random_name)
 	NextStageSleepTime = delay_time[random_name];
 end;
-
 local UseNextStage = true;
 
 if GetSmallestNumHeartsLeftForAnyHumanPlayer() > 0 then
@@ -43,10 +47,12 @@ else
 	UseNextStage = false;
 end;
 
-t[#t+1] = LoadActor(bg)..{
-	InitCommand=cmd(visible,UseNextStage;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;sleep,NextStageSleepTime;queuecommand,"Wall");
-	WallCommand=cmd(linear,0.25;diffuse,color("#000000");diffusealpha,1;linear,0.25;diffusealpha,0);
-};
+if UseNextStage then
+	t[#t+1] = LoadActor(bg)..{
+		InitCommand=cmd(visible,UseNextStage;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;sleep,NextStageSleepTime;queuecommand,"Wall");
+		WallCommand=cmd(linear,0.25;diffuse,color("#000000");diffusealpha,1;linear,0.25;diffusealpha,0);
+	};
+end;
 
 
 t[#t+1] = LoadActor(sound)..{
@@ -74,11 +80,10 @@ t[#t+1] = Def.Actor {
 	end;
 };
 
---[[DEBUG
-
-t[#t+1] = LoadFont("Common Normal")..{	--percentage scoring P1
-			InitCommand=cmd(zoom,2;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
-			Text=curstage.." - Delay: "..NextStageSleepTime;
-		};
---]]
+if DoDebug then
+	t[#t+1] = LoadFont("Common Normal")..{	--percentage scoring P1
+		InitCommand=cmd(zoom,2;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
+		Text=curstage.." - Delay: "..NextStageSleepTime;
+	};
+end;
 return t;

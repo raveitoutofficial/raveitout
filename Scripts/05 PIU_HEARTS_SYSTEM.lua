@@ -7,6 +7,9 @@ MAX_SECONDS_FOR_SHORTCUT = 95
 --MIN_SECONDS_FOR_LONG = PREFSMAN:GetPreference("LongVerSongSeconds")
 --MIN_SECONDS_FOR_MARATHON = PREFSMAN:GetPreference("MarathonVerSongSeconds")
 
+-- Set to true to test obtaining extra hearts without any of the hard work.
+local Debug_AlwaysGetBonusHearts = false;
+
 
 --[[
 Called by InitGame. No need to define them anywhere since a variable
@@ -19,6 +22,7 @@ function Reset_PIU_Hearts()
 		HeartsPerPlay = 6;
 		WritePrefToFile("HeartsPerPlay",6);
 	end;
+	
 	PREFSMAN:SetPreference("SongsPerPlay",math.ceil(HeartsPerPlay/2));
 	NumHeartsLeft = {
 		PlayerNumber_P1 = HeartsPerPlay,
@@ -74,7 +78,8 @@ end;
 
 function PlayerAchievedBonusHeart(player)
 	--Can only earn up to 2 bonus hearts.
-	if BonusHeartsAdded[player] >= 2 then
+	--Not sure why IsSideJoined has to be checked but if I don't it shows the bonus heart message for the wrong player
+	if BonusHeartsAdded[player] >= 2 or GAMESTATE:IsSideJoined(player) == false then
 		return false;
 	end;
 	local acc = getenv(pname(player).."_accuracy") or 0
@@ -86,5 +91,5 @@ function PlayerAchievedBonusHeart(player)
 		misses = misses+css1:GetTapNoteScores("TapNoteScore_CheckpointMiss")+css1:GetTapNoteScores("TapNoteScore_HitMine")
 	end;
 	return (STATSMAN:GetCurStageStats():GetPlayerStageStats(player):IsDisqualified()==false and acc >= 96 and misses == 0 and css1:GetTapNoteScores("TapNoteScore_W4") == 0)]]
-	return (acc > 90);
+	return (acc > 90 or Debug_AlwaysGetBonusHearts);
 end;

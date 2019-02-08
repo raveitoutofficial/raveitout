@@ -276,7 +276,7 @@ if STATSMAN:GetCurStageStats():GetPlayerStageStats(player):IsDisqualified()==fal
 				OnCommand=cmd(settext,pname(player).." hearts left: "..NumHeartsLeft[player];);
 			};
 			LoadFont("Common Normal")..{
-				OnCommand=cmd(settext,pname(player).." hearts removed: "..NumHeartsRemoved[player];addy,20);
+				OnCommand=cmd(settext,pname(player).." hearts removed: "..NumHeartsRemoved[player].. "(excluding bonus hearts)";addy,20);
 			};
 			LoadFont("Common Normal")..{
 				OnCommand=cmd(settext,pname(player).." bonus hearts: "..BonusHeartsAdded[player];addy,40);
