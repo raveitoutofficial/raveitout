@@ -31,11 +31,7 @@ t[#t+1] = Def.ActorFrame{
 	};
 		
 
-	LoadActor("particle.lua")..{ --snow effect, triggers only in December
-		InitCommand=function(self)
-			if MonthOfYear() == 11 then self:visible(true); else self:visible(false); end;
-		end;
-	};
+	LoadActor("particle.lua"); --Special holiday effects.
 
 };
 

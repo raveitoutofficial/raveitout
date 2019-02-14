@@ -16,7 +16,10 @@ local numChoices = #Choices --Precalculate it instead of iterating every time
 local t = Def.ActorFrame{}
 
 local Static = Def.ActorFrame{
-	LoadActor("fade")..{ InitCommand=function(self) self:FullScreen() end; };
+	LoadActor("fade")..{ 
+		InitCommand=cmd(FullScreen;zoomy,0);
+		OnCommand=cmd(decelerate,.4;FullScreen);
+	};
 };
 
 t[#t+1] = Static;
@@ -129,8 +132,8 @@ t[#t+1] = Def.ActorFrame{
 
 local SoundBank = Def.ActorFrame{ OnCommand=function(self) SBank = self; MESSAGEMAN:Broadcast("RefreshOption") end };
 local ItemChoices = Def.ActorFrame{
-	InitCommand=cmd(x,SCREEN_LEFT;y,SCREEN_BOTTOM+500;);
-	OnCommand=cmd(sleep,0.3;decelerate,0.5;x,0;y,SCREEN_CENTER_Y);
+	--InitCommand=cmd(x,SCREEN_LEFT;y,SCREEN_BOTTOM+500;);
+	--OnCommand=cmd(sleep,0.3;decelerate,0.5;x,0;y,SCREEN_CENTER_Y);
 };
 ChoiceIntroPlayed = false
 SOUND:PlayOnce( THEME:GetPathS("","PlayModes/select_game_mode") )
@@ -158,9 +161,10 @@ for i=1,numChoices do
 
 	-- Choice Selection Sprite
 	ItemChoices[#ItemChoices+1] = Def.ActorFrame{
+		InitCommand=cmd(Center);
 		OnCommand=function(self)
 			if IsUsingWideScreen() then
-				self:x(SCREEN_WIDTH/numChoices*i-SCREEN_WIDTH/numChoices/2);
+				self:decelerate(.5):x(SCREEN_WIDTH/numChoices*i-SCREEN_WIDTH/numChoices/2);
 			else
 				self:x(SCREEN_WIDTH/3*i-SCREEN_WIDTH/3/2)
 			end;
@@ -300,11 +304,11 @@ t[#t+1] = Actions;
 
 -- Selector Sprite
 t[#t+1] = Def.ActorFrame{
-	InitCommand=cmd(y,SCREEN_BOTTOM+500;draworder,0);
-	OnCommand=cmd(sleep,0.3;decelerate,0.5;y,SCREEN_CENTER_Y);
-		Def.Sprite{
+	--InitCommand=cmd(draworder,0;xy,SCREEN_CENTER_X,SCREEN_CENTER_Y;);
+	--OnCommand=cmd(sleep,0.3;decelerate,0.5;);
+	Def.Sprite{
 		Texture="border_ani 6x6";
-		InitCommand=cmd(zoom,defaultzoom+0.12;x,distance;SetAllStateDelays,0.03);
+		InitCommand=cmd(zoom,defaultzoom+0.12;x,distance;SetAllStateDelays,0.03;xy,SCREEN_CENTER_X,SCREEN_CENTER_Y;diffusealpha,0);
 		OffCommand=cmd(bouncebegin,0.4;zoom,0);
 		RefreshOptionMessageCommand=function(self)
 			self:stoptweening();

@@ -152,7 +152,14 @@ t[#t+1] = Def.ActorFrame {
 
 	};
 
-
+	LoadFont("Common Normal")..{
+		Condition=DoDebug;
+		InitCommand=function(self)
+			self:zoom(.5):horizalign(left):addx(100):addy(-10);
+			self:settext("Icon: "..getenv("profile_icon_P1").." Setting: "..tostring(ActiveModifiers["P1"]['ProfileIcon']));
+			--self:settext(THEME:GetPathG("","USB_stuff/avatars").."/"..ActiveModifiers["P1"]["ProfileIcon"]);
+		end;
+	};
 	
 	PlayerName(PLAYER_1)..{
 		InitCommand=cmd(zoom,0.8;addx,68;addy,7;horizalign,left;);
@@ -165,6 +172,8 @@ t[#t+1] = Def.ActorFrame {
 	PlayerLevel(PLAYER_1)..{
 		InitCommand=cmd(zoom,0.45;addx,68;addy,-7;horizalign,left;);
 	};
+	
+	
 }
 
 

@@ -82,6 +82,20 @@ end
 
 --[[FUNCTIONS]]
 
+--This is honestly only ever called in ScreenOptionsCustomizeProfile so it's kind of useless
+function getProfileIcons()
+	--This junk is copypasted from Delta NEX Rebirth (which was copypasted from Simply Love), so it still uses the backgrounds variable
+    local fullPath = THEME:GetPathG("","USB_stuff/avatars")
+    local files = FILEMAN:GetDirListing(fullPath.."/")
+    local backgrounds = {}
+    --local backgroundsLength=0 --Fucking lua
+
+    for k,filename in ipairs(files) do
+        backgrounds[#backgrounds+1] = filename--:sub(1, -5)
+        --backgroundsLength = backgroundsLength+1;
+    end
+    return backgrounds;
+end;
 
 --If this is called at the same frame, it's not truly random... So use the playernumber to randomize it a bit
 function getRandomProfileIcon(pn)
@@ -113,22 +127,18 @@ end;
 
 --DO NOT CALL THIS FUNCTION!!! Use getenv("profile_icon_PX") (where X is the player number).
 --SL-CustomProfiles will set the env var "profile_icon_PX" when you load a profile.
-function getUSBProfileIcon(pn)
-	if PROFILEMAN:ProfileWasLoadedFromMemoryCard(pn) then
-		local profileDir = PROFILEMAN:GetProfileDir(ProfileSlot[PlayerNumber:Reverse()[pn]+1]);
-		if (FILEMAN:DoesFileExist(profileDir.."avatar.png")) then
-			return profileDir.."avatar.png";
-		elseif (FILEMAN:DoesFileExist(profileDir.."avatar.jpg")) then
-			return profileDir.."avatar.jpg";
-		elseif (FILEMAN:DoesFileExist(profileDir.."avatar.bmp")) then
-			return profileDir.."avatar.bmp";
-		elseif (FILEMAN:DoesFileExist(profileDir.."avatar.gif")) then
-			return profileDir.."avatar.gif";
-		else
-			return nil
-		end
-	else 
-		return nil;
+function getLocalProfileIcon(profileDir)
+	--local profileDir = PROFILEMAN:GetProfileDir(ProfileSlot[PlayerNumber:Reverse()[pn]+1]);
+	if (FILEMAN:DoesFileExist(profileDir.."avatar.png")) then
+		return profileDir.."avatar.png";
+	elseif (FILEMAN:DoesFileExist(profileDir.."avatar.jpg")) then
+		return profileDir.."avatar.jpg";
+	elseif (FILEMAN:DoesFileExist(profileDir.."avatar.bmp")) then
+		return profileDir.."avatar.bmp";
+	elseif (FILEMAN:DoesFileExist(profileDir.."avatar.gif")) then
+		return profileDir.."avatar.gif";
+	else
+		return nil
 	end
 end;
 
@@ -186,6 +196,21 @@ function IsEntryIDLocked( sEntryID )	--IsEntryIDLocked	 by ROAD24
 		lua.Trace("ROAD24 IsEntryIDLocked: Se esperaba un string pero se recibio nil");
 	return -1;
 end;
+
+function UnlockStatusToString(num)
+	if num == 0 then
+		return "UNLOCKED: This song is unlocked.";
+	elseif num == 1 then
+		return "LOCKED_ROULETTE: Only available in roulette.";
+	elseif num == 4 then
+		return "LOCKED_SELECTABLE: Locked due to #SELECTABLE tag.";
+	elseif num == 8 then
+		return "LOCKED_DISABELD: Disabled by operator.";
+	else
+		return "Unknown Status.";
+	end;
+end;
+
 function getNumberOfElements(t)
 	local count = 0;
 	if t then

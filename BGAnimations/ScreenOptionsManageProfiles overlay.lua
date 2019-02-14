@@ -7,7 +7,7 @@ t[#t+1] = Def.ActorFrame{
 		StorageDevicesChangedMessageCommand=function(self)
 			local slot1 = MEMCARDMAN:GetCardState(PLAYER_1)
 			local slot2 = MEMCARDMAN:GetCardState(PLAYER_2)
-		--[[	if slot1 == "MemoryCardState_none" then
+			if slot1 == "MemoryCardState_none" then
 				mem1 = "No card inserted"
 			else
 				mem1 = slot1
@@ -17,8 +17,8 @@ t[#t+1] = Def.ActorFrame{
 			else
 				mem2 = slot2
 			end;
-		--	self:settext("Status slot 1: "..mem1.."\nStatus slot 2: "..mem2);	--]]
-			self:settext("Status slot 1: "..slot1.."\nStatus slot 2: "..slot2);
+			self:settext("Status slot 1: "..mem1.."\nStatus slot 2: "..mem2);
+			--self:settext("Status slot 1: "..slot1.."\nStatus slot 2: "..slot2);
 		end
 	};
 };

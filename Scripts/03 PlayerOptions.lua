@@ -20,7 +20,7 @@ PlayerDefaults = {
 	ReverseGrade = false, --Like the PIU thing? Perfect is shown as bad
 	ScreenFilter = 0,
 	BGAMode = "On", --Options: Black, Off, Dark, On
-	ProfileIcon = nil, -- Technically not an OptionsList option, but it gets saved at ScreenProfileSave so it's here anyway.
+	ProfileIcon = false, -- Technically not an OptionsList option, but it gets saved at ScreenProfileSave so it's here anyway. Don't set it to nil the SL-CustomProfiles code is retarded and won't iterate over it
 	JudgmentGraphic = "Season2", --Judgment graphic
 }
 

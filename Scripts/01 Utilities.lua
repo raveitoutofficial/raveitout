@@ -82,7 +82,9 @@ STREAM_UNSAFE_AUDIO = {
 --List of BGAs that will get your recording blocked worldwide
 STREAM_UNSAFE_VIDEO = {
 	"Good Feeling",
-	"I Wanna Go"
+	"I Wanna Go",
+	"Jaleo",
+	"Breakin' A Sweat"
 };
 --Called from ScreenSelectPlayMode to pick a random group and the GroupWheel to show available groups
 function getAvailableGroups()
