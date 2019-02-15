@@ -22,6 +22,7 @@ PlayerDefaults = {
 	BGAMode = "On", --Options: Black, Off, Dark, On
 	ProfileIcon = false, -- Technically not an OptionsList option, but it gets saved at ScreenProfileSave so it's here anyway. Don't set it to nil the SL-CustomProfiles code is retarded and won't iterate over it
 	JudgmentGraphic = "Season2", --Judgment graphic
+	CompetitionMode = false --Show score and HP in the middle to make things more exciting
 }
 
 --PerfectionistMode should NEVER be written to profile, so it's not in the PlayerDefaults table.
@@ -162,6 +163,31 @@ function OptionRowPerfectionistMode()		--Perfectionist Mode 2.0 rewritten by Rhy
 		SaveSelections = function(self, list, pn)
 			--If list[2] (The On choice) is selected, then it would get set true in ActiveModifiers. If it's not selected, it's false, so it gets set false in ActiveModifiers.
 			PerfectionistMode[pn] = list[2];
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end;
+
+function OptionRowCompetitionMode()
+	local t = {
+		Name = "CompetitionMode";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = false;
+		ExportOnChange = false;
+		Choices = { "Off", "On"};
+		LoadSelections = function(self, list, pn)
+			local perfMode = ActiveModifiers[pname(pn)]['CompetitionMode'] --Get the player's PerfectionistMode preference
+			if perfMode == true then --You don't really need the == true here but whatever
+				list[2] = true; --Make the "On" choice selected
+			else
+				list[1] = true; --Else, make the "Off" choice selected
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			--If list[2] (The On choice) is selected, then it would get set true in ActiveModifiers. If it's not selected, it's false, so it gets set false in ActiveModifiers.
+			ActiveModifiers[pname(pn)]['CompetitionMode'] = list[2];
 		end;
 	};
 	setmetatable( t, t );

@@ -75,7 +75,7 @@ local t = Def.ActorFrame{
  	Def.ActorFrame{	--Main
 		LoadActor("stats.lua")..{
 			InitCommand=cmd(y,stats_y;x,stats_x)
-		};		--Stats at screen bottom
+		};
 		
 		LoadActor("new_elements");
 		LoadActor("score_system");
@@ -116,12 +116,7 @@ local t = Def.ActorFrame{
 				GAMESTATE:ApplyGameCommand("mod, "..vel,pn);
 			end;
 		};--]]
-		LoadActor("song meter")..{
-			--this would never NOT be visible... Items are visible by default
-			--[[OnCommand=function(self)
-				if stage == "ScreenGameplay stage Demo" then self:visible(true); end
-			end;]]
-		};
+		LoadActor("song meter")..{};
 		
 		LoadActor("demoplay")..{
 			InitCommand=cmd(x,notefxp1;y,SCREEN_BOTTOM-70;zoom,0.5;playcommand,"Set");
@@ -213,12 +208,20 @@ local t = Def.ActorFrame{
 
 	LoadActor("MenuOptions");	
 };
-for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
-	
+
+local competitionMode = (ActiveModifiers["P1"]["CompetitionMode"] and ActiveModifiers["P2"]["CompetitionMode"])
+	--Percentage thing
+for pn in ivalues(GAMESTATE:GetHumanPlayers()) do	
 	local notefxp =	THEME:GetMetric("ScreenGameplay","Player"..pname(pn).."OnePlayerOneSideX")	--Note field X position P1/P2 (pname evaluates to P1/P2 so it would be doing ScreenGameplay PlayerP1OnePlayerOneSideX)
 	local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 	if (style == "OnePlayerOneSide" and PREFSMAN:GetPreference("Center1Player")) or style == "OnePlayerTwoSides" then
 		notefxp = SCREEN_CENTER_X;
+	elseif competitionMode then
+		if pn == PLAYER_1 then
+			notefxp = SCREEN_CENTER_X-80;
+		else
+			notefxp = SCREEN_CENTER_X+80;
+		end;
 	end;
 	local steps;
 	if GAMESTATE:IsCourseMode() then
@@ -233,29 +236,51 @@ for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 		Def.ActorFrame{
 			LoadActor(pname(pn).."_bg_percentage")..{
 				InitCommand=cmd(zoom,0.8;y,SCREEN_BOTTOM-23.5;);
+				--Hide the "completed" text in competition mode... I'm sorry for this
+				OnCommand=function(self)
+					if competitionMode then
+						self:cropbottom(.3);
+					end;
+				end;
 			};
 			
 			LoadActor(pname(pn).."_percentage_bar")..{
 				InitCommand=cmd(zoomx,0.8;zoomy,0.7;playcommand,"ComboChangedMessage";y,SCREEN_BOTTOM-28;);
 				ComboChangedMessageCommand=function(self,param)
-						if GAMESTATE:IsPlayerEnabled(pn) then
-							local State = GAMESTATE:GetPlayerState(pn);
-							local PlayerType = State:GetPlayerController();
-							local css = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn);
-							local curmaxscore =	stagemaxscore
-							local score =		css:GetScore()				--score :v
-							local rawaccuracy =	(score/curmaxscore)*100		--Player accuracy RAW number
-							--rawaccuracy = getenv("P1_accuracy");
-							local maxzoomx = 0.8;
-							local multiplier = (maxzoomx/100)*rawaccuracy
-							
-							self:cropright((maxzoomx-multiplier)/maxzoomx);
-
-							if stepsp2 == "StepsType_Pump_Routine" and GAMESTATE:GetMasterPlayerNumber() ~= pn then
-								self:visible(false);
-							end;
+					local State = GAMESTATE:GetPlayerState(pn);
+					local PlayerType = State:GetPlayerController();
+					local css = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn);
+					local curmaxscore =	stagemaxscore
+					local score =		css:GetScore()				--score :v
+					local rawaccuracy =	(score/curmaxscore)*100		--Player accuracy RAW number
+					--rawaccuracy = getenv("P1_accuracy");
+					local maxzoomx = 0.8;
+					local multiplier = (maxzoomx/100)*rawaccuracy
+					
+					self:cropright((maxzoomx-multiplier)/maxzoomx);
+					
+					if competitionMode and pn == PLAYER_1 then
+						local css2 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2);
+						local p2acc = (css2:GetScore()/stagemaxscore)*100
+						if rawaccuracy < p2acc then
+							self:diffuse(color(".5,.5,.5,1"));
+						else
+							self:diffuse(Color("White"))
+						end;
+					elseif competitionMode and pn == PLAYER_2 then
+						local css2 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1);
+						local p2acc = (css2:GetScore()/stagemaxscore)*100
+						if rawaccuracy < p2acc then
+							self:diffuse(color(".5,.5,.5,1"));
+						else
+							self:diffuse(Color("White"))
 						end;
 					end;
+
+					if stepsp2 == "StepsType_Pump_Routine" and GAMESTATE:GetMasterPlayerNumber() ~= pn then
+						self:visible(false);
+					end;
+				end;
 			};
 		};
 		LoadFont("monsterrat/_montserrat light 60px")..{	--percentage scoring P1
@@ -335,6 +360,7 @@ for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 		};
 	};
 end;
+
 t[#t+1] = LoadActor("playerFailed");
 
 return t;

@@ -192,19 +192,20 @@ elseif activeModP1 == "Off" or activeModP2 == "Off" or (ReadPrefFromFile("Stream
 		};
 	end;]]
 end;
-for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
-	local negativeOffset = (pn == PLAYER_1) and -1 or 1;
-	local barposX = (pn == PLAYER_1) and 25*PREFSMAN:GetPreference("DisplayAspectRatio") or SCREEN_RIGHT-(25*PREFSMAN:GetPreference("DisplayAspectRatio"));
-	--setenv("BarPosX",barposX);
-	t[#t+1] = LoadActor("lifebar", pn)..{
-		InitCommand=cmd(xy,barposX+(negativeOffset*100),SCREEN_CENTER_Y;rotationz,-90;);
-		OnCommand=cmd(sleep,1.5;accelerate,0.25;x,barposX);
-	};
-	t[#t+1] = LoadActor("avatars", pn)..{
-		InitCommand=cmd(xy,barposX+negativeOffset*100,50);
-		OnCommand=cmd(sleep,1.5;accelerate,0.25;x,barposX);
-	};
-end;
+
+	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+		local negativeOffset = (pn == PLAYER_1) and -1 or 1;
+		local barposX = (pn == PLAYER_1) and 25*PREFSMAN:GetPreference("DisplayAspectRatio") or SCREEN_RIGHT-(25*PREFSMAN:GetPreference("DisplayAspectRatio"));
+		--setenv("BarPosX",barposX);
+		t[#t+1] = LoadActor("lifebar", pn)..{
+			InitCommand=cmd(xy,barposX+(negativeOffset*100),SCREEN_CENTER_Y;rotationz,-90;);
+			OnCommand=cmd(sleep,1.5;accelerate,0.25;x,barposX);
+		};
+		t[#t+1] = LoadActor("avatars", pn)..{
+			InitCommand=cmd(xy,barposX+negativeOffset*100,50);
+			OnCommand=cmd(sleep,1.5;accelerate,0.25;x,barposX);
+		};
+	end;
 
 --/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 t[#t+1] = Def.ActorFrame{		--Limit break by ROAD24 and NeobeatIKK
