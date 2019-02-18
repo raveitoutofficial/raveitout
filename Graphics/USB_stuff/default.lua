@@ -6,31 +6,16 @@ local function PlayerLevel(player)
 	--return LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
 	return LoadFont("common normal")..{
 		SetCommand=function(self)
-			local profile = PROFILEMAN:GetProfile(player);
-			local level = profile:GetTotalNumSongsPlayed();
-			local uplevelfactor = 25;
-			local maxlevelnum = 99;
-			local currentplayer = pname(player) -- PLAYER_1 -> P1
-		
-		--	if MEMCARDMAN:GetCardState(player) == 'MemoryCardState_none' then
-			--	setenv("level_"..currentplayer,"??");
-			--else
-			
-			--[[if currentplayer == "P1" then
-				SCREENMAN:SystemMessage("level_p1: "..string.format("%02d",math.ceil(level/uplevelfactor)).." ("..level.." songs played / "..uplevelfactor.." level factor)")
-			end]]
-			if level > uplevelfactor*maxlevelnum then
-				setenv("level_"..currentplayer,"??");
-			else
-				setenv("level_"..currentplayer, string.format("%02d",math.ceil(level/uplevelfactor)) );
-			end
+			local numSongs = PROFILEMAN:GetProfile(player):GetTotalNumSongsPlayed();
+			--This is literally used nowhere
+			--local currentplayer = pname(player) -- PLAYER_1 -> P1
+			--setenv("level_"..currentplayer, string.format("%02d",level));
 			--end
 			
 			if DoDebug then
 				self:settext(" ∞");
 			else
-				--self:settext("Lv."..getenv("level_"..currentplayer).." / Life: "..string.format("%02i",GAMESTATE:GetNumStagesLeft(player)));
-				self:settext("Lv. "..getenv("level_"..currentplayer));
+				self:settext("Lv. "..string.format("%02d",calcPlayerLevel(numSongs)));
 			end;
 			self:visible(GAMESTATE:IsSideJoined(player));
 		end;
@@ -153,7 +138,7 @@ t[#t+1] = Def.ActorFrame {
 	};
 
 	LoadFont("Common Normal")..{
-		Condition=DoDebug;
+		Condition=(DoDebug and GAMESTATE:IsSideJoined(PLAYER_1));
 		InitCommand=function(self)
 			self:zoom(.5):horizalign(left):addx(100):addy(-10);
 			self:settext("Icon: "..getenv("profile_icon_P1").." Setting: "..tostring(ActiveModifiers["P1"]['ProfileIcon']));
@@ -207,6 +192,21 @@ t[#t+1] = Def.ActorFrame{
 		ScreenChangedMessageCommand=cmd(playcommand,"On");
 		StorageDevicesChangedMessageCommand=cmd(playcommand,"On");
 
+	};
+	LoadFont("Common Normal")..{
+		Condition=(DoDebug and GAMESTATE:IsSideJoined(PLAYER_2));
+		InitCommand=function(self)
+			self:zoom(.5):horizalign(left):addx(-500):addy(-10);
+			if PROFILEMAN:ProfileWasLoadedFromMemoryCard(PLAYER_2) then
+				local dir = PROFILEMAN:GetProfileDir('ProfileSlot_Player2')
+				--self:settext(dir.." "..boolToString(FILEMAN:DoesFileExist(dir.."avatar.png")));
+				local listing = FILEMAN:GetDirListing(dir)
+				self:settext(strArrayToString(listing))
+			else
+				self:settext("Icon: "..getenv("profile_icon_P2").." Setting: "..tostring(ActiveModifiers["P2"]['ProfileIcon']));
+			end;
+			--self:settext(THEME:GetPathG("","USB_stuff/avatars").."/"..ActiveModifiers["P1"]["ProfileIcon"]);
+		end;
 	};
 	
 	PlayerName(PLAYER_2)..{

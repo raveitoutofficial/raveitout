@@ -87,7 +87,7 @@ t[#t+1] = 	Def.ActorFrame{
 	--TIME
 	LoadFont("monsterrat/_montserrat light 60px")..{
 			Text="TIME";
-			InitCommand=cmd(x,SCREEN_CENTER_X-25;y,SCREEN_BOTTOM-92;zoom,0.6;skewx,-0.2);
+			InitCommand=cmd(x,THEME:GetMetric("ScreenSelectProfile","TimerX")-100;y,THEME:GetMetric("ScreenSelectProfile","TimerY")+15;zoom,0.6;skewx,-0.2);
 		};
 		
 

@@ -1,7 +1,7 @@
 
 
 --DoDebug = THEME:GetMetric("CustomRIO","DevMode")
-DoDebug = false;
+DoDebug = true;
 --[[FIXED FONTS]]
 DebugFont =		"Common normal"
 
@@ -156,6 +156,137 @@ function getPlayModeChoices()
 	end;
 end;
 
+--Take a wild guess as to what this does
+--Asks for numSongsPlayed instead of profile because of ScreenSelectProfile complexity...
+function calcPlayerLevel(numSongsPlayed)
+	local uplevelfactor = THEME:GetMetric("CustomRIO","NumSongsToLevelUp");
+	local maxlevelnum = THEME:GetMetric("CustomRIO","MaxLevel");
+	if numSongsPlayed > maxlevelnum*uplevelfactor then
+		return maxlevelnum;
+	else
+		return math.ceil(numSongsPlayed/uplevelfactor)
+	end;
+end
+
+--Called from ScreenSelectPlayMode to pick a random group and the GroupWheel to show available groups
+function getAvailableGroups()
+	local groups = SONGMAN:GetSongGroupNames();
+
+	if not DoDebug then
+		--Remove easy and special folder from the group select
+		for k,v in pairs(groups) do
+			if v == RIO_FOLDER_NAMES["EasyFolder"] then
+				table.remove(groups, k)
+			elseif v == RIO_FOLDER_NAMES["SpecialFolder"] then
+				table.remove(groups, k)
+			--Never display the internal group folder
+			elseif v == "00-Internal" then
+				table.remove(groups, k)
+			--TODO: This should be done on startup.
+			elseif (#SONGMAN:GetSongsInGroup(v))-1 < 1 then
+				table.remove(groups, k)
+			end;
+		end
+	end;
+	return groups;
+end;
+
+function Resize(width,height,setwidth,sethight)
+    if height >= sethight and width >= setwidth then
+        if height*(setwidth/sethight) >= width then
+            return sethight/height
+        else
+            return setwidth/width
+        end
+    elseif height >= sethight then
+        return sethight/height
+    elseif width >= setwidth then
+        return setwidth/width
+    else 
+        return 1
+    end
+end
+
+function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+
+    return false
+end
+
+-- Memory card helpers
+function GetMemcardPath(player)
+	if player == PLAYER_1 then
+		return "/@mc1/"
+	else
+		return "/@mc2/"
+	end;
+end;
+
+function GetMemcardProfileDir(player)
+	return GetMemcardPath(player)..PREFSMAN:GetPreference("MemoryCardProfileSubdir").."/"
+end;
+
+function DoesMemcardProfileExist(player)
+	return FILEMAN:DoesFileExist(GetMemcardProfileDir(player).."Stats.xml");
+end;
+
+--NO IT DOESN'T FUCKING WORK GO FUCK YOURSELF
+--[[function Actor:ScaleToHeight(height)
+	if height >= self:GetHeight() then
+		self:SetWidth(self:GetWidth()*(height/self:GetHeight()))
+	else
+		self:SetWidth(self:GetWidth()*(self:GetHeight()/height))
+	end;
+	self:SetHeight(height)
+end;
+
+function Actor:ScaleToWidth(width)
+	if width/self:GetWidth() > 1 then
+		self:SetHeight(self:GetHeight()*(width/self:GetWidth()))
+	else
+		self:SetHeight(self:GetHeight()*(self:GetWidth()/width))
+	end;
+	self:SetWidth(width)
+end;
+
+function testScaleToHeight(origWidth, origHeight, height)
+	if height/origHeight > origHeight/height then
+		return origWidth*(height/origHeight)
+	else
+		return origWidth*(origHeight/height)
+	end;
+
+end;
+
+function testScaleToWidth(origWidth, origHeight, width)
+	if width > origWidth then
+		return origHeight*(width/origWidth)
+	else
+		return origHeight*(origWidth/width)
+	end;
+
+end;]]
+
+function returnLastElement(arr)
+	return arr[#arr]
+end
+
+function ListActorChildren(frame)
+	if frame:GetNumChildren() == 0 then
+		return "No children in frame.";
+	end
+	local list = frame:GetNumChildren().." children: ";
+	local children = frame:GetChildren()
+	for key,value in pairs(children) do
+		list = list..key..", ";
+	end
+	return list;
+end
+
 --Unlock functions
 function GetUnlockIndex( sEntryID )		--GetUnlockIndex	 by ROAD24 (Jose Jesus)		--HUGE thanks to him -NeobeatIKK
 local iNumLocks = UNLOCKMAN:GetNumUnlocks();
@@ -244,7 +375,13 @@ function soundext(filename)
 end
 
 
---Override the function to support RIO's SongBackgrounds folder.
+--OVERRIDES
+
+GameColor.PlayerColors = {
+	PLAYER_1 = color("#ed0972"),
+	PLAYER_2 = color("#33B5E5")
+};
+
 function GetSongBackground(return_nil_on_fail)
 	local song = GAMESTATE:GetCurrentSong();
 	if not song then
@@ -302,4 +439,9 @@ function getLargeJacket()
 		--self:LoadFromSongBanner(GAMESTATE:GetCurrentSong())
 		return song:GetBannerPath()
 	end;
+end;
+
+--Because it's useful
+function Actor:Cover()
+	self:scaletocover(0,0,SCREEN_RIGHT,SCREEN_BOTTOM);
 end;

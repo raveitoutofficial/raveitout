@@ -86,109 +86,16 @@ STREAM_UNSAFE_VIDEO = {
 	"Jaleo",
 	"Breakin' A Sweat"
 };
---Called from ScreenSelectPlayMode to pick a random group and the GroupWheel to show available groups
-function getAvailableGroups()
-	local groups = SONGMAN:GetSongGroupNames();
 
-	if not DoDebug then
-		--Remove easy and special folder from the group select
-		for k,v in pairs(groups) do
-			if v == RIO_FOLDER_NAMES["EasyFolder"] then
-				table.remove(groups, k)
-			elseif v == RIO_FOLDER_NAMES["SpecialFolder"] then
-				table.remove(groups, k)
-			--Never display the internal group folder
-			elseif v == "00-Internal" then
-				table.remove(groups, k)
-			--TODO: This should be done on startup.
-			elseif (#SONGMAN:GetSongsInGroup(v))-1 < 1 then
-				table.remove(groups, k)
-			end;
-		end
-	end;
-	return groups;
-end;
-
---Because it's useful
-function Actor:Cover()
-	self:scaletocover(0,0,SCREEN_RIGHT,SCREEN_BOTTOM);
-end;
-
-function Resize(width,height,setwidth,sethight)
-    if height >= sethight and width >= setwidth then
-        if height*(setwidth/sethight) >= width then
-            return sethight/height
-        else
-            return setwidth/width
-        end
-    elseif height >= sethight then
-        return sethight/height
-    elseif width >= setwidth then
-        return setwidth/width
-    else 
-        return 1
-    end
-end
-
-function has_value (tab, val)
-    for index, value in ipairs(tab) do
-        if value == val then
-            return true
-        end
-    end
-
-    return false
-end
-
---NO IT DOESN'T FUCKING WORK GO FUCK YOURSELF
---[[function Actor:ScaleToHeight(height)
-	if height >= self:GetHeight() then
-		self:SetWidth(self:GetWidth()*(height/self:GetHeight()))
-	else
-		self:SetWidth(self:GetWidth()*(self:GetHeight()/height))
-	end;
-	self:SetHeight(height)
-end;
-
-function Actor:ScaleToWidth(width)
-	if width/self:GetWidth() > 1 then
-		self:SetHeight(self:GetHeight()*(width/self:GetWidth()))
-	else
-		self:SetHeight(self:GetHeight()*(self:GetWidth()/width))
-	end;
-	self:SetWidth(width)
-end;
-
-function testScaleToHeight(origWidth, origHeight, height)
-	if height/origHeight > origHeight/height then
-		return origWidth*(height/origHeight)
-	else
-		return origWidth*(origHeight/height)
-	end;
-
-end;
-
-function testScaleToWidth(origWidth, origHeight, width)
-	if width > origWidth then
-		return origHeight*(width/origWidth)
-	else
-		return origHeight*(origWidth/width)
-	end;
-
-end;]]
-
-function returnLastElement(arr)
-	return arr[#arr]
-end
-
-function ListActorChildren(frame)
-	if frame:GetNumChildren() == 0 then
-		return "No children in frame.";
-	end
-	local list = frame:GetNumChildren().." children: ";
-	local children = frame:GetChildren()
-	for key,value in pairs(children) do
-		list = list..key..", ";
-	end
-	return list;
-end
+--Tentative, implementation is not finished.
+UNLOCKABLE_TITLES = {}
+--[[
+"SANGVIS FERRI" - Play 10 charts by Accelerator
+"Team 404" - Play 20 charts by Accelerator
+"Dance Beginner" - Become lv5
+"Dance Trainee" - Become lv10
+"Dance Pro" - Become lv20
+"Dance Master" - Become lv50
+"Dance Legend" - Become lv75
+"Ultimate Dance Legend" - Become lv100
+]]
