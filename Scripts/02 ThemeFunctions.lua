@@ -1,7 +1,5 @@
-
-
 --DoDebug = THEME:GetMetric("CustomRIO","DevMode")
-DoDebug = true;
+DoDebug = false;
 --[[FIXED FONTS]]
 DebugFont =		"Common normal"
 
