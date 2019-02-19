@@ -31,6 +31,7 @@ else
 end
 
 
+--This stupid code is used for the demo text and nothing else
 local notefxp1 =	THEME:GetMetric("ScreenGameplay","PlayerP1OnePlayerOneSideX")	--Note field X position P1
 local notefxp2 =	THEME:GetMetric("ScreenGameplay","PlayerP2OnePlayerOneSideX")	--Note field X position P2
 if IsP1On then
@@ -58,24 +59,10 @@ if IsP2On then
 	end
 end
 
-local stats_x, stats_y;
-if PREFSMAN:GetPreference("Center1Player") and GAMESTATE:GetNumSidesJoined() == 1 then
-	stats_x = SCREEN_CENTER_X/2-20;
-	stats_y = -SCREEN_HEIGHT+45;
-elseif stepsp1 ~= "StepsType_Pump_Single" or stepsp2 ~= "StepsType_Pump_Single" then
-	stats_y = -SCREEN_HEIGHT+59;
-	stats_x = 5;
-else
-	stats_x = 5;
-	stats_y = -SCREEN_HEIGHT+50;
-end
 				
 local t = Def.ActorFrame{
 
  	Def.ActorFrame{	--Main
-		LoadActor("stats.lua")..{
-			InitCommand=cmd(y,stats_y;x,stats_x)
-		};
 		
 		LoadActor("new_elements");
 		LoadActor("score_system");
@@ -210,18 +197,12 @@ local t = Def.ActorFrame{
 };
 
 local competitionMode = (ActiveModifiers["P1"]["CompetitionMode"] and ActiveModifiers["P2"]["CompetitionMode"])
-	--Percentage thing
+
 for pn in ivalues(GAMESTATE:GetHumanPlayers()) do	
 	local notefxp =	THEME:GetMetric("ScreenGameplay","Player"..pname(pn).."OnePlayerOneSideX")	--Note field X position P1/P2 (pname evaluates to P1/P2 so it would be doing ScreenGameplay PlayerP1OnePlayerOneSideX)
 	local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 	if (style == "OnePlayerOneSide" and PREFSMAN:GetPreference("Center1Player")) or style == "OnePlayerTwoSides" then
 		notefxp = SCREEN_CENTER_X;
-	elseif competitionMode then
-		if pn == PLAYER_1 then
-			notefxp = SCREEN_CENTER_X-80;
-		else
-			notefxp = SCREEN_CENTER_X+80;
-		end;
 	end;
 	local steps;
 	if GAMESTATE:IsCourseMode() then
@@ -230,8 +211,19 @@ for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 		steps = GAMESTATE:GetCurrentSteps(pn):GetStepsType();
 	end
 	
+	--Percentage thing
 	t[#t+1] = Def.ActorFrame{
-		InitCommand=cmd(x,notefxp);
+		InitCommand=function(self)
+			if competitionMode then
+				if pn == PLAYER_1 then
+					self:x(SCREEN_CENTER_X-80);
+				else
+					self:x(SCREEN_CENTER_X+80);
+				end;
+			else
+				self:x(notefxp);
+			end;
+		end;
 		--P1 PERCENTAGE
 		Def.ActorFrame{
 			LoadActor(pname(pn).."_bg_percentage")..{
@@ -359,6 +351,13 @@ for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 			end;
 		};
 	};
+	
+	--The judgement stats above the note receptors
+	if not PerfectionistMode[pn] then	--p1 live stats
+		t[#t+1] = LoadActor("stats", pn)..{
+			InitCommand=cmd(xy,notefxp,35);
+		};
+	end;
 end;
 
 t[#t+1] = LoadActor("playerFailed");

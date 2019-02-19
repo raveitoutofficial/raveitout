@@ -21,10 +21,10 @@ function DoesMemcardProfileExist(player)
 end;
 
 function LoadMemcardProfileData(player)
-	local dir = GetMemcardProfileDir(player)
-	if FILEMAN:DoesFileExist(dir.."rioStats.ini") then
+	local filePath = GetMemcardProfileDir(player).."rioStats.ini"
+	if FILEMAN:DoesFileExist(filePath) then
 		local file = RageFileUtil.CreateRageFile();
-		file:Open(dir.."rioStats.ini",1) --Access type: Read
+		file:Open(filePath,1) --Access type: Read
 		local s = file:Read();
 		s = s:split("\n")
 		profileCache = {};
@@ -50,7 +50,7 @@ function LoadMemcardProfileData(player)
 		file:destroy();
 		return profileCache;
 	else
-		SCREENMAN:SystemMessage(player.." profile does not exist...")
+		SCREENMAN:SystemMessage(player.." profile does not exist... "..filePath)
 	end;
 	return nil;
 end;
