@@ -75,6 +75,10 @@ t[#t+1] = Def.Actor {
 		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
 			local profileDir = PROFILEMAN:GetProfileDir(ProfileSlot[PlayerNumber:Reverse()[player]+1]);
 			SaveProfileCustom(PROFILEMAN:GetProfile(player),profileDir);
+			--If there are no stages left, save extra data needed for memory cards.
+			if not UseNextStage and PROFILEMAN:ProfileWasLoadedFromMemoryCard(player) then
+				SaveMemcardProfileData(player);
+			end;
 		end;
 		SCREENMAN:GetTopScreen():Continue();
 	end;

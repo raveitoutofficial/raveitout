@@ -1,27 +1,6 @@
-local function parseFile2(filename)
-  local file = RageFileUtil.CreateRageFile()
-  file:Open(filename, 1)
-  local xmlP = newParser()
-  xmlP:ParseXmlText(file:Read())
-  file:Close()
-  file:destroy()
-  return xmlP;
-end
-
-
-local p = GetMemcardProfileDir(PLAYER_2).."Stats.xml"
-assert(FILEMAN:DoesFileExist("/@mc2/dumper.cfg"),p.." does not exist!");
---local xml = parseFile(p);
-local xml = parseFile2(p)
-SCREENMAN:SystemMessage(xml:children()[1]:name())
---SCREENMAN:SystemMessage(xml.children[1].children);
---[[for k,v in ipairs(xml.children[1].children) do
-	Trace(v.name)
-end;
-lua.Flush()
-]]
-
 local Player = PLAYER_2;
+local profData = LoadMemcardProfileData(Player);
+--SCREENMAN:SystemMessage(profData["DisplayName"])
 local PROFILE_FRAME_WIDTH,PROFILE_FRAME_HEIGHT = 400,490
 local t = Def.ActorFrame{
 	InitCommand=cmd(Center);

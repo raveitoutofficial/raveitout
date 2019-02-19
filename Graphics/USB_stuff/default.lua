@@ -201,7 +201,7 @@ t[#t+1] = Def.ActorFrame{
 				local dir = PROFILEMAN:GetProfileDir('ProfileSlot_Player2')
 				--self:settext(dir.." "..boolToString(FILEMAN:DoesFileExist(dir.."avatar.png")));
 				local listing = FILEMAN:GetDirListing(dir)
-				self:settext(strArrayToString(listing))
+				self:settext(dir)
 			else
 				self:settext("Icon: "..getenv("profile_icon_P2").." Setting: "..tostring(ActiveModifiers["P2"]['ProfileIcon']));
 			end;

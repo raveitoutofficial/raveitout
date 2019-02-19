@@ -22,6 +22,10 @@ function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
 end
 
+function trimStr(s)
+   return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
 --From https://stackoverflow.com/a/19263313
 --This does not work with periods for some mysterious reason
 --Usage: "something here":split(",")

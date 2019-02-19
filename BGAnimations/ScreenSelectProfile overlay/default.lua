@@ -27,6 +27,16 @@ function(table, ind)
 end
 })
 
+local MemcardProfileInfocache = {
+	["PlayerNumber_P1"] = nil,
+	["PlayerNumber_P2"] = nil
+};
+for player in ivalues({PLAYER_1, PLAYER_2}) do
+	if MEMCARDMAN:GetCardState(player) == 'MemoryCardState_ready' then
+		MemcardProfileInfocache[player] = LoadMemcardProfileData(player)
+	end;
+end;
+
 function GetLocalProfiles()
 	local t = {};
 
@@ -202,6 +212,7 @@ function LoadPlayerStuff(Player)
 		};
 		
 		LoadActor("circle")..{
+			Condition=IsMemcardEnabled();
 			InitCommand=cmd(diffusealpha,0;zoom,3.5;y,-PROFILE_FRAME_HEIGHT/2+100;);
 			OnCommand=cmd(queuecommand,"Loop");
 			LoopCommand=cmd(decelerate,1;diffusealpha,1;zoom,1.5;sleep,.5;linear,.5;diffusealpha,0;sleep,0;zoom,3.5;queuecommand,"Loop");
@@ -209,6 +220,11 @@ function LoadPlayerStuff(Player)
 		LoadFont("Common Normal")..{
 			Text="Insert your USB stick to login";
 			InitCommand=cmd(y,-PROFILE_FRAME_HEIGHT/2+25;vertalign,top);
+			OnCommand=function(self)
+				if not IsMemcardEnabled() then
+					self:settext("Memory cards are disabled. Select a local profile below.");
+				end;
+			end;
 			--OnCommand=cmd(diffuseshift;effectperiod,2;effectcolor1,color("1,1,1,1");effectcolor2,color("1,1,1,0"));
 		
 		};
@@ -319,7 +335,7 @@ function LoadPlayerStuff(Player)
 					};
 					LoadFont("ScreenSelectProfile subtext")..{
 						Name="PlayerTitle";
-						InitCommand=cmd(y,18;vertalign,top);
+						InitCommand=cmd(y,18;vertalign,top;maxwidth,300);
 						OnCommand=function(self)
 							if pn == 1 then
 								self:x(40);
@@ -577,6 +593,7 @@ function UpdateInternal3(self, Player)
 	--Profile stuff
 	local playdata_pages = bigframe:GetChild('playdata_pages');
 	local playerName = playdata_pages:GetChild('page1'):GetChild("NameFrame"):GetChild("PlayerName");
+	local playerTitle = playdata_pages:GetChild('page1'):GetChild("NameFrame"):GetChild("PlayerTitle");
 	--local playerID = playdata_pages:GetChild('page1'):GetChild("PlayerID");
 	local playerLv = playdata_pages:GetChild("page1"):GetChild("LevelFrame"):GetChild("Level");
 	local playerNumSongs = playdata_pages:GetChild('page1'):GetChild("PlayCountFrame"):GetChild("PlayerNumSongs");
@@ -627,11 +644,15 @@ function UpdateInternal3(self, Player)
 			joinframe:visible(false);
 			loginframe:visible(false);
 			bigframe:visible(true);
-			local profile = PROFILEMAN:GetProfile(Player);
-			playerName:settext(profile:GetDisplayName());
-			playerLv:settext(calcPlayerLevel(profile:GetNumTotalSongsPlayed()));
-			playerNumSongs:settext(tostring(math.ceil(profile:GetNumTotalSongsPlayed())));
-			playerDP:settext(profile:GetTotalDancePoints());
+			if MemcardProfileInfocache[Player] ~= nil then
+				playerName:settext(MemcardProfileInfocache[Player]["DisplayName"]);
+				playerLv:settext(calcPlayerLevel(MemcardProfileInfocache[Player]["NumTotalSongsPlayed"]));
+				playerNumSongs:settext(MemcardProfileInfocache[Player]["NumTotalSongsPlayed"]);
+				playerDP:settext(MemcardProfileInfocache[Player]["DancePoints"]);
+			else
+				playerName:settext("Missing stats");
+				playerTitle:settext("This profile needs to be migrated!");
+			end;
 			SCREENMAN:GetTopScreen():SetProfileIndex(Player, 0);
 		end;
 	else
@@ -770,6 +791,13 @@ local t = Def.ActorFrame {
 		LoadActor( THEME:GetPathS("ScreenSelectProfile","Move") )..{
 			DirectionButtonMessageCommand=cmd(play);
 		};]]
+		LoadActor(THEME:GetPathS("ScreenSelectProfile", "USB"))..{
+			OnCommand=function(self)
+				if IsMemcardEnabled() then
+					self:play();
+				end;
+			end;
+		};
 	};
 };
 

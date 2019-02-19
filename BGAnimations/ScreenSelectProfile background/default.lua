@@ -72,7 +72,7 @@ t[#t+1] = 	Def.ActorFrame{
 		InitCommand=cmd(uppercase,true;horizalign,left;x,SCREEN_LEFT+18;y,SCREEN_TOP+10;zoom,0.185;skewx,-0.1);
 		OnCommand=function(self)
 			self:uppercase(true);
-			self:settext(THEME:GetString("ScreenSelectProfile","INSERT YOUR USB"));
+			self:settext(THEME:GetString("ScreenSelectProfile","SELECT A LOCAL PROFILE OR"));
 		end;
 	};
 	
@@ -80,7 +80,7 @@ t[#t+1] = 	Def.ActorFrame{
 		InitCommand=cmd(uppercase,true;horizalign,left;x,SCREEN_LEFT+16;y,SCREEN_TOP+30;zoom,0.6;skewx,-0.255);
 		OnCommand=function(self)
 			self:uppercase(true);
-			self:settext(THEME:GetString("ScreenSelectProfile","OR SELECT A LOCAL PROFILE"));
+			self:settext(THEME:GetString("ScreenSelectProfile","INSERT YOUR USB FLASH DRIVE"));
 		end;
 	};
 	

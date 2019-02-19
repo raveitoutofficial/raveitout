@@ -1,5 +1,5 @@
 --DoDebug = THEME:GetMetric("CustomRIO","DevMode")
-DoDebug = false;
+DoDebug = true;
 --[[FIXED FONTS]]
 DebugFont =		"Common normal"
 
@@ -215,22 +215,6 @@ function has_value (tab, val)
     return false
 end
 
--- Memory card helpers
-function GetMemcardPath(player)
-	if player == PLAYER_1 then
-		return "/@mc1/"
-	else
-		return "/@mc2/"
-	end;
-end;
-
-function GetMemcardProfileDir(player)
-	return GetMemcardPath(player)..PREFSMAN:GetPreference("MemoryCardProfileSubdir").."/"
-end;
-
-function DoesMemcardProfileExist(player)
-	return FILEMAN:DoesFileExist(GetMemcardProfileDir(player).."Stats.xml");
-end;
 
 --NO IT DOESN'T FUCKING WORK GO FUCK YOURSELF
 --[[function Actor:ScaleToHeight(height)
