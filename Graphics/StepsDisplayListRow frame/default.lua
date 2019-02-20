@@ -77,10 +77,8 @@ t[#t+1] = Def.ActorFrame{
 			if meter >= 99 then
 				--self:settextf("%s","99+");
 				self:settext("??");
-			elseif meter >= 10 then
-				self:settextf("%d",meter);
 			else
-				self:settextf("0%d",meter);
+				self:settextf("%02d",meter);
 			end;
 		end;
 	};

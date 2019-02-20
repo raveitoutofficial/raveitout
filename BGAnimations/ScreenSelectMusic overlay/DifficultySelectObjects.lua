@@ -10,12 +10,12 @@ local alignment = (pn == PLAYER_1) and right or left;
 local negativeOffset = (pn == PLAYER_1) and 1 or -1;
 local start = (pn == PLAYER_1) and SCREEN_LEFT or SCREEN_RIGHT;
 
-return Def.ActorFrame{		--P1 info display set
+return Def.ActorFrame{
 		InitCommand=cmd(x,start;y,_screen.cy+110;vertalign,middle,horizalign,alignment);
 		SongChosenMessageCommand=cmd(stoptweening;decelerate,0.125;x,SCREEN_CENTER_X);
 		SongUnchosenMessageCommand=cmd(stoptweening;accelerate,0.125*1.5;x,start;);
 		
-		LoadActor(pname(pn).."_info")..{		--P1 INFO
+		LoadActor(pname(pn).."_info")..{		--PLAYER INFO
 			InitCommand=cmd(horizalign,alignment;zoomto,250,45;x,-180*negativeOffset;y,-235;);
 			OnCommand=function(self)
 				if pn == PLAYER_1 then
@@ -28,7 +28,7 @@ return Def.ActorFrame{		--P1 info display set
 		};
 		
 		
-		LoadActor("ready")..{		--P1 READY
+		LoadActor("ready")..{		--PLAYER READY
 			InitCommand=cmd(visible,false;horizalign,center;x,-260;y,-150);
 			StepsChosenMessageCommand=function(self,param)
 				if param.Player == pn and GAMESTATE:GetNumSidesJoined() == 2 then
@@ -41,8 +41,9 @@ return Def.ActorFrame{		--P1 info display set
 		};
 		Def.ActorFrame{		--Chart Info and more for P1
 			InitCommand=cmd(y,-diffy);
-			LoadFont("monsterrat/_montserrat semi bold 60px")..{	--Artist text
-				InitCommand=cmd(x,-120*negativeOffset;y,-170;zoom,0.215;uppercase,true;maxwidth,400);
+			--Artist text
+			LoadFont("monsterrat/_montserrat semi bold 60px")..{	
+				InitCommand=cmd(x,-120*negativeOffset;y,-175;zoom,0.215;uppercase,true;maxwidth,400);
 				PlayerJoinedMessageCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn);queuecommand,"CurrentSteps"..pname(pn).."ChangedMessage");
 				["CurrentSteps"..pname(pn).."ChangedMessageCommand"]=function(self)
 				--	local author = GAMESTATE:GetCurrentSteps(pn):GetAuthorCredit()	--this is the Thor that is the auThor... lol get it? yes but... ah ok...
@@ -51,7 +52,7 @@ return Def.ActorFrame{		--P1 info display set
 					if GAMESTATE:IsCourseMode() and GetCourseDescription(GAMESTATE:GetCurrentCourse():GetCourseDir(),"DESCRIPTION") ~= "" then
 						author = GAMESTATE:GetCurrentCourse():GetScripter();
 						if author == "" then
-								artist = "Not available\n...wait what? Are you freaking serious?"
+								artist = "Not available"
 								self:maxwidth(1000);
 							else
 								if DoDebug then		--what is code and/or stepmania... without jokes? (only for p1)
@@ -69,32 +70,48 @@ return Def.ActorFrame{		--P1 info display set
 							self:visible(GAMESTATE:IsHumanPlayer(pn));
 							self:settext(artist);
 					else
-
-					if GAMESTATE:GetCurrentSteps(pn) then
-					author = GAMESTATE:GetCurrentSteps(pn):GetAuthorCredit();		--Cortes got lazy and opt to use Description tag lol
-						if GAMESTATE:GetCurrentSong() then		--set text display
-							if author == "" then
-								artist = "Not available\n...wait what? Are you freaking serious?"
-								self:maxwidth(1000);
-							else
-								if DoDebug then		--what is code and/or stepmania... without jokes? (only for p1)
-									if author == "C.Cortes" then
-										artist = "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
-									elseif author == "F.Rodriguez" then
-										artist = "I LIEK TURTLES"
+						if GAMESTATE:GetCurrentSteps(pn) then
+							author = GAMESTATE:GetCurrentSteps(pn):GetAuthorCredit();		--Cortes got lazy and opt to use Description tag lol
+							if GAMESTATE:GetCurrentSong() then		--set text display
+								if author == "" then
+									artist = "Not available"
+									self:maxwidth(1000);
+								else
+									if DoDebug then		--what is code and/or stepmania... without jokes? (only for p1)
+										if author == "C.Cortes" then
+											artist = "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+										elseif author == "F.Rodriguez" then
+											artist = "I LIEK TURTLES"
+										else
+											artist = author
+										end
 									else
 										artist = author
 									end
-								else
-									artist = author
 								end
-							end
-							self:visible(GAMESTATE:IsHumanPlayer(pn));
-							self:settext(artist);
+								self:visible(GAMESTATE:IsHumanPlayer(pn));
+								self:settext(artist);
+							else
+								self:visible(false);
+							end;
+						end;
+					end;
+				end;
+			};
+			LoadFont("monsterrat/_montserrat semi bold 60px")..{	
+				InitCommand=cmd(x,-120*negativeOffset;y,-160;zoom,0.215;uppercase,true;maxwidth,400);
+				PlayerJoinedMessageCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn);queuecommand,"CurrentSteps"..pname(pn).."ChangedMessage");
+				["CurrentSteps"..pname(pn).."ChangedMessageCommand"]=function(self)
+					if GAMESTATE:IsCourseMode() and GetCourseDescription(GAMESTATE:GetCurrentCourse():GetCourseDir(),"DESCRIPTION") ~= "" then
+						self:settext("TODO: Implement this");
+					else
+						if GAMESTATE:GetCurrentSteps(pn) then
+							self:settext(StepsTypeToString(GAMESTATE:GetCurrentSteps(pn)));
+							--self:settext("afdaasdasdda");
+							self:visible(true);
 						else
 							self:visible(false);
 						end;
-					end;
 					end;
 				end;
 			};

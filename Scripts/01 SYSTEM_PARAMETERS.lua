@@ -6,7 +6,7 @@ DISPLAY TYPE: HD
 ]]
 SysInfo = {
 	InternalName = "RIOS2",
-	Version = "Internal Alpha",
+	Version = "Alpha",
 }
 
 RIO_FOLDER_NAMES = {
@@ -69,6 +69,10 @@ STEPMAKER_NAMES_BLACKLIST = {
 	"A.Sofikitis",
 	"Furqon",
 	"Blank",
+	--S2 names
+	"A.Sora",
+	"Accelerator",
+	"G.Shawn"
 };
 
 

@@ -356,6 +356,27 @@ function soundext(filename)
 	return file_path
 end
 
+--GetChartStyle support Requested by someone on Facebook
+function StepsTypeToString(steps)
+	local meter = steps:GetMeter();
+	--If the steps has a custom style name, use it.
+	local style = steps:GetChartStyle();
+	--If not, get the regular name.
+	if style == "" then
+		local sttype = split("_",ToEnumShortString(steps:GetStepsType()))
+		--local gamemode = sttype[1]
+		style = string.upper(sttype[2]) --Ex. Single, Double, Halfdouble, etc.
+		
+		if style == "HALFDOUBLE" then style = "HALF DOUBLE" end;
+		if meter >= 99 then
+			return style.." Lv.??";
+		else
+			return style..string.format(" Lv.%02d",meter)
+		end;
+	end;
+	
+	return style;
+end;
 
 --OVERRIDES
 

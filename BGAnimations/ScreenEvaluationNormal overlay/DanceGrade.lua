@@ -71,26 +71,11 @@ t[#t+1] = Def.ActorFrame{
 	LoadFont("monsterrat/_montserrat semi bold 60px")..{
 	InitCommand=cmd(zoomx,0.25;zoomy,0.225;skewx,-0.2;uppercase,true;horizalign,center;vertalign,top;);
 	OnCommand=function(self)
-	
-	local steps = GAMESTATE:GetCurrentSteps(player)
-	local meter = steps:GetMeter();
-	local stepstype = ToEnumShortString(steps:GetStepsType());
-
-		if steps then			
-			if stepstype == "Pump_Single" then mode = "SINGLE";
-			elseif stepstype == "Pump_Double" then mode = "DOUBLE";
-			elseif stepstype == "Pump_Routine" then mode = "ROUTINE"; self:visible(player == GAMESTATE:GetMasterPlayerNumber());
-			elseif stepstype == "Pump_Halfdouble" then mode = "HALF DOUBLE";
-			end;
-
-			if meter < 10 then
-				self:settext(mode.." Lv.0"..meter);
-			elseif meter >= 30 then
-				self:settext(mode.." Lv.??");
-			else
-				self:settext(mode.." Lv."..meter);
-			end;
+		local steps = GAMESTATE:GetCurrentSteps(player);
+		if ToEnumShortString(steps:GetStepsType()) == "Pump_Routine" then
+			self:visible(player == GAMESTATE:GetMasterPlayerNumber());
 		end;
+		self:settext(StepsTypeToString(steps));
 		
 		if player == PLAYER_1 then
 			if IsUsingWideScreen() then self:x(SCREEN_CENTER_X-290); self:maxwidth(350); else self:x(SCREEN_CENTER_X-217); end;
