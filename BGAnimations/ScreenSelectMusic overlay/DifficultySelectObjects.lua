@@ -43,7 +43,7 @@ return Def.ActorFrame{
 			InitCommand=cmd(y,-diffy);
 			--Artist text
 			LoadFont("monsterrat/_montserrat semi bold 60px")..{	
-				InitCommand=cmd(x,-120*negativeOffset;y,-175;zoom,0.215;uppercase,true;maxwidth,800);
+				InitCommand=cmd(x,-120*negativeOffset;y,-175;zoom,0.215;uppercase,true;maxwidth,900);
 				PlayerJoinedMessageCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn);queuecommand,"CurrentSteps"..pname(pn).."ChangedMessage");
 				["CurrentSteps"..pname(pn).."ChangedMessageCommand"]=function(self)
 				--	local author = GAMESTATE:GetCurrentSteps(pn):GetAuthorCredit()	--this is the Thor that is the auThor... lol get it? yes but... ah ok...
@@ -99,7 +99,7 @@ return Def.ActorFrame{
 				end;
 			};
 			LoadFont("monsterrat/_montserrat semi bold 60px")..{	
-				InitCommand=cmd(x,-120*negativeOffset;y,-160;zoom,0.215;uppercase,true;maxwidth,800);
+				InitCommand=cmd(x,-120*negativeOffset;y,-160;zoom,0.215;uppercase,true;maxwidth,900);
 				PlayerJoinedMessageCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn);queuecommand,"CurrentSteps"..pname(pn).."ChangedMessage");
 				["CurrentSteps"..pname(pn).."ChangedMessageCommand"]=function(self)
 					if GAMESTATE:IsCourseMode() and GetCourseDescription(GAMESTATE:GetCurrentCourse():GetCourseDir(),"DESCRIPTION") ~= "" then
@@ -107,7 +107,7 @@ return Def.ActorFrame{
 					else
 						if GAMESTATE:GetCurrentSteps(pn) then
 							self:settext(StepsTypeToString(GAMESTATE:GetCurrentSteps(pn)));
-							--self:settext("123456789012345678901234567890");
+							self:settext("123456789012345678901234567890");
 							self:visible(true);
 						else
 							self:visible(false);
