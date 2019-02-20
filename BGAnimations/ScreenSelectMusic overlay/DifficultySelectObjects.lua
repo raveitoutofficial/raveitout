@@ -107,7 +107,7 @@ return Def.ActorFrame{
 					else
 						if GAMESTATE:GetCurrentSteps(pn) then
 							self:settext(StepsTypeToString(GAMESTATE:GetCurrentSteps(pn)));
-							self:settext("123456789012345678901234567890");
+							--self:settext("123456789012345678901234567890");
 							self:visible(true);
 						else
 							self:visible(false);
