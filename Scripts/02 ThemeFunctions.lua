@@ -360,7 +360,7 @@ end
 function StepsTypeToString(steps)
 	local meter = steps:GetMeter();
 	--If the steps has a custom style name, use it.
-	local style = steps:GetChartStyle();
+	local style = steps:GetChartName();
 	--If not, get the regular name.
 	if style == "" then
 		local sttype = split("_",ToEnumShortString(steps:GetStepsType()))

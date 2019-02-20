@@ -45,3 +45,7 @@ Put something in the description tag of the steps for it to show under that diff
 
 LEVEL:
 Songs at lv99 or more will show up as "??".
+
+STEPS INFO:
+Put something in the #CHARTNAME tag for your steps if you want it to display something custom.
+It will also show instead of the regular "SINGLE Lv.XX" in the results screen.
