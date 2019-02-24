@@ -150,7 +150,7 @@ local function inputs(event)
 		SCREENMAN:set_input_redirected(PLAYER_1, false);
 		SCREENMAN:set_input_redirected(PLAYER_2, false);
 		MESSAGEMAN:Broadcast("StartSelectingSong");
-	elseif button == "DownLeft" or button == "MenuLeft" then
+	elseif button == "DownLeft" or button == "Left" then
 		SOUND:PlayOnce(THEME:GetPathS("MusicWheel", "change"), true);
 		if selection == 1 then
 			selection = #groups;
@@ -161,7 +161,7 @@ local function inputs(event)
 		setenv("cur_group",groups[selection]);
 		MESSAGEMAN:Broadcast("GroupChange");
 		
-	elseif button == "DownRight" or button == "MenuRight" then
+	elseif button == "DownRight" or button == "Right" then
 		SOUND:PlayOnce(THEME:GetPathS("MusicWheel", "change"), true);
 		if selection == #groups then
 			selection = 1;
