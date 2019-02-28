@@ -46,14 +46,44 @@ function GetNumHeartsForSong()
 	local s = GAMESTATE:GetCurrentSong()
 	if not s then
 		return 0
-	elseif s:MusicLengthSeconds() < MAX_SECONDS_FOR_SHORTCUT then
-		return 1
-	elseif s:IsLong() then
-		return 4
-	elseif s:IsMarathon() then
-		return 6
 	else
-		return 2
+		--It doesn't matter what steps we grab since we're reading the .ssc
+		local steps = s:GetAllSteps()[1];
+		if steps and steps:GetFilename() then
+			local file = File.Read( steps:GetFilename() );
+			if file then
+				local fnd = string.find(file , "#SONGTYPE:")
+				if fnd then
+					local last = string.find(file , ";" , fnd)
+					local previewvid = string.sub(file,fnd,last)
+					--Awful code
+					previewvid = string.gsub(previewvid, "\r", "")
+					previewvid = string.gsub(previewvid, "\n", "")
+					--SCREENMAN:SystemMessage(previewvid);
+					--TODO: Check if removing #SONGTYPE is faster then checking with it included
+					if previewvid == "#SONGTYPE:ARCADE;" then
+						return 2
+					elseif previewvid == "#SONGTYPE:SHORTCUT;" then
+						return 1
+					elseif previewvid == "#SONGTYPE:REMIX;" then
+						return 3
+					elseif previewvid == "#SONGTYPE:FULLSONG;" then
+						return 4
+					elseif previewvid == "#SONGTYPE:MARATHON;" then
+						return 6
+					end;
+				end;
+			end;
+		end;
+		if s:MusicLengthSeconds() < MAX_SECONDS_FOR_SHORTCUT then
+			return 1
+		elseif s:IsLong() then
+			return 4
+		elseif s:IsMarathon() then
+			return 6
+		else
+			return 2
+		end;
 	end;
 end;
 

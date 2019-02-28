@@ -1,3 +1,4 @@
+local isWheelCustom = ...
 local shine_index = 0;
 local streamSafeMode = (ReadPrefFromFile("StreamSafeEnabled") == "true");
 
@@ -22,7 +23,7 @@ return Def.ActorFrame{
 					if GAMESTATE:GetCurrentSong():GetPreviewVidPath() then
 						--Do nothing
 					else
-						self:sleep(.5):queuecommand("Load2");
+						self:sleep(.4):queuecommand("Load2");
 					end;
 				end;
 			end;
@@ -34,7 +35,7 @@ return Def.ActorFrame{
 		Def.Sprite{
 			--Name = "BGAPreview";
 			InitCommand=cmd(x,_screen.cx;y,_screen.cy-30);
-			CurrentSongChangedMessageCommand=cmd(stoptweening;Load,nil;sleep,.1;queuecommand,"PlayVid2");
+			CurrentSongChangedMessageCommand=cmd(stoptweening;Load,nil;sleep,.4;queuecommand,"PlayVid2");
 			PlayVid2Command=function(self)
 				--self:Load(nil);
 				local song = GAMESTATE:GetCurrentSong()
@@ -43,7 +44,6 @@ return Def.ActorFrame{
 				self:Load(path);
 				self:diffusealpha(0);
 				self:zoomto(384,232);
-				self:sleep(0.5);
 				self:linear(0.2);
 				if path == "/Backgrounds/Title.mp4" then
 					self:diffusealpha(0.5);
@@ -189,17 +189,22 @@ return Def.ActorFrame{
 		--SONG COUNTER
 		LoadFont("monsterrat/_montserrat light 60px")..{
 			InitCommand=cmd(horizalign,right;uppercase,true;x,_screen.cx+190;y,_screen.cy+75;zoom,0.8;skewx,-0.2);
-			CurrentSongChangedMessageCommand=function(self)
+			CurrentSongChangedMessageCommand=function(self,params)
 				local song = GAMESTATE:GetCurrentSong();
 				if song then
 					self:stoptweening();
-					local num = SCREENMAN:GetTopScreen():GetChild('MusicWheel'):GetCurrentIndex();
-					if not num then num = 0 else num = num + 1 end;
-					local numb = num < 1000 and string.format("%.3i", num) or scorecap(num);
-					local index = SCREENMAN:GetTopScreen():GetChild('MusicWheel'):GetNumItems();
-					if not index then index = 0 end;
-					local total = index < 1000 and string.format("%.3i", index) or scorecap(index);
-					self:settext( numb.."/"..total );
+					--It's probably not very efficient
+					local num = 0
+					local total = 0
+					if isWheelCustom == true then
+						--assert(params.index, "CurSongChanged is missing custom params!");
+						num = scroller:get_index()
+						total = 999
+					else
+						num = SCREENMAN:GetTopScreen():GetChild('MusicWheel'):GetCurrentIndex()+1;
+						total = SCREENMAN:GetTopScreen():GetChild('MusicWheel'):GetNumItems();
+					end
+					self:settext( string.format("%.3i", num).."/"..string.format("%.3i", total) );
 					(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.275;)) (self)
 				else
 					self:stoptweening();self:linear(0.25);self:diffusealpha(0);

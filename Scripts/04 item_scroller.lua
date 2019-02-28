@@ -192,6 +192,9 @@ item_scroller_mt= {
 																				 self.info_set)
 			return self.info_set[index]
 		end,
+		get_index= function(self)
+			return self:maybe_wrap_index(self.info_pos, self.focus_pos, self.info_set)
+		end,
 		get_actor_item_at_focus_pos= function(self)
 			return self.items[self.focus_pos]
 		end,

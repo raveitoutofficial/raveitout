@@ -7,9 +7,10 @@ local alph = 0.5	--diffusealpha
 
 return Def.ActorFrame{
 
-	LoadActor(THEME:GetPathG("MusicWheelItem Song","OverPart"))..{
+	--Don't load a blank file you fucking mongoloid
+	--[[LoadActor(THEME:GetPathG("MusicWheelItem Song","OverPart"))..{
 		InitCommand=cmd(addy,(scah/2)+8;rotationx,180;diffusealpha,0.5;croptop,ctop;fadetop,ftop);
-	};
+	};]]
 
 	Def.Sprite{		--Normal song banner item
 		Name="SongBanner";
