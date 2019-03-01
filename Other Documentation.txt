@@ -1,0 +1,22 @@
+GRADES:
+SS - 100% accuracy
+SS - >=97%  accuracy, 0 misses, 0 COOL, 0 OKAY, Pro Mode Off
+S+ - Same as above but Pro Mode On
+S - >=96%  accuracy, 0 misses, 0 OKAY
+A - >=80% accuracy
+B - >=70% accuracy
+C - >=60% accuracy
+D - >=50% accuracy
+F - <50% accuracy
+Failed - Failed.
+
+EXTRA STAGE:
+Get 90% or more accuracy for a bonus heart.
+
+
+EASTER EGGS:
+Hey, don't spoil yourself! You should play the game and find out for yourself...
+Alright, alright, I'll tell you anyway.
+Within 4 days before or after valentines day: Hearts in background
+December: snowflakes in background, christmas hats.
+Weed combo: 420 combos.

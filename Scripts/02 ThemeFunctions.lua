@@ -189,22 +189,6 @@ function getAvailableGroups()
 	return groups;
 end;
 
-function Resize(width,height,setwidth,sethight)
-    if height >= sethight and width >= setwidth then
-        if height*(setwidth/sethight) >= width then
-            return sethight/height
-        else
-            return setwidth/width
-        end
-    elseif height >= sethight then
-        return sethight/height
-    elseif width >= setwidth then
-        return setwidth/width
-    else 
-        return 1
-    end
-end
-
 function has_value (tab, val)
     for index, value in ipairs(tab) do
         if value == val then
@@ -268,61 +252,6 @@ function ListActorChildren(frame)
 	end
 	return list;
 end
-
---Unlock functions
-function GetUnlockIndex( sEntryID )		--GetUnlockIndex	 by ROAD24 (Jose Jesus)		--HUGE thanks to him -NeobeatIKK
-local iNumLocks = UNLOCKMAN:GetNumUnlocks();
-lua.Trace("ROAD24 GetUnlockIndex: iNumLocks = " .. iNumLocks);
-	for idx = 0, iNumLocks-1 do
-			local sIDtoCompare = UNLOCKMAN:GetUnlockEntry(idx):GetCode();
-			lua.Trace("ROAD24 GetUnlockIndex: idx = " .. idx .. " sIDtoCompare = " .. sIDtoCompare );
-			if sIDtoCompare == sEntryID then
-				lua.Trace("ROAD24 GetUnlockIndex: se encontro el code, index = " .. idx);
-				return idx;
-			end;
-	end;
-	lua.Trace("ROAD24 GetUnlockIndex: No se encontro regresando -1");	-- Si no lo encuentra ;
-	return -1;
-end;
-function IsEntryIDLocked( sEntryID )	--IsEntryIDLocked	 by ROAD24
-	if sEntryID then
-		lua.Trace("ROAD24 IsEntryIDLocked: Intentando obtener index de " .. sEntryID);
-		lua.Trace("ROAD24 IsEntryIDLocked: Invocando GetUnlockIndex");
-		local iEntryIndex = GetUnlockIndex( sEntryID );
-		lua.Trace("ROAD24 IsEntryIDLocked: GetUnlockIndex regreso " .. iEntryIndex );
-		if iEntryIndex >= 0 then
-     		local tUnlockEntry = UNLOCKMAN:GetUnlockEntry( iEntryIndex );
-			if tUnlockEntry then
-				local IsLocked = tUnlockEntry:IsLocked();
-				if IsLocked ~= nil then
-					lua.Trace("ROAD24 IsEntryIDLocked: regresa true");
-					return IsLocked;
-				else
-					lua.Trace("ROAD24 IsEntryIDLocked: IsLocked regreso nil");
-					return -1;
-				end;
-			end;
-		else
-			lua.Trace("ROAD24 IsEntryIDLocked: No se encontro index para " .. sEntryID);
-		end;
-	end;
-		lua.Trace("ROAD24 IsEntryIDLocked: Se esperaba un string pero se recibio nil");
-	return -1;
-end;
-
-function UnlockStatusToString(num)
-	if num == 0 then
-		return "UNLOCKED: This song is unlocked.";
-	elseif num == 1 then
-		return "LOCKED_ROULETTE: Only available in roulette.";
-	elseif num == 4 then
-		return "LOCKED_SELECTABLE: Locked due to #SELECTABLE tag.";
-	elseif num == 8 then
-		return "LOCKED_DISABELD: Disabled by operator.";
-	else
-		return "Unknown Status.";
-	end;
-end;
 
 function getNumberOfElements(t)
 	local count = 0;
@@ -409,6 +338,10 @@ function GetSongBackground(return_nil_on_fail)
 				return path;
 			end;
 		end;
+		--[[
+		TODO: Remove GetBackgroundPath() because this function needs to support
+		StepF2 where backgrounds without -wide at the end are used instead.
+		]]
 		path = song:GetBackgroundPath()
 		if path then
 			return path;
@@ -448,3 +381,42 @@ end;
 function Actor:Cover()
 	self:scaletocover(0,0,SCREEN_RIGHT,SCREEN_BOTTOM);
 end;
+
+--Like ScaleToFit except not stupid
+--Thx to Jousway for this
+function Resize(width,height,setwidth,sethight)
+    if height >= sethight and width >= setwidth then
+        if height*(setwidth/sethight) >= width then
+            return sethight/height
+        else
+            return setwidth/width
+        end
+    elseif height >= sethight then
+        return sethight/height
+    elseif width >= setwidth then
+        return setwidth/width
+    else 
+        return 1
+    end
+end
+
+--Same as above except you can do cmd(Resize,width,height;) on a Def.Sprite{} now
+function Sprite:Resize(setwidth,sethight)
+	--local width = self:GetTexture():GetTextureWidth();
+	--local height = self:GetTexture():GetTextureHeight();
+	local width = self:GetWidth();
+	local height = self:GetHeight();
+    if height >= sethight and width >= setwidth then
+        if height*(setwidth/sethight) >= width then
+            return self:zoom(sethight/height);
+        else
+            return self:zoom(setwidth/width);
+        end
+    elseif height >= sethight then
+        return self:zoom(sethight/height);
+    elseif width >= setwidth then
+        return self:zoom(setwidth/width);
+    else 
+        return 1
+    end
+end

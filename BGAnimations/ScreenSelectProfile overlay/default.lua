@@ -22,6 +22,7 @@ function(table, ind)
     out.NumTotalSongsPlayed = prof:GetNumTotalSongsPlayed()
     out.UserTable = prof:GetUserTable()
 	out.DancePoints = prof:GetTotalDancePoints()
+	--out.NumSP_A = prof:GetTotalStepsWithTopGrade('StepsType_Pump_Single',0,)
     rawset(table, ind, out)
     return out
 end
@@ -133,7 +134,7 @@ function LoadPlayerStuff(Player)
 		Def.ActorFrame {
 			Name = 'JoinFrame';
 			--OnCommand=cmd(diffuseshift;effectperiod,2;effectcolor1,color("1,1,1,1");effectcolor2,color("1,1,1,0"));
-			InitCommand=cmd(zoom,.75);
+			InitCommand=cmd(zoom,.75;addx,5);
 			LoadFont("monsterrat/_montserrat semi bold 60px") .. {
 				Text="PRESS         OR       \nTO JOIN THE RAVE.";
 				InitCommand=cmd(uppercase,true;skewx,-0.2;zoom,.9);
@@ -277,7 +278,6 @@ function LoadPlayerStuff(Player)
 			-- This is a long standing issue (ITG? ITG2?)
 			Def.ActorFrame{
 				Name="page1";
-				--It does nothing!!
 				
 				--[[
 				This is the important profile information.
@@ -395,6 +395,16 @@ function LoadPlayerStuff(Player)
 						InitCommand=cmd(setsize,PROFILE_FRAME_WIDTH,1;diffuse,color("#AAAAAAFF");y,13);
 					};
 					
+					LoadActor(THEME:GetPathG("","GradeDisplayEval/A"))..{
+						InitCommand=cmd(zoom,.2;valign,.67;);
+					};
+					LoadActor(THEME:GetPathG("","GradeDisplayEval/S_normal"))..{
+						InitCommand=cmd(zoom,.2;valign,.67;x,PROFILE_FRAME_WIDTH*.2);
+					};
+					LoadActor(THEME:GetPathG("","GradeDisplayEval/S_S"))..{
+						InitCommand=cmd(zoom,.2;valign,.67;x,PROFILE_FRAME_WIDTH*.4);
+					};
+					
 				};
 				Def.ActorFrame{
 					InitCommand=cmd(y,24);
@@ -404,8 +414,16 @@ function LoadPlayerStuff(Player)
 						Text="Single";
 					};
 					LoadFont("bebas/_bebas neue bold 90px")..{
-						InitCommand=cmd(horizalign,right;zoom,0.52;skewx,-0.15;x,PROFILE_FRAME_WIDTH/2.1);
-						--Text=profile:GetTotalStepsWithTopGrade("StepsType_Pump_Single");
+						InitCommand=cmd(zoom,0.52;addy,-16;skewx,-0.15;);
+						Text="123";
+					};
+					LoadFont("bebas/_bebas neue bold 90px")..{
+						InitCommand=cmd(zoom,0.52;addy,-16;skewx,-0.15;x,PROFILE_FRAME_WIDTH*.2);
+						Text="456";
+					};
+					LoadFont("bebas/_bebas neue bold 90px")..{
+						InitCommand=cmd(zoom,0.52;addy,-16;skewx,-0.15;x,PROFILE_FRAME_WIDTH*.4);
+						Text="789";
 					};
 					Def.Quad{
 						InitCommand=cmd(setsize,PROFILE_FRAME_WIDTH,1;diffuse,color("#AAAAAAFF");y,13);
@@ -420,8 +438,16 @@ function LoadPlayerStuff(Player)
 						Text="Double";
 					};
 					LoadFont("bebas/_bebas neue bold 90px")..{
-						InitCommand=cmd(horizalign,right;zoom,0.52;skewx,-0.15;x,PROFILE_FRAME_WIDTH/2.1);
-						--Text=profile:GetTotalStepsWithTopGrade("StepsType_Pump_Single");
+						InitCommand=cmd(zoom,0.52;addy,-12;skewx,-0.15;);
+						Text="123";
+					};
+					LoadFont("bebas/_bebas neue bold 90px")..{
+						InitCommand=cmd(zoom,0.52;addy,-12;skewx,-0.15;x,PROFILE_FRAME_WIDTH*.2);
+						Text="456";
+					};
+					LoadFont("bebas/_bebas neue bold 90px")..{
+						InitCommand=cmd(zoom,0.52;addy,-12;skewx,-0.15;x,PROFILE_FRAME_WIDTH*.4);
+						Text="789";
 					};
 					Def.Quad{
 						InitCommand=cmd(setsize,PROFILE_FRAME_WIDTH,1;diffuse,color("#AAAAAAFF");y,18);
