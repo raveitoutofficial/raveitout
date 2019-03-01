@@ -191,7 +191,7 @@ local function inputs(event)
 		button_history[3] = button_history[4]
 		button_history[4] = button
 		if button_history[1] == "UpLeft" and button_history[2] == "UpRight" and button_history[3] == "UpLeft" and button_history[4] == "UpRight" then
-			SCREENMAN:AddNewScreenToTop("ScreenSelectSort");
+			--SCREENMAN:AddNewScreenToTop("ScreenSelectSort");
 		end;
 		--SCREENMAN:SystemMessage(strArrayToString(button_history));
 		--musicwheel:SetOpenSection("");

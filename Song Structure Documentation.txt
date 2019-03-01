@@ -49,3 +49,13 @@ Songs at lv99 or more will show up as "??".
 STEPS INFO:
 Put something in the #CHARTNAME tag for your steps if you want it to display something custom.
 It will also show instead of the regular "SINGLE Lv.XX" in the results screen.
+
+HEARTS:
+By default it will subtract 1 heart if it's under 95 seconds, 2 hearts for that until long, 4 hearts for long, 6 for marathon.
+These are stepmania defaults (Except shortcut) so you can edit it in preferences.ini under LongVerSongSeconds and MarathonVerSongSeconds
+If you want to manually set the heart count, add a #SONGTYPE tag to the ssc:
+- #SONGTYPE:ARCADE; for regular (2 Hearts, usually 2-2:30)
+- #SONGTYPE:SHORTCUT; for short (1 Heart, usually 1:00-1:30)
+- #SONGTYPE:REMIX; for longer (3 Hearts, 2:30+)
+- #SONGTYPE:FULLSONG; for extra-long (4 Hearts, usually ~4:00)
+- #SONGTYPE:MARATHON; for very very long (6 Hearts, usually >=6:00)

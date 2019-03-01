@@ -422,23 +422,23 @@ end;
 t[#t+1] = LoadActor(THEME:GetPathG("","USB_stuff"))..{};
 
 t[#t+1] = LoadActor("ready")..{		-- 1 PLAYER JOINED READY
-			InitCommand=cmd(visible,false;horizalign,center;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoom,2;);
-			WaitingConfirmMessageCommand=cmd(playcommand,"Ready";);
-			StepsChosenMessageCommand=cmd(playcommand,"Ready";);
-			ReadyCommand=function(self)
-				if GAMESTATE:GetNumSidesJoined() == 1 and state > 1 then
-					self:stoptweening();
-					self:visible(false);
-					self:zoom(1);
-					self:linear(0.3);
-					self:zoom(2);
-					self:visible(true);
-				end;
-			end;
-			CurrentSongChangedMessageCommand=cmd(visible,false);
-			StepsUnchosenMessageCommand=cmd(visible,false);
-			SongUnchosenMessageCommand=cmd(visible,false);
-		};
+	InitCommand=cmd(visible,false;horizalign,center;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoom,2;);
+	WaitingConfirmMessageCommand=cmd(playcommand,"Ready";);
+	StepsChosenMessageCommand=cmd(playcommand,"Ready";);
+	ReadyCommand=function(self)
+		if GAMESTATE:GetNumSidesJoined() == 1 and state > 1 then
+			self:stoptweening();
+			self:visible(false);
+			self:zoom(1);
+			self:linear(0.3);
+			self:zoom(2);
+			self:visible(true);
+		end;
+	end;
+	CurrentSongChangedMessageCommand=cmd(visible,false);
+	StepsUnchosenMessageCommand=cmd(visible,false);
+	SongUnchosenMessageCommand=cmd(visible,false);
+};
 
 --TODO: Refactor it eventually since it's a waste of code
 if getenv("PlayMode") == "Easy" then
