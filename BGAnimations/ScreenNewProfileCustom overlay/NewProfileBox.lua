@@ -40,7 +40,7 @@ end;
 local player = ...;
 
 --Settings you can change
-local RECT_WIDTH,RECT_HEIGHT = SCREEN_WIDTH/2-10,SCREEN_HEIGHT*.7
+--local RECT_WIDTH,RECT_HEIGHT = SCREEN_WIDTH/2-10,SCREEN_HEIGHT*.7
 local SSC_BORDER_SIZE = 4;
 local SSC_ROWS = 1;
 local SSC_COLUMNS = 9;
@@ -54,7 +54,10 @@ local yPosition = -100;
 
 local f = Def.ActorFrame{
 	
-	rectGen(RECT_WIDTH,RECT_HEIGHT,2,color("1,1,1,1"),color("0,0,0,0"))..{};
+	--rectGen(RECT_WIDTH,RECT_HEIGHT,2,color("1,1,1,1"),color("0,0,0,0"))..{};
+	LoadActor(THEME:GetPathG("Common","PlayerBox"))..{
+		InitCommand=cmd(zoom,.6;diffuse,PlayerColor(player););
+	};
 	--[[rectGen(bWidth,bHeight,2,Color("White"),color(".3,.3,.3,.5"))..{
 		Name="BGQuad";
 		InitCommand=cmd(y,100);
@@ -75,7 +78,7 @@ local boxFrame = Def.ActorFrame{
 		boxFrameActor = self;
 	end;
 	
-	LoadActor('arrow')..{
+	LoadActor(THEME:GetPathG("common",'arrow'))..{
 		InitCommand=cmd(rotationz,90;xy,sqWidth/2,100;bounce)
 		--OnCommand=cmd(self:GetTexture
 	};

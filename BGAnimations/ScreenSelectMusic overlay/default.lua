@@ -322,8 +322,11 @@ else
 
 		};
 	}
-
-	t[#t+1] = Def.ActorFrame{		--OpList
+	--OpList
+	--This keeps the name of the current OptionsList because OptionsListLeft and OptionsListRight does not know what list this is otherwise
+	local currentOpListP1
+	local currentOpListP2
+	t[#t+1] = Def.ActorFrame{
 			CodeMessageCommand = function(self, params)
 				if params.Name == 'OptionList' then
 					SCREENMAN:GetTopScreen():OpenOptionsList(params.PlayerNumber)
@@ -351,7 +354,7 @@ else
 			};
 			LoadFont("bebas/_bebas neue bold 90px")..{	--Texto "OPTION LIST"
 				Text="OPTION LIST";
-				InitCommand=cmd(draworder,999;x,SCREEN_LEFT-olwid;y,_screen.cy-(olhei/2.25)+20;zoom,0.35;);
+				InitCommand=cmd(draworder,999;x,SCREEN_LEFT-olwid;y,_screen.cy-(olhei/2.25);vertalign,bottom;zoom,0.35;);
 				OptionsListOpenedMessageCommand=function(self,params)
 					if params.Player == PLAYER_1 then
 						setenv("currentplayer",PLAYER_1);
@@ -366,6 +369,64 @@ else
 						self:accelerate(olanib);
 						self:x(SCREEN_LEFT-(olwid/2));
 					end
+				end;
+			};
+			
+			--Uncomment if you want descriptions for options, but it's not finished anyway
+			LoadFont("Common Normal")..{
+				Text="Hello World!";
+				InitCommand=cmd(draworder,999;x,SCREEN_LEFT-olwid;y,_screen.cy-(olhei/2.25)+10;vertalign,top;zoom,.5;wrapwidthpixels,350);
+				OptionsListOpenedMessageCommand=function(self,params)
+					if params.Player == PLAYER_1 then
+						currentOpListP1 = "SongMenu"
+						--A better solution would be grabbing and parsing the first element of the OptionsList and setting it in InitCommand, but this will do for now.
+						self:settext(THEME:GetString("OptionExplanations","Speed"))
+						self:decelerate(olania);
+						self:x(SCREEN_LEFT+(olwid/2));
+					end;
+				end;
+				OptionsListClosedMessageCommand=function(self,params)
+					if params.Player == PLAYER_1 then
+						self:stoptweening();
+						self:accelerate(olanib);
+						self:x(SCREEN_LEFT-(olwid/2));
+					end
+				end;
+				OptionsListRightMessageCommand=function(self,params)
+					--SCREENMAN:SystemMessage(currentOpList..", "..params.Selection.." "..THEME:GetMetric("ScreenOptionsMaster",currentOpList..","..params.Selection+1))
+					if params.Player == PLAYER_1 then
+						if currentOpListP1 == "SongMenu" or currentOpListP1 == "System" then
+							local limit = tonumber(THEME:GetMetric("ScreenOptionsMaster",currentOpListP1))
+							if params.Selection+1 <= limit then
+								local itemName = string.gsub(THEME:GetMetric("ScreenOptionsMaster",currentOpListP1..","..params.Selection+1):split(";")[1],"name,","")
+								self:settext(THEME:GetString("OptionExplanations",itemName))
+							else
+								self:settext("Exit.");
+							end;
+						end;
+					end;
+					--SCREENMAN:SystemMessage(itemName)
+				end;
+				--No I don't know why playcommand isn't working
+				OptionsListLeftMessageCommand=function(self,params)
+					if params.Player == PLAYER_1 then
+						if currentOpListP1 == "SongMenu" or currentOpListP1 == "System" then
+							local limit = tonumber(THEME:GetMetric("ScreenOptionsMaster",currentOpListP1))
+							if params.Selection+1 <= limit then
+								local itemName = string.gsub(THEME:GetMetric("ScreenOptionsMaster",currentOpListP1..","..params.Selection+1):split(";")[1],"name,","")
+								self:settext(THEME:GetString("OptionExplanations",itemName))
+							else
+								self:settext("Exit.");
+							end;
+						end;
+					end;
+				end;
+				OptionsMenuChangedMessageCommand=function(self,params)
+					--SCREENMAN:SystemMessage("MenuChanged: Menu="..params.Menu);
+					currentOpListP1=params.Menu
+					if params.Menu ~= "SongMenu" and params.Menu ~= "System" then
+						self:settext(THEME:GetString("OptionExplanations",params.Menu))
+					end;
 				end;
 			};
 		};
@@ -391,7 +452,7 @@ else
 			};
 			LoadFont("bebas/_bebas neue bold 90px")..{	--Texto "OPTION LIST"
 				Text="OPTION LIST";
-				InitCommand=cmd(draworder,999;x,SCREEN_RIGHT+olwid;y,_screen.cy-(olhei/2.25)+20;zoom,0.35;);
+				InitCommand=cmd(draworder,999;x,SCREEN_RIGHT+olwid;y,_screen.cy-(olhei/2.25)vertalign,bottom;zoom,0.35;);
 				OptionsListOpenedMessageCommand=function(self,params)
 					if params.Player == PLAYER_2 then
 						setenv("currentplayer",PLAYER_2);
@@ -405,6 +466,61 @@ else
 						self:stoptweening();
 						self:accelerate(olanib);
 						self:x(SCREEN_RIGHT+(olwid/2));
+					end;
+				end;
+			};
+			LoadFont("Common Normal")..{
+				--Text="Hello World!";
+				InitCommand=cmd(draworder,999;x,SCREEN_RIGHT+olwid;y,_screen.cy-(olhei/2.25)+10;vertalign,top;zoom,.5;wrapwidthpixels,350);
+				OptionsListOpenedMessageCommand=function(self,params)
+					if params.Player == PLAYER_2 then
+						currentOpListP2 = "SongMenu"
+						--A better solution would be grabbing and parsing the first element of the OptionsList and setting it in InitCommand, but this will do for now.
+						self:settext(THEME:GetString("OptionExplanations","Speed"))
+						self:decelerate(olania);
+						self:x(SCREEN_RIGHT-(olwid/2));
+					end;
+				end;
+				OptionsListClosedMessageCommand=function(self,params)
+					if params.Player == PLAYER_2 then
+						self:stoptweening();
+						self:accelerate(olanib);
+						self:x(SCREEN_RIGHT-(olwid/2));
+					end
+				end;
+				OptionsListRightMessageCommand=function(self,params)
+					if params.Player == PLAYER_2 then
+						if currentOpListP2 == "SongMenu" or currentOpListP2 == "System" then
+							local limit = tonumber(THEME:GetMetric("ScreenOptionsMaster",currentOpListP2))
+							if params.Selection+1 <= limit then
+								local itemName = string.gsub(THEME:GetMetric("ScreenOptionsMaster",currentOpListP2..","..params.Selection+1):split(";")[1],"name,","")
+								self:settext(THEME:GetString("OptionExplanations",itemName))
+							else
+								self:settext("Exit.");
+							end;
+						end;
+					end;
+					--SCREENMAN:SystemMessage(itemName)
+				end;
+				--No I don't know why playcommand isn't working
+				OptionsListLeftMessageCommand=function(self,params)
+					if params.Player == PLAYER_2 then
+						if currentOpListP2 == "SongMenu" or currentOpListP2 == "System" then
+							local limit = tonumber(THEME:GetMetric("ScreenOptionsMaster",currentOpListP2))
+							if params.Selection+1 <= limit then
+								local itemName = string.gsub(THEME:GetMetric("ScreenOptionsMaster",currentOpListP2..","..params.Selection+1):split(";")[1],"name,","")
+								self:settext(THEME:GetString("OptionExplanations",itemName))
+							else
+								self:settext("Exit.");
+							end;
+						end;
+					end;
+				end;
+				OptionsMenuChangedMessageCommand=function(self,params)
+					--SCREENMAN:SystemMessage("MenuChanged: Menu="..params.Menu);
+					currentOpListP2=params.Menu
+					if params.Menu ~= "SongMenu" and params.Menu ~= "System" then
+						self:settext(THEME:GetString("OptionExplanations",params.Menu))
 					end;
 				end;
 			};

@@ -79,7 +79,7 @@ function LoadPlayerStuff(Player)
 			InitCommand=cmd(zoomtowidth,PROFILE_FRAME_WIDTH+80;zoomtoheight,PROFILE_FRAME_HEIGHT+50);
 		
 		};]]
-		LoadActor("profile_box")..{
+		LoadActor(THEME:GetPathG("Common","PlayerBox"))..{
 			InitCommand=cmd(diffuse,PlayerColor(Player);zoomtowidth,PROFILE_FRAME_WIDTH+50;zoomtoheight,PROFILE_FRAME_HEIGHT);
 			OnCommand=function(self)
 				if pn == 2 then
@@ -286,7 +286,7 @@ function LoadPlayerStuff(Player)
 			};
 		};]]
 		
-		LoadActor("mask")..{
+		LoadActor(THEME:GetPathG("Common", "Mask"))..{
 			InitCommand=cmd(diffuse,PlayerColor(Player);zoomtowidth,PROFILE_FRAME_WIDTH+50;zoomtoheight,PROFILE_FRAME_HEIGHT);
 			OnCommand=function(self)
 				if pn == 2 then
