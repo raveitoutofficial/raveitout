@@ -196,16 +196,23 @@ function LoadPlayerStuff(Player)
 			end;
 			children = GetLocalProfiles();
 		};
+		--This is the "grey" card unit BG that will show up if you have no card, no card checking, etc.
 		LoadActor("card_unit")..{
 			InitCommand=cmd(vertalign,top;y,-PROFILE_FRAME_HEIGHT/2+17;zoomtowidth,PROFILE_FRAME_WIDTH+15;zoomtoheight,185;);
-		};
-		LoadActor("mask")..{
-			InitCommand=cmd(diffuse,PlayerColor(Player);zoomtowidth,PROFILE_FRAME_WIDTH+50;zoomtoheight,PROFILE_FRAME_HEIGHT);
-			OnCommand=function(self)
-				if pn == 2 then
-					self:rotationy(180);
-				end;
-			end;
+			--[[StorageDevicesChangedMessageCommand=function(self)
+				self:linear(.3):zoomy(0):sleep(0):linear(.3):zoomy(1);
+				local st = ToEnumShortString(MEMCARDMAN:GetCardState(Player))
+				if st == "checking" then
+					self:diffuse(Color("Yellow"))
+				elseif st == "late" or st == "error" or st == "removed" then
+					self:diffuse(Color("Red"));
+				elseif st == "ready" then
+					self:diffuse(Color("Green"));
+				else
+					self:diffuse(Color("White"));
+				end
+			
+			end;]]
 		};
 		
 		LoadActor(THEME:GetPathG("USB", "icon"))..{
@@ -228,6 +235,64 @@ function LoadPlayerStuff(Player)
 			end;
 			--OnCommand=cmd(diffuseshift;effectperiod,2;effectcolor1,color("1,1,1,1");effectcolor2,color("1,1,1,0"));
 		
+		};
+		--This one shows up on top of the other one because it looks cool when you card in.
+		--[[Def.ActorFrame{
+			InitCommand=cmd(y,-PROFILE_FRAME_HEIGHT/4-12);
+			LoadActor("checking_card_unit")..{
+				InitCommand=function(self)
+					self:zoomtowidth(PROFILE_FRAME_WIDTH+15);
+					local st = ToEnumShortString(MEMCARDMAN:GetCardState(Player))
+					if ToEnumShortString(MEMCARDMAN:GetCardState(Player)) == "none" then
+						self:zoomy(0);
+					else
+						self:zoomtoheight(185);
+					end;
+				end;
+					
+				OnCommand=function(self)
+					self:linear(.3):zoomtoheight(185);
+					self:diffuse(Color("Yellow"));
+				end;
+				StorageDevicesChangedMessageCommand=function(self)
+					self:linear(.3):zoomy(0):sleep(0):linear(.3):zoomy(1);
+					local st = ToEnumShortString(MEMCARDMAN:GetCardState(Player))
+					if st == "checking" then
+						self:diffuse(Color("Yellow"))
+					elseif st == "late" or st == "error" or st == "removed" then
+						self:diffuse(Color("Red"));
+					elseif st == "ready" then
+						self:diffuse(Color("Green"));
+					else
+						self:diffuse(Color("White"));
+					end
+				
+				end;
+			};
+			Def.Sprite{
+				Texture="Checking_USB 12x10";
+				InitCommand=cmd(SetAllStateDelays,.03;zoom,.75);
+			};
+			Def.Sprite{
+				Texture="Verified_USB 7x5";
+				InitCommand=cmd(SetAllStateDelays,.03;zoom,.75);
+				AnimationFinishedCommand=function(self)
+					self:setstate(self:GetNumStates()-5):animate(false);
+				end;
+			};
+			LoadActor("Validating")..{
+				InitCommand=cmd(addy,60;diffuseshift;effectcolor1,color("#FFFFFFFF");effectcolor2,color("#FFFFFF55");effectperiod,1);
+			
+			};
+		};]]
+		
+		LoadActor("mask")..{
+			InitCommand=cmd(diffuse,PlayerColor(Player);zoomtowidth,PROFILE_FRAME_WIDTH+50;zoomtoheight,PROFILE_FRAME_HEIGHT);
+			OnCommand=function(self)
+				if pn == 2 then
+					self:rotationy(180);
+				end;
+			end;
 		};
 		
 	

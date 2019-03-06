@@ -1,4 +1,5 @@
 return Def.ActorFrame {
+	--OnCommand=cmd(sleep,999);
 
 	LoadActor(THEME:GetPathG("","_BGMovies/gameover"))..{
 		InitCommand=cmd(Cover);
@@ -9,7 +10,7 @@ return Def.ActorFrame {
 	};
 	Def.Quad{
 		InitCommand=cmd(diffuse,Color("White");setsize,SCREEN_WIDTH,SCREEN_HEIGHT;Center;diffusealpha,0);
-		OnCommand=cmd(sleep,4.5;linear,.5;diffusealpha,1);
+		OnCommand=cmd(sleep,4.5;linear,.5;diffusealpha,1;);
 	};
 };
 
