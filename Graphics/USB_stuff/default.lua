@@ -32,7 +32,7 @@ local function PlayerName(player)
 	--return LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
 	return LoadFont("common normal")..{
 		SetCommand=function(self)
-			self:settext("bla");
+			--self:settext("bla");
 			local profile = PROFILEMAN:GetProfile(player)
 			local name = profile:GetDisplayName()
 			
@@ -41,7 +41,8 @@ local function PlayerName(player)
 				if name == "" then		
 					self:settext(string.upper("RIO-000"));
 				else
-					self:settext(string.upper(name));
+					--TODO: Adjust maxwidth based on the number of hearts per play.
+					self:settext(string.upper(name)):maxwidth(160);
 				end
 				
 			else

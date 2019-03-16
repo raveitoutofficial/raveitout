@@ -305,6 +305,7 @@ t[#t+1] = Def.Quad{
 	StartSelectingSongMessageCommand=cmd(stoptweening;diffusealpha,1;linear,0.3;diffusealpha,0);
 };
 
+--Add scroller here
 t[#t+1] = scroller:create_actors("foo", numWheelItems, item_mt, SCREEN_CENTER_X, SCREEN_CENTER_Y);
 
 	--Current Group/Playlist

@@ -6,12 +6,13 @@ function Setup()
 --PREFSMAN:SetPreference("AllowW1",'AllowW1_Never');
 --PREFSMAN:SetPreference("VideoRenderers","d3d");
 --PREFSMAN:SetPreference("Vsync",0);
-	--PREFSMAN:SetPreference("SongsPerPlay",6);
 	--forced prefs by game design
 	--//copied and modified from NIKK's DDRS2KHD theme
 	--THEME:ReloadMetrics();
 	--redundante dejarlo aquí, dejar en theme default ScreenTitleMenu overlay o probar en ScreenOptions overlay
 	--PREFSMAN:SetPreference("Theme","RioTI"); --appearance op --ok [sólo al iniciar]
+	PREFSMAN:SetPreference("HideIncompleteCourses",true);
+	
 	PREFSMAN:SetPreference("SuperMeterPercentChangeCheckpointHit",0);
 	PREFSMAN:SetPreference("SuperMeterPercentChangeCheckpointMiss",0);
 	PREFSMAN:SetPreference("SuperMeterPercentChangeHeld",6);
@@ -23,6 +24,7 @@ function Setup()
 	PREFSMAN:SetPreference("SuperMeterPercentChangeW3",6);
 	PREFSMAN:SetPreference("SuperMeterPercentChangeW4",2);
 	PREFSMAN:SetPreference("SuperMeterPercentChangeW5",-2);
+	
 	PREFSMAN:SetPreference("TimeMeterSecondsChangeCheckpointHit",0);
 	PREFSMAN:SetPreference("TimeMeterSecondsChangeCheckpointMiss",0);
 	PREFSMAN:SetPreference("TimeMeterSecondsChangeHeld",3);
@@ -35,7 +37,6 @@ function Setup()
 	PREFSMAN:SetPreference("TimeMeterSecondsChangeW4",2);
 	PREFSMAN:SetPreference("TimeMeterSecondsChangeW5",-2);
 			--note end
-	PREFSMAN:SetPreference("HideIncompleteCourses",true);
 	PREFSMAN:SetPreference("TimingWindowAdd",0);
 	PREFSMAN:SetPreference("TimingWindowScale",THEME:GetMetric("CustomRIO","ForcedTimingScale"));
 	PREFSMAN:SetPreference("TimingWindowSecondsAttack",0.135000);
@@ -62,7 +63,6 @@ function Setup()
 	PREFSMAN:SetPreference("MusicWheelSwitchSpeed",15);
 			--Appearance Options
 	PREFSMAN:SetPreference("Announcer",nil); 		--not verified
-	--PREFSMAN:SetPreference("DefaultNoteSkin","rio");	--not verified
 	PREFSMAN:SetPreference("PercentageScoring",true);	--doesn't work?
 	PREFSMAN:SetPreference("RandomBackgroundMode","RandomBackgroundMode_RandomMovies");
 	PREFSMAN:SetPreference("ShowDancingCharacters","ShowDancingCharacters_Off");

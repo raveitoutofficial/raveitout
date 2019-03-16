@@ -21,7 +21,7 @@ return Def.ActorFrame {
 	};
 	
 	LoadFont("_fixedsys")..{
-		Text="RAVE IT OUT - THE INFUSION\n© 2016-2017 RIO DEVS.";
+		Text="RAVE IT OUT - SEASON 2\n© 2016-2019 RIO DEVS.";
 		InitCommand=cmd(xy,20,SCREEN_HEIGHT-20;SetTextureFiltering,false;horizalign,left;vertalign,bottom;zoom,textsize;);
 	};
 	LoadFont("_fixedsys")..{

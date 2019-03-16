@@ -104,6 +104,9 @@ function OptionRowAvailableNoteskins()
 	return t
 end
 
+--So when making a lua OptionsList, literally EVERYTHING had to be rewritten...
+--function OptionRowSpeedMods()
+
 --Thanks to Midflight Digital (again)
 function OptionRowScreenFilter()
 	local t = {
