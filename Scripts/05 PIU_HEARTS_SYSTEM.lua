@@ -3,10 +3,6 @@ THE PIU HEARTS SYSTEM, BROUGHT TO YOU BY ACCELERATOR
 Implementation: Hearts are removed during ScreenEvaluation init. If a player got an S or higher they get 1 heart back, max two hearts per session.
 ]]
 
---Using builtin functions
---MIN_SECONDS_FOR_LONG = PREFSMAN:GetPreference("LongVerSongSeconds")
---MIN_SECONDS_FOR_MARATHON = PREFSMAN:GetPreference("MarathonVerSongSeconds")
-
 -- Set to true to test obtaining extra hearts without any of the hard work.
 local Debug_AlwaysGetBonusHearts = false;
 
