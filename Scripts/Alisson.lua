@@ -16,6 +16,17 @@ function getcurstage()
 	return gfxNames[GAMESTATE:GetCurrentStage()]
 end
 
+function GetBGAPreviewPath(_)
+	--just ignore the tag parameter
+	local song = GAMESTATE:GetCurrentSong()
+	if song then
+		return GetSongExtraData(song, "PreviewVid")
+	end
+	return ""
+end
+
+--[[
+original code by Alisson, for reference
 function GetBGAPreviewPath(tag)
 	local song = GAMESTATE:GetCurrentSong();
 	if song then
@@ -52,6 +63,8 @@ function GetBGAPreviewPath(tag)
 		end
 	end
 end;
+]]
+
 
 function IsRoutineMasterPlayer(p)
 	--[[ ROAD: check if not nil
@@ -123,7 +136,8 @@ function ResetLife()
 	end
 end]]
 
-
+--[[
+--this is unused and does not appear to work
 function SetTagValue(file,tag)
 local song = GAMESTATE:GetCurrentSong();
 --if GAMESTATE:IsCourseMode() then return "" end
@@ -137,6 +151,7 @@ if FILEMAN:DoesFileExist(file) then
         File.Write(file..".a2",teste[1].."#FIRSTSECOND:"..firstsecond..";".."\n".."#LASTSECOND:"..lastsecond..";".."\n".."#"..tag..":"..teste[2])
 end
 end;
+]]
 
 
 function GetTagValue(file,tag)

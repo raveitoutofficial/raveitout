@@ -119,12 +119,11 @@ return Def.ActorFrame{
 			OnCommand=cmd(playcommand,"YearTag");
 			CurrentSongChangedMessageCommand=cmd(playcommand,"YearTag");
 			YearTagCommand=function(self)
-				ssc_year = GetCourseDescription(GAMESTATE:GetCurrentSong():GetSongFilePath(),"ORIGIN")
-				if ssc_year == nil or ssc_year == "" then
-					self:settext("????");
-				else
-					self:settext(ssc_year);
-				end;
+				local origin = GAMESTATE:GetCurrentSong():GetOrigin()
+				if origin == "" then
+					origin = "????"
+				end
+				self:settext(origin);
 				(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.2;skewx,-0.2)) (self)
 			end;
 		};
