@@ -40,6 +40,8 @@ You can display a custom message that tells information about the song during Sc
 If you want it to pick from multiple messages, simply put them on a separate line and it will randomly pick one.
 Note: msg.txt MUST be "CR LF" formatted, aka Windows style. If you don't know what that means, you're probably using Windows anyway and you don't need to worry.
 
+YEAR: Put the year in the #ORIGIN tag of your ssc for it to show up in the song select.
+
 DESCRIPTION:
 Put something in the description tag of the steps for it to show under that difficulty in the music select.
 
