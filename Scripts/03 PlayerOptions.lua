@@ -399,7 +399,8 @@ function adjustPlayerMMod(pn, amount)
 		playerOptions:MMod(playerOptions:MMod()+amount);
 	end;
 	GAMESTATE:GetPlayerState(pn):SetPlayerOptions('ModsLevel_Preferred', playerState:GetPlayerOptionsString("ModsLevel_Preferred"));
-	SCREENMAN:SystemMessage(GAMESTATE:GetPlayerState(pn):GetPlayerOptionsString("ModsLevel_Preferred"));
+	--SCREENMAN:SystemMessage(GAMESTATE:GetPlayerState(pn):GetPlayerOptionsString("ModsLevel_Preferred"));
+	return playerOptions:MMod();
 end
 
 --MMod only
@@ -411,12 +412,11 @@ function SpeedMods2()
 		GoToFirstOnStart= false;
 		OneChoiceForAllPlayers = false;
 		ExportOnChange = false;
-		Choices = { "OFF", "ON", "AV -100", "AV -10","AV +10", "AV +100"};
+		Choices = { "ON", "AV -100", "AV -10","AV +10", "AV +100"};
 		LoadSelections = function(self, list, pn)
 			if GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
-				list[2] = true
-			else
 				list[1] = true
+				--SCREENMAN:SystemMessage("MMod!")
 			end;
 		end;
 		--We're not saving anything!
@@ -425,43 +425,38 @@ function SpeedMods2()
 		end;
 		--Abuse the heck out of this one since we're checking what button they pressed and not what's selected or deselected
 		NotifyOfSelection = function(self,pn,choice)
-			SCREENMAN:SystemMessage("choice "..choice)
-			--[[
-			if list[1] then
-				GAMESTATE:ApplyGameCommand("mod,2x",pn);
-			elseif list[2] then
+			--SCREENMAN:SystemMessage("choice "..choice)
+			local speed;
+			if choice == 1 then
+				--If MMod isn't on, turn it on
 				if not GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
-					GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod(200)
-					--SCREENMAN:SystemMessage("New MMod: "..GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod())
-				end;
-			else
-				if not GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod() then
+					
 					local playerState = GAMESTATE:GetPlayerState(pn);
 					--This returns an instance of playerOptions, you need to set it back to the original
 					local playerOptions = playerState:GetPlayerOptions("ModsLevel_Preferred")
 					playerOptions:MMod(200)
 					GAMESTATE:GetPlayerState(pn):SetPlayerOptions('ModsLevel_Preferred', playerState:GetPlayerOptionsString("ModsLevel_Preferred"));
+					
+					--SCREENMAN:SystemMessage("New MMod: "..GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod())
+				else --If MMod is on, turn it off.
+					GAMESTATE:ApplyGameCommand("mod,2x",pn);
 				end;
-				if list[3] then
-					adjustPlayerMMod(pn,-100)
-				elseif list[4] then
-					adjustPlayerMMod(pn,-10)
-				elseif list[5] then
-					adjustPlayerMMod(pn,10)
-				elseif list[6] then
-					adjustPlayerMMod(pn,100)
+			elseif GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
+				if choice == 2 then
+					speed = adjustPlayerMMod(pn, -100);
+				elseif choice == 3 then
+					speed = adjustPlayerMMod(pn, -10);
+				elseif choice == 4 then
+					speed = adjustPlayerMMod(pn, 10);
+				elseif choice == 5 then
+					speed = adjustPlayerMMod(pn, 100);
 				end;
-				
-				--Hacky shit so it will say Auto Velocity ON in the main menu
-				for i=1,#list do
-					list[i] = false
-				end
-				list[2] = true
-				SCREENMAN:SystemMessage("New MMod: "..GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod())
-			end]]
-			MESSAGEMAN:Broadcast("SpeedModChange");
-			--Choices = { "asdasdads", "asdON", "AasdadV -100", "AV222 -10","A21313V +10", "AV +1asdad00"};
+			end;
+			MESSAGEMAN:Broadcast("MModChanged", {Player=pn,Speed=speed});
+			--Always return true because we don't want anything to get highlighted.
 			return true;
+			
+			--self.Choices = {"asdON", "AasdadV -100", "AV222 -10","A21313V +10", "AV +1asdad00"};
 		end;
 	};
 	setmetatable( t, t );

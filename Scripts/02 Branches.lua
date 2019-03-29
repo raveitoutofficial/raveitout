@@ -186,27 +186,60 @@ Branch = {
 		if GAMESTATE:IsCourseMode() then
 			return "ScreenProfileSave"
 		else
-			local maxHearts = HeartsPerPlay
-			local heartsLeft = GetSmallestNumHeartsLeftForAnyHumanPlayer();
-			local allFailed = STATSMAN:GetCurStageStats():AllFailed()
-			local song = GAMESTATE:GetCurrentSong()
-			--SCREENMAN:SystemMessage(heartsLeft);
-			if GAMESTATE:IsEventMode() or heartsLeft >= 1 then
-				return "ScreenProfileSave"
-			elseif song:IsLong() and maxHearts <= 4 and heartsLeft < 1 and allFailed then
-				return "ScreenProfileSaveSummary"
-			elseif song:IsMarathon() and maxHearts <= 6 and heartsLeft < 1 and allFailed then
-				return "ScreenProfileSaveSummary"
-			elseif maxHearts >= 4 and heartsLeft < 1 and allFailed then
-				return "ScreenProfileSaveSummary"
-			elseif allFailed then
-				return "ScreenProfileSaveSummary"
-			elseif heartsLeft <= 0 then
-				return "ScreenProfileSaveSummary"
+			if UnlockedOMES_RIO() then
+				local s = SONGMAN:FindSong(OMES_SONG);
+				if not s then
+					SCREENMAN:SystemMessage("The OMES song was not found, giving up.");
+					return "ScreenProfileSaveSummary";
+				end;
+				--Use same StepsType as the last played song.
+				if GAMESTATE:GetNumSidesJoined() > 1 then
+					local p1steps = GAMESTATE:GetCurrentSteps(PLAYER_1)
+					local p2steps = GAMESTATE:GetCurrentSteps(PLAYER_2)
+					--Never choose EDIT difficulty
+					local p1difficulty = (p1steps:GetDifficulty() and p1steps:GetDifficulty() ~= 5) or 4
+					local p2difficulty = (p2steps:GetDifficulty() and p2steps:GetDifficulty() ~= 5) or 4
+					if s:HasStepsTypeAndDifficulty(p1steps:GetStepsType(),p1difficulty) and s:HasStepsTypeAndDifficulty(p2steps:GetStepsType(),p2difficulty) then
+						GAMESTATE:SetCurrentSong(s);
+						GAMESTATE:SetCurrentSteps(PLAYER_1,s:GetOneSteps(p1steps:GetStepsType(),p1difficulty))
+						GAMESTATE:SetCurrentSteps(PLAYER_2,s:GetOneSteps(p2steps:GetStepsType(),p2difficulty))
+						return "ScreenGameplay";
+					end;
+					SCREENMAN:SystemMessage("There was no available difficulties for the OMES.")
+					return "ScreenProfileSaveSummary"
+				else
+					local steps = GAMESTATE:GetCurrentSteps(GAMESTATE:GetMasterPlayerNumber())
+					local difficulty = (steps:GetDifficulty() and steps:GetDifficulty() ~= 5) or 4
+					if s:HasStepsTypeAndDifficulty(steps:GetStepsType(),difficulty) then
+						GAMESTATE:SetCurrentSong(s);
+						GAMESTATE:SetCurrentSteps(PLAYER_1,s:GetOneSteps(steps:GetStepsType(),difficulty))
+						return "ScreenGameplay";
+					end;
+					SCREENMAN:SystemMessage("There was no available difficulties for the OMES.")
+					return "ScreenProfileSaveSummary"
+				end;
 			else
-				return "ScreenProfileSave"
+				local maxHearts = HeartsPerPlay
+				local heartsLeft = GetSmallestNumHeartsLeftForAnyHumanPlayer();
+				local allFailed = STATSMAN:GetCurStageStats():AllFailed()
+				local song = GAMESTATE:GetCurrentSong()
+				--SCREENMAN:SystemMessage(heartsLeft);
+				if GAMESTATE:IsEventMode() or heartsLeft >= 1 then
+					return "ScreenProfileSave"
+				elseif song:IsLong() and maxHearts <= 4 and heartsLeft < 1 and allFailed then
+					return "ScreenProfileSaveSummary"
+				elseif song:IsMarathon() and maxHearts <= 6 and heartsLeft < 1 and allFailed then
+					return "ScreenProfileSaveSummary"
+				elseif maxHearts >= 4 and heartsLeft < 1 and allFailed then
+					return "ScreenProfileSaveSummary"
+				elseif allFailed then
+					return "ScreenProfileSaveSummary"
+				elseif heartsLeft <= 0 then
+					return "ScreenProfileSaveSummary"
+				else
+					return "ScreenProfileSave"
+				end
 			end
-
 		end
 	end,
 	AfterSummary = function()

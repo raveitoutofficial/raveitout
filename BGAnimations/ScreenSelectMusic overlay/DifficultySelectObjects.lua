@@ -170,7 +170,7 @@ return Def.ActorFrame{
 							curmod = "C Mod "..cmod
 							speedvalue = cmod
 						elseif mmod then
-							curmod = "M Mod "..mmod
+							curmod = mmod.." AV"
 							speedvalue = mmod
 						else
 							curmod = xmod.."x"

@@ -381,9 +381,8 @@ else
 					InitCommand=cmd(draworder,999;y,_screen.cy-(olhei/2.25);vertalign,bottom;zoom,0.35;);
 				};
 				
-				--Uncomment if you want descriptions for options, but it's not finished anyway
 				LoadFont("Common Normal")..{
-					Text="Hello World!";
+					--Text="Hello World!";
 					InitCommand=cmd(draworder,999;y,_screen.cy-(olhei/2.25)+10;vertalign,top;zoom,.5;wrapwidthpixels,350);
 					OptionsListOpenedMessageCommand=function(self,params)
 						if params.Player == pn then
@@ -455,8 +454,47 @@ else
 							if params.Menu ~= "SongMenu" and params.Menu ~= "System" then
 								self:settext(THEME:GetString("OptionExplanations",params.Menu))
 							else
+								--SCREENMAN:SystemMessage(params.Size);
 								numRows = tonumber(THEME:GetMetric("ScreenOptionsMaster",currentOpList))
 							end;
+						end;
+					end;
+				};
+				LoadFont("Common Normal")..{
+					Text="Current Velocity:";
+					InitCommand=cmd(draworder,999;y,_screen.cy-(olhei/2.25)+35;vertalign,top;zoom,.5;wrapwidthpixels,350;diffusebottomedge,Color("HoloBlue");visible,false);
+					UpdateTextCommand=function(self,params)
+						if params.Player == pn then
+							if GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
+								self:settext("Current Velocity: "..GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod());
+							else
+								self:settext("Current Velocity: None");
+							end;
+						end;
+					end;
+					MModChangedMessageCommand=function(self,params)
+						if params.Player == pn and currentOpList == "SpeedMods" then
+							self:playcommand("UpdateText",params);
+						end;
+					end;
+					AdjustCommand=function(self,params)
+						if currentOpList == "SongMenu" then
+							if params.Selection == 5 then
+								self:playcommand("UpdateText",params);
+								self:visible(true);
+							else
+								self:visible(false);
+							end;
+						end;
+					end;
+					OptionsListRightMessageCommand=function(self,params)
+						if params.Player == pn then
+							self:playcommand("Adjust",params);
+						end;
+					end;
+					OptionsListLeftMessageCommand=function(self,params)
+						if params.Player == pn then
+							self:playcommand("Adjust",params);
 						end;
 					end;
 				};

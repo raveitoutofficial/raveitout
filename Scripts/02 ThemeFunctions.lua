@@ -178,7 +178,7 @@ function getAvailableGroups()
 			elseif v == RIO_FOLDER_NAMES["SpecialFolder"] then
 				table.remove(groups, k)
 			--Never display the internal group folder
-			elseif v == "00-Internal" then
+			elseif v == "Internal" then
 				table.remove(groups, k)
 			--TODO: This should be done on startup.
 			elseif (#SONGMAN:GetSongsInGroup(v))-1 < 1 then
@@ -307,12 +307,34 @@ function StepsTypeToString(steps)
 	return style;
 end;
 
+function getCorrectStepsTypeForGame(style)
+	return "StepsType"..firstToUpper(GAMESTATE:GetCurrentGame():GetName())..style
+end;
+
 --OVERRIDES
 
 GameColor.PlayerColors = {
 	PLAYER_1 = color("#ed0972"),
 	PLAYER_2 = color("#33B5E5")
 };
+
+-- Someone might be too lazy to update their fallback, so it's copied and pasted here
+local OptionsListKeys = {
+	PrevItem = {
+		pump="MenuLeft",
+		default="MenuUp"
+	},
+	NextItem = {
+		pump="MenuRight",
+		default="MenuDown"
+	}
+};
+
+function GetOptionsListMapping(name)
+	local sGame = string.lower(GAMESTATE:GetCurrentGame():GetName())
+	local map = OptionsListKeys[name]
+	return map[sGame] or map["default"]
+end
 
 function GetSongBackground(return_nil_on_fail)
 	local song = GAMESTATE:GetCurrentSong();
