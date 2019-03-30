@@ -40,8 +40,11 @@ end;
 
 --TODO: Check if the last extra stage played was in the Extra Savior folder.
 function UnlockedOMES_RIO()
-	local acc = getenv(pname(player).."_accuracy") or 0
-	return (acc > 95 and IsExtraStagePIU() and GetNumHeartsForSong() == 2);
+	if IsExtraStagePIU() then
+		local acc = getenv(pname(player).."_accuracy") or 0
+		return (acc > 95 and GetNumHeartsForSong() == 2);
+	end;
+	return false;
 end;
 
 function GetNumHeartsForSong()

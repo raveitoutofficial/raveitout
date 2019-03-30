@@ -186,7 +186,8 @@ Branch = {
 		if GAMESTATE:IsCourseMode() then
 			return "ScreenProfileSave"
 		else
-			if UnlockedOMES_RIO() then
+			--It's broken don't touch it
+			if false then
 				local s = SONGMAN:FindSong(OMES_SONG);
 				if not s then
 					SCREENMAN:SystemMessage("The OMES song was not found, giving up.");
