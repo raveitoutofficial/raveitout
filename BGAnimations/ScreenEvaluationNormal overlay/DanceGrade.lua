@@ -94,7 +94,7 @@ t[#t+1] = Def.ActorFrame{
 	InitCommand=cmd(y,13;zoom,0.235;skewx,-0.2;uppercase,true;horizalign,center;vertalign,top;maxwidth,220);
 	OnCommand=function(self)
 
-		if GAMESTATE:IsCourseMode() and GetCourseDescription(GAMESTATE:GetCurrentCourse():GetCourseDir(),"DESCRIPTION") ~= "" then
+		if GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() then
 			author = GAMESTATE:GetCurrentCourse():GetScripter();
 			if author == "" then
 				author = "Not available"

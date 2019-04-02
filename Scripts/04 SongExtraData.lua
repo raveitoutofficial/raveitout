@@ -1,6 +1,10 @@
 --SongExtraData
 local fand = RageFileUtil.CreateRageFile()
-local SongDataCache = setmetatable({}, {__mode="k"})
+local DataCache
+function ClearExtraDataCache()
+	DataCache = setmetatable({}, {__mode="k"})
+end
+ClearExtraDataCache()
 
 local SongTypeToHearts = {
 	arcade = 2,
@@ -9,10 +13,12 @@ local SongTypeToHearts = {
 	fullsong = 4,
 	marathon = 6
 }
+MAX_SECONDS_FOR_SHORTCUT = 95
+
 local function SongTypeTransform(_, data)
 	return SongTypeToHearts[string.lower(data)]
 end
-MAX_SECONDS_FOR_SHORTCUT = 95
+
 local function SongTypeFallback(song)
 	if song:MusicLengthSeconds() < MAX_SECONDS_FOR_SHORTCUT then
 		return SongTypeToHearts.shortcut
@@ -42,43 +48,97 @@ local function PreviewTransform(song, VideoName)
 	return VideoName
 end
 
-local items = {
+local SongItems = {
 	PreviewVid={source="PREVIEWVID", transform=PreviewTransform, fallback=""},
 	Hearts={source="SONGTYPE", transform=SongTypeTransform, fallback=SongTypeFallback}
 }
 
-function GetSongExtraData(song, item)
-	assert(song, "no Song provided")
+local CourseItems = {
+	LimitBreak={source="LIMITBREAK", transform=function(_,data) return tonumber(data) end, fallback=51}
+}
+
+function GetExtraData(sc, item, course_mode)
+	assert(sc, "no Song/Course provided")
 	assert(item, "no data item provided")
+	local items
+	if not course_mode then
+		items = SongItems
+	else
+		items = CourseItems
+	end
 	assert(items[item], "invalid data item "..item)
 	
-	local dir = song:GetSongDir()
-	local result = nil
-	if SongDataCache[dir] then
-		result = SongDataCache[dir][item]
+	local dir
+	if not course_mode then
+		dir = sc:GetSongDir()
 	else
-		fand:Open(song:GetSongFilePath(), 1)
-		local FileContents = fand:Read()
-		fand:Close()
+		dir = sc:GetCourseDir()
+	end
+	local result = nil
+	if DataCache[dir] then
+		result = DataCache[dir][item]
+	else
 		local CacheEntry = {}
+		
+		local UseFallback = false
+		local WasOpened = true
+		
+		local FileContents
+		local ItemPath
+		if not course_mode then
+			ItemPath = sc:GetSongFilePath()
+		else
+			--i guess???
+			ItemPath = dir
+		end
+		fand:Open(ItemPath, 1)
+		if fand:GetError() ~= "" then
+			UseFallback = true
+			WasOpened = false
+		else
+			FileContents = fand:Read()
+			if not FileContents then
+				UseFallback = true
+			end
+		end
+
 		for name, data in pairs(items) do
-			local _, __, TagData = string.find(FileContents, "#"..data.source..":([^;]*);")
-			if TagData then
-				if data.transform then
-					TagData = data.transform(song, TagData)
+			local UsingFallbackThisTime = UseFallback
+		
+			if not UsingFallbackThisTime then
+				local _, __, TagData = string.find(FileContents, "#"..data.source..":([^;]*);")
+				if TagData then
+					if data.transform then
+						TagData = data.transform(sc, TagData)
+					end
+					CacheEntry[name] = TagData
+				else
+					UsingFallbackThisTime = true
 				end
-				CacheEntry[name] = TagData
-			else
+			end
+		
+			if UsingFallbackThisTime then
 				if type(data.fallback) == "function" then
-					CacheEntry[name] = data.fallback(song)
+					CacheEntry[name] = data.fallback(sc)
 				else
 					CacheEntry[name] = data.fallback
 				end
 			end
+		
 		end
+		
 		result = CacheEntry[item]
-		SongDataCache[dir] = CacheEntry
+		DataCache[dir] = CacheEntry
+		if WasOpened then
+			fand:Close()
+		end
+		fand:ClearError()
+	
 	end
 
 	return result
+end
+
+function GetSongExtraData(song, item)
+	return GetExtraData(song, item, false)
 end

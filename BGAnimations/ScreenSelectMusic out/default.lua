@@ -23,7 +23,7 @@ return Def.ActorFrame{
 		Name="Quad";
 		PlayCommand=function(self)
 			if GAMESTATE:IsCourseMode() then
-				setenv("BreakCombo",GetCourseDescription(GAMESTATE:GetCurrentCourse():GetCourseDir(),"LIMITBREAK"));
+				setenv("BreakCombo",GetExtraData(GAMESTATE:GetCurrentCourse(), "LimitBreak", true));
 			end;
 			
 			--AutoSetStyle is already a thing, WTF is this even doing?

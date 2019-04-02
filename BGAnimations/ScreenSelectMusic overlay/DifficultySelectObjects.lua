@@ -49,7 +49,7 @@ return Def.ActorFrame{
 				--	local author = GAMESTATE:GetCurrentSteps(pn):GetAuthorCredit()	--this is the Thor that is the auThor... lol get it? yes but... ah ok...
 																							--lolXD  - road
 					-- TODO: there's a special error only when reloading the screen, should i avoid or fix ??
-					if GAMESTATE:IsCourseMode() and GetCourseDescription(GAMESTATE:GetCurrentCourse():GetCourseDir(),"DESCRIPTION") ~= "" then
+					if GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() then
 						author = GAMESTATE:GetCurrentCourse():GetScripter();
 						if author == "" then
 								artist = "Not available"
@@ -102,7 +102,7 @@ return Def.ActorFrame{
 				InitCommand=cmd(x,-120*negativeOffset;y,-160;zoom,0.215;uppercase,true;maxwidth,900);
 				PlayerJoinedMessageCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn);queuecommand,"CurrentSteps"..pname(pn).."ChangedMessage");
 				["CurrentSteps"..pname(pn).."ChangedMessageCommand"]=function(self)
-					if GAMESTATE:IsCourseMode() and GetCourseDescription(GAMESTATE:GetCurrentCourse():GetCourseDir(),"DESCRIPTION") ~= "" then
+					if GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() then
 						self:settext("TODO: Implement this");
 					else
 						if GAMESTATE:GetCurrentSteps(pn) then
@@ -135,7 +135,7 @@ return Def.ActorFrame{
 				InitCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn);x,-infx-txxtune;y,-infy+txytune+70;zoom,0.4;horizalign,right;vertalign,middle;);
 				PlayerJoinedMessageCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn));
 				OnCommand=function(self)
-					list = GetCourseDescription(THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectCourse decorations/courses_list.txt","SONG1").."\n"..GetCourseDescription(THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectCourse decorations/courses_list.txt","SONG2").."\n"..GetCourseDescription(THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectCourse decorations/courses_list.txt","SONG3").."\n"..GetCourseDescription(THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectCourse decorations/courses_list.txt","SONG4");
+					list = File.Read(THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectCourse decorations/courses_list.txt");
 					if GAMESTATE:IsCourseMode() then
 						self:settext(list)
 					else

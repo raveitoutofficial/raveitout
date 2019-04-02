@@ -1,4 +1,4 @@
-#SONG1:Clarity;
-#SONG2:Find You;
-#SONG3:Spectrum;
-#SONG4:Stay The Night;
+Clarity
+Find You
+Spectrum
+Stay The Night

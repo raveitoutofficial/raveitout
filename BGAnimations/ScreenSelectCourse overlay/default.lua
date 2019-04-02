@@ -584,7 +584,7 @@ t[#t+1] = Def.ActorFrame{
 				InitCommand=cmd(visible,GAMESTATE:IsHumanPlayer(PLAYER_2);x,infx+txxtune;y,-infy+txytune+70;zoom,0.4;horizalign,left;vertalign,middle;);
 				PlayerJoinedMessageCommand=cmd(visible,GAMESTATE:IsHumanPlayer(PLAYER_2));
 				OnCommand=function(self)
-					list = GetCourseDescription(THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectCourse decorations/courses_list.txt","SONG1").."\n"..GetCourseDescription(THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectCourse decorations/courses_list.txt","SONG2").."\n"..GetCourseDescription(THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectCourse decorations/courses_list.txt","SONG3").."\n"..GetCourseDescription(THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectCourse decorations/courses_list.txt","SONG4");
+					list = File.Read(THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectCourse decorations/courses_list.txt");
 					if GAMESTATE:IsCourseMode() then
 						self:settext(list)
 					else
