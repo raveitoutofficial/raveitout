@@ -61,7 +61,9 @@ function OptionRowAvailableNoteskins()
 			end
 		end;
 	end;
-	
+	--Make this global so the OptionsList shit in SSM can access it.
+	OPTIONSLIST_NUMNOTESKINS = #ns
+	OPTIONSLIST_NOTESKINS = ns
 	local t = {
 		Name="NoteskinsCustom",
 		LayoutType = "ShowAllInRow",
@@ -70,6 +72,7 @@ function OptionRowAvailableNoteskins()
 		ExportOnChange = false,
 		Choices = ns,
 		LoadSelections = function(self, list, pn)
+			--SCREENMAN:SystemMessage("Num items: "..#ns)
 			--This returns an instance of playerOptions, you need to set it back to the original
 			local playerOptions = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
 			local curNS = playerOptions:NoteSkin();
@@ -103,9 +106,6 @@ function OptionRowAvailableNoteskins()
 	setmetatable(t, t)
 	return t
 end
-
---So when making a lua OptionsList, literally EVERYTHING had to be rewritten...
---function OptionRowSpeedMods()
 
 --Thanks to Midflight Digital (again)
 function OptionRowScreenFilter()
@@ -288,7 +288,6 @@ end;
 
 function OptionRowJudgmentGraphic()
 	--The true name of the graphic is stored in ActiveModifiers to make it easier to load.
-	local judgementFileNames = { "Season1", "Season2", "Montserrat", "None"}
 	local judgementNames = {"Season 1", "Season 2", "Montserrat", "None"}
 	local t = {
 		Name="JudgmentType",
@@ -297,10 +296,12 @@ function OptionRowJudgmentGraphic()
 		OneChoiceForAllPlayers = false,
 		ExportOnChange = false,
 		Choices = judgementNames,
+		--Embedded in the metatable because the ScreenSelectMusic needs to access it too
+		judgementFileNames = { "Season1", "Season2", "Montserrat", "None"},
 		LoadSelections = function(self, list, pn)
 			local found = false;
 			for i=1,#list do
-				if judgementFileNames[i] == ActiveModifiers[pname(pn)]["JudgmentGraphic"] then
+				if self.judgementFileNames[i] == ActiveModifiers[pname(pn)]["JudgmentGraphic"] then
 					list[i] = true;
 					found = true;
 				end;
@@ -308,7 +309,7 @@ function OptionRowJudgmentGraphic()
 			if not found then
 				list[2] = true;
 				--Need to replace the setting in the modifiers table too
-				ActiveModifiers[pname(pn)]["JudgmentGraphic"] = judgementFileNames[2]
+				ActiveModifiers[pname(pn)]["JudgmentGraphic"] = self.judgementFileNames[2]
 				assert(found, "Should have defaulted to S2 judgement, but none was found")
 			end;
 		end,
@@ -317,7 +318,7 @@ function OptionRowJudgmentGraphic()
 			for i=1,#list do
 				if not found then
 					if list[i] == true then
-						ActiveModifiers[pname(pn)]["JudgmentGraphic"] = judgementFileNames[i];
+						ActiveModifiers[pname(pn)]["JudgmentGraphic"] = self.judgementFileNames[i];
 						found = true
 					end
 				end
@@ -398,7 +399,8 @@ function adjustPlayerMMod(pn, amount)
 		playerOptions:MMod(playerOptions:MMod()+amount);
 	end;
 	GAMESTATE:GetPlayerState(pn):SetPlayerOptions('ModsLevel_Preferred', playerState:GetPlayerOptionsString("ModsLevel_Preferred"));
-	SCREENMAN:SystemMessage(GAMESTATE:GetPlayerState(pn):GetPlayerOptionsString("ModsLevel_Preferred"));
+	--SCREENMAN:SystemMessage(GAMESTATE:GetPlayerState(pn):GetPlayerOptionsString("ModsLevel_Preferred"));
+	return playerOptions:MMod();
 end
 
 --MMod only
@@ -406,52 +408,56 @@ function SpeedMods2()
 	local t = {
 		Name = "UserPrefSpeedMods";
 		LayoutType = "ShowAllInRow";
-		SelectType = "SelectOne";
+		SelectType = "SelectMultiple";
+		GoToFirstOnStart= false;
 		OneChoiceForAllPlayers = false;
-		ExportOnChange = true;
-		Choices = { "OFF", "ON", "AV -100", "AV -10","AV +10", "AV +100"};
+		ExportOnChange = false;
+		Choices = { "ON", "AV -100", "AV -10","AV +10", "AV +100"};
 		LoadSelections = function(self, list, pn)
 			if GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
-				list[2] = true
-			else
 				list[1] = true
+				--SCREENMAN:SystemMessage("MMod!")
 			end;
 		end;
+		--We're not saving anything!
 		SaveSelections = function(self, list, pn)
-				if list[1] then
-					GAMESTATE:ApplyGameCommand("mod,2x",pn);
-				elseif list[2] then
-					if not GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
-						GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod(200)
-						--SCREENMAN:SystemMessage("New MMod: "..GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod())
-					end;
-				else
-					if not GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod() then
-						local playerState = GAMESTATE:GetPlayerState(pn);
-						--This returns an instance of playerOptions, you need to set it back to the original
-						local playerOptions = playerState:GetPlayerOptions("ModsLevel_Preferred")
-						playerOptions:MMod(200)
-						GAMESTATE:GetPlayerState(pn):SetPlayerOptions('ModsLevel_Preferred', playerState:GetPlayerOptionsString("ModsLevel_Preferred"));
-					end;
-					if list[3] then
-						adjustPlayerMMod(pn,-100)
-					elseif list[4] then
-						adjustPlayerMMod(pn,-10)
-					elseif list[5] then
-						adjustPlayerMMod(pn,10)
-					elseif list[6] then
-						adjustPlayerMMod(pn,100)
-					end;
+		
+		end;
+		--Abuse the heck out of this one since we're checking what button they pressed and not what's selected or deselected
+		NotifyOfSelection = function(self,pn,choice)
+			--SCREENMAN:SystemMessage("choice "..choice)
+			local speed;
+			if choice == 1 then
+				--If MMod isn't on, turn it on
+				if not GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
 					
-					--Hacky shit so it will say Auto Velocity ON in the main menu
-					for i=1,#list do
-						list[i] = false
-					end
-					list[2] = true
+					local playerState = GAMESTATE:GetPlayerState(pn);
+					--This returns an instance of playerOptions, you need to set it back to the original
+					local playerOptions = playerState:GetPlayerOptions("ModsLevel_Preferred")
+					playerOptions:MMod(200)
+					GAMESTATE:GetPlayerState(pn):SetPlayerOptions('ModsLevel_Preferred', playerState:GetPlayerOptionsString("ModsLevel_Preferred"));
+					
 					--SCREENMAN:SystemMessage("New MMod: "..GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod())
-				end
-				MESSAGEMAN:Broadcast("SpeedModChange");
-		end
+				else --If MMod is on, turn it off.
+					GAMESTATE:ApplyGameCommand("mod,2x",pn);
+				end;
+			elseif GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
+				if choice == 2 then
+					speed = adjustPlayerMMod(pn, -100);
+				elseif choice == 3 then
+					speed = adjustPlayerMMod(pn, -10);
+				elseif choice == 4 then
+					speed = adjustPlayerMMod(pn, 10);
+				elseif choice == 5 then
+					speed = adjustPlayerMMod(pn, 100);
+				end;
+			end;
+			MESSAGEMAN:Broadcast("MModChanged", {Player=pn,Speed=speed});
+			--Always return true because we don't want anything to get highlighted.
+			return true;
+			
+			--self.Choices = {"asdON", "AasdadV -100", "AV222 -10","A21313V +10", "AV +1asdad00"};
+		end;
 	};
 	setmetatable( t, t );
 	return t;

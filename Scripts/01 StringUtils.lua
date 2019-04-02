@@ -91,3 +91,8 @@ function strArrayToString(a)
 	end
 	return s;
 end
+
+--Because GetCurrentGame returns lowercase, but StepsType wants uppercase.
+function firstToUpper(str)
+    return (str:gsub("^%l", string.upper))
+end

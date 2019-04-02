@@ -38,6 +38,15 @@ function IsExtraStagePIU()
 	return NumHeartsRemoved[PLAYER_1] >= HeartsPerPlay or NumHeartsRemoved[PLAYER_2] >= HeartsPerPlay;
 end;
 
+--TODO: Check if the last extra stage played was in the Extra Savior folder.
+function UnlockedOMES_RIO()
+	if IsExtraStagePIU() then
+		local acc = getenv(pname(player).."_accuracy") or 0
+		return (acc > 95 and GetNumHeartsForSong() == 2);
+	end;
+	return false;
+end;
+
 function GetNumHeartsForSong()
 	local s = GAMESTATE:GetCurrentSong()
 	if not s then

@@ -7,7 +7,7 @@ local t = Def.ActorFrame {
 --HAS THIS GUY EVER HEARD OF METRICS???
 local stage =		GAMESTATE:GetCurrentStage()
 --optionlist controls
-local olwid =		THEME:GetMetric("CustomRIO","OpQuadWidth")		--option list quad width
+local OPLIST_WIDTH =		THEME:GetMetric("CustomRIO","OpQuadWidth")		--option list quad width
 local olania =		0.1			--optionlist animation time in
 local olanib =		0.2			--optionlist animation time out
 local olhei	=		SCREEN_HEIGHT*0.75	--optionlist quadheight
@@ -15,6 +15,9 @@ local oltfad =		0.125		--optionlist top fade value (0..1)
 local olbfad =		0.5			--optionlist bottom fade value
 local ollfad =		0			--optionlist left  fade value
 local olrfad =		0			--optionlist right fade value
+local OPLIST_splitAt = THEME:GetMetric("OptionsList","MaxItemsBeforeSplit")
+--Start to shift the optionsList up at this row
+local OPLIST_ScrollAt = 16
 -- Chart info helpers
 local infy =		160					--Chart info Y axis position (both players, includes black quad alt)
 local infx =		0					--Chart info X DIFFERENCE FROM DISC
@@ -319,210 +322,290 @@ else
 	if THEME:GetMetric("ScreenSelectMusic","UseCustomOptionsList") then
 		t[#t+1] = LoadActor("CustomOptionsList");
 	elseif THEME:GetMetric("ScreenSelectMusic","UseOptionsList") then
+		local function CurrentNoteSkin(p)
+			local state = GAMESTATE:GetPlayerState(p)
+			local mods = state:GetPlayerOptionsArray( 'ModsLevel_Preferred' )
+			local skins = NOTESKIN:GetNoteSkinNames()
+
+			for i = 1, #mods do
+				for j = 1, #skins do
+					if string.lower( mods[i] ) == string.lower( skins[j] ) then
+					   return skins[j];
+					end
+				end
+			end
+		end
 		--OpList
-		--This keeps the name of the current OptionsList because OptionsListLeft and OptionsListRight does not know what list this is otherwise
-		local currentOpListP1
-		local currentOpListP2
-		t[#t+1] = Def.ActorFrame{
+		for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+			--This keeps the name of the current OptionsList because OptionsListLeft and OptionsListRight does not know what list this is otherwise
+			local currentOpList
+			--The amount of rows in the current optionsList menu.
+			local numRows
+			--This gets a handle on the optionsList Actor so it can be adjusted.
+			local optionsListActor
+			--If player 1, move towards left. If player 2, move towards right.
+			local moveTowards = (pn == PLAYER_1) and SCREEN_LEFT+OPLIST_WIDTH/2 or SCREEN_RIGHT-OPLIST_WIDTH/2
+			--The offscreen position.
+			local startPosition = (pn==PLAYER_1) and moveTowards-OPLIST_WIDTH or moveTowards+OPLIST_WIDTH
+			t[#t+1] = Def.ActorFrame{
+				InitCommand=cmd(x,startPosition);
+				OnCommand=function(self)
+					--Named OptionsListP1 or OptionsListP2
+					optionsListActor = SCREENMAN:GetTopScreen():GetChild("OptionsList"..pname(pn))
+					--assert(optionsListActor,"No actor!")
+				end;
 				CodeMessageCommand = function(self, params)
 					if params.Name == 'OptionList' then
 						SCREENMAN:GetTopScreen():OpenOptionsList(params.PlayerNumber)
 					end;
 				end;
-			Def.ActorFrame{		--PLAYER 1 OpList
+				OptionsListOpenedMessageCommand=function(self,params)
+					if params.Player == pn then
+						setenv("currentplayer",pn);
+						self:decelerate(olania);
+						self:x(moveTowards);
+					end
+				end;
+				OptionsListClosedMessageCommand=function(self,params)
+					if params.Player == pn then
+						self:stoptweening();
+						self:accelerate(olanib);
+						self:x(startPosition);
+					end;
+				end;
 				Def.Quad{			--Fondo difuminado
-					InitCommand=cmd(draworder,998;diffuse,0,0,0,0.75;xy,SCREEN_LEFT-olwid,_screen.cy;zoomto,olwid,olhei;horizalign,left
-									fadetop,oltfad;fadebottom,olbfad);
-					OptionsListOpenedMessageCommand=function(self,params)
-						if params.Player == PLAYER_1 then
-							setenv("currentplayer",PLAYER_1);
-							self:decelerate(olania);
-							self:x(SCREEN_LEFT);
-						end
-					end;
-					OptionsListClosedMessageCommand=function(self,params)
-						if params.Player == PLAYER_1 then
-				--			setenv("currentplayer",PLAYER_1);	--I think setting it again isn't necessary -NIKK
-							self:stoptweening();
-							self:accelerate(olanib);
-							self:x(SCREEN_LEFT-olwid);
-						end;
-					end;
+					InitCommand=cmd(draworder,998;diffuse,0,0,0,0.75;y,_screen.cy;zoomto,OPLIST_WIDTH,olhei;fadetop,oltfad;fadebottom,olbfad);
 				};
 				LoadFont("bebas/_bebas neue bold 90px")..{	--Texto "OPTION LIST"
 					Text="OPTION LIST";
-					InitCommand=cmd(draworder,999;x,SCREEN_LEFT-olwid;y,_screen.cy-(olhei/2.25);vertalign,bottom;zoom,0.35;);
-					OptionsListOpenedMessageCommand=function(self,params)
-						if params.Player == PLAYER_1 then
-							setenv("currentplayer",PLAYER_1);
-							self:decelerate(olania);
-							self:x(SCREEN_LEFT+(olwid/2));
-						end;
-					end;
-					OptionsListClosedMessageCommand=function(self,params)
-						if params.Player == PLAYER_1 then
-				--			setenv("currentplayer",PLAYER_1);	--I think setting it again isn't necessary -NIKK
-							self:stoptweening();
-							self:accelerate(olanib);
-							self:x(SCREEN_LEFT-(olwid/2));
-						end
-					end;
+					InitCommand=cmd(draworder,999;y,_screen.cy-(olhei/2.25);vertalign,bottom;zoom,0.35;);
 				};
 				
-				--Uncomment if you want descriptions for options, but it's not finished anyway
-				LoadFont("Common Normal")..{
-					Text="Hello World!";
-					InitCommand=cmd(draworder,999;x,SCREEN_LEFT-olwid;y,_screen.cy-(olhei/2.25)+10;vertalign,top;zoom,.5;wrapwidthpixels,350);
-					OptionsListOpenedMessageCommand=function(self,params)
-						if params.Player == PLAYER_1 then
-							currentOpListP1 = "SongMenu"
-							--A better solution would be grabbing and parsing the first element of the OptionsList and setting it in InitCommand, but this will do for now.
-							self:settext(THEME:GetString("OptionExplanations","Speed"))
-							self:decelerate(olania);
-							self:x(SCREEN_LEFT+(olwid/2));
-						end;
-					end;
-					OptionsListClosedMessageCommand=function(self,params)
-						if params.Player == PLAYER_1 then
-							self:stoptweening();
-							self:accelerate(olanib);
-							self:x(SCREEN_LEFT-(olwid/2));
-						end
-					end;
-					OptionsListRightMessageCommand=function(self,params)
-						--SCREENMAN:SystemMessage(currentOpList..", "..params.Selection.." "..THEME:GetMetric("ScreenOptionsMaster",currentOpList..","..params.Selection+1))
-						if params.Player == PLAYER_1 then
-							if currentOpListP1 == "SongMenu" or currentOpListP1 == "System" then
-								local limit = tonumber(THEME:GetMetric("ScreenOptionsMaster",currentOpListP1))
-								if params.Selection+1 <= limit then
-									local itemName = string.gsub(THEME:GetMetric("ScreenOptionsMaster",currentOpListP1..","..params.Selection+1):split(";")[1],"name,","")
-									self:settext(THEME:GetString("OptionExplanations",itemName))
-								else
-									self:settext("Exit.");
-								end;
-							end;
-						end;
-						--SCREENMAN:SystemMessage(itemName)
-					end;
-					--No I don't know why playcommand isn't working
-					OptionsListLeftMessageCommand=function(self,params)
-						if params.Player == PLAYER_1 then
-							if currentOpListP1 == "SongMenu" or currentOpListP1 == "System" then
-								local limit = tonumber(THEME:GetMetric("ScreenOptionsMaster",currentOpListP1))
-								if params.Selection+1 <= limit then
-									local itemName = string.gsub(THEME:GetMetric("ScreenOptionsMaster",currentOpListP1..","..params.Selection+1):split(";")[1],"name,","")
-									self:settext(THEME:GetString("OptionExplanations",itemName))
-								else
-									self:settext("Exit.");
-								end;
-							end;
-						end;
-					end;
-					OptionsMenuChangedMessageCommand=function(self,params)
-						--SCREENMAN:SystemMessage("MenuChanged: Menu="..params.Menu);
-						currentOpListP1=params.Menu
-						if params.Menu ~= "SongMenu" and params.Menu ~= "System" then
-							self:settext(THEME:GetString("OptionExplanations",params.Menu))
-						end;
-					end;
-				};
-			};
-			Def.ActorFrame{		--PLAYER 2 OpList
-				Def.Quad{			--Fondo difuminado
-					InitCommand=cmd(draworder,998;diffuse,0,0,0,0.75;xy,SCREEN_RIGHT+olwid,_screen.cy;zoomto,olwid,olhei;horizalign,right
-									fadetop,oltfad;fadebottom,olbfad);
-					OptionsListOpenedMessageCommand=function(self,params)
-						if params.Player == PLAYER_2 then
-							setenv("currentplayer",PLAYER_2);
-							self:decelerate(olania);
-							self:x(SCREEN_RIGHT);
-						end;
-					end;
-					OptionsListClosedMessageCommand=function(self,params)
-						if params.Player == PLAYER_2 then
-				--			setenv("currentplayer",PLAYER_2);	--I think setting it again isn't necessary -NIKK
-							self:stoptweening();
-							self:accelerate(olanib);
-							self:x(SCREEN_RIGHT+olwid);
-						end;
-					end;
-				};
-				LoadFont("bebas/_bebas neue bold 90px")..{	--Texto "OPTION LIST"
-					Text="OPTION LIST";
-					InitCommand=cmd(draworder,999;x,SCREEN_RIGHT+olwid;y,_screen.cy-(olhei/2.25)vertalign,bottom;zoom,0.35;);
-					OptionsListOpenedMessageCommand=function(self,params)
-						if params.Player == PLAYER_2 then
-							setenv("currentplayer",PLAYER_2);
-							self:decelerate(olania);
-							self:x(SCREEN_RIGHT-(olwid/2));
-						end;
-					end;
-					OptionsListClosedMessageCommand=function(self,params)
-						if params.Player == PLAYER_2 then
-				--			setenv("currentplayer",PLAYER_2);	--I think setting it again isn't necessary -NIKK
-							self:stoptweening();
-							self:accelerate(olanib);
-							self:x(SCREEN_RIGHT+(olwid/2));
-						end;
-					end;
-				};
 				LoadFont("Common Normal")..{
 					--Text="Hello World!";
-					InitCommand=cmd(draworder,999;x,SCREEN_RIGHT+olwid;y,_screen.cy-(olhei/2.25)+10;vertalign,top;zoom,.5;wrapwidthpixels,350);
+					InitCommand=cmd(draworder,999;y,_screen.cy-(olhei/2.25)+10;vertalign,top;zoom,.5;wrapwidthpixels,350);
 					OptionsListOpenedMessageCommand=function(self,params)
-						if params.Player == PLAYER_2 then
-							currentOpListP2 = "SongMenu"
-							--A better solution would be grabbing and parsing the first element of the OptionsList and setting it in InitCommand, but this will do for now.
-							self:settext(THEME:GetString("OptionExplanations","Speed"))
-							self:decelerate(olania);
-							self:x(SCREEN_RIGHT-(olwid/2));
+						if params.Player == pn then
+							currentOpList = "SongMenu"
+							--This batshit code finds the value of [ScreenOptionsMaster] SongMenu,1
+							self:settext(THEME:GetString("OptionExplanations",string.gsub(THEME:GetMetric("ScreenOptionsMaster",THEME:GetMetric("OptionsList","TopMenu")..",1"):split(";")[1],"name,","")))
 						end;
 					end;
-					OptionsListClosedMessageCommand=function(self,params)
-						if params.Player == PLAYER_2 then
-							self:stoptweening();
-							self:accelerate(olanib);
-							self:x(SCREEN_RIGHT-(olwid/2));
-						end
-					end;
-					OptionsListRightMessageCommand=function(self,params)
-						if params.Player == PLAYER_2 then
-							if currentOpListP2 == "SongMenu" or currentOpListP2 == "System" then
-								local limit = tonumber(THEME:GetMetric("ScreenOptionsMaster",currentOpListP2))
-								if params.Selection+1 <= limit then
-									local itemName = string.gsub(THEME:GetMetric("ScreenOptionsMaster",currentOpListP2..","..params.Selection+1):split(";")[1],"name,","")
+					AdjustCommand=function(self,params)
+						--SCREENMAN:SystemMessage(currentOpList..", "..params.Selection.." "..THEME:GetMetric("ScreenOptionsMaster",currentOpList..","..params.Selection+1))
+						if params.Player == pn then
+							if currentOpList == "SongMenu" or currentOpList == "System" then
+								
+								if params.Selection+1 <= numRows then
+									local itemName = string.gsub(THEME:GetMetric("ScreenOptionsMaster",currentOpList..","..params.Selection+1):split(";")[1],"name,","")
 									self:settext(THEME:GetString("OptionExplanations",itemName))
 								else
 									self:settext("Exit.");
+								end;
+							elseif currentOpList == "NoteSkins" then
+								local curRow;
+								--This global var is exported by OptionRowAvailableNoteskins()
+								if OPLIST_splitAt < OPTIONSLIST_NUMNOTESKINS then
+									curRow = math.floor((params.Selection)/2)+1
+								else
+									curRow = params.Selection+1
+								end;
+								--SCREENMAN:SystemMessage(curRow)
+								if curRow>OPLIST_ScrollAt then
+									optionsListActor:stoptweening():linear(.2):y((SCREEN_CENTER_Y-100)+THEME:GetMetric("OptionsList","ItemsSpacingY")*(OPLIST_ScrollAt-curRow))
+								else
+									optionsListActor:stoptweening():linear(.2):y(SCREEN_CENTER_Y-100)
 								end;
 							end;
 						end;
 						--SCREENMAN:SystemMessage(itemName)
 					end;
-					--No I don't know why playcommand isn't working
+					OptionsListRightMessageCommand=function(self,params)
+						self:playcommand("Adjust",params);
+					end;
 					OptionsListLeftMessageCommand=function(self,params)
-						if params.Player == PLAYER_2 then
-							if currentOpListP2 == "SongMenu" or currentOpListP2 == "System" then
-								local limit = tonumber(THEME:GetMetric("ScreenOptionsMaster",currentOpListP2))
-								if params.Selection+1 <= limit then
-									local itemName = string.gsub(THEME:GetMetric("ScreenOptionsMaster",currentOpListP2..","..params.Selection+1):split(";")[1],"name,","")
-									self:settext(THEME:GetString("OptionExplanations",itemName))
+						self:playcommand("Adjust",params);
+					end;
+					
+					OptionsListStartMessageCommand=function(self,params)
+						if params.Player == pn then
+							if currentOpList == "NoteSkins" then
+								local curRow;
+								--This global var is exported by OptionRowAvailableNoteskins()
+								if OPLIST_splitAt < OPTIONSLIST_NUMNOTESKINS then
+									curRow = math.floor((OPTIONSLIST_NUMNOTESKINS)/2)+1
 								else
-									self:settext("Exit.");
+									curRow = OPTIONSLIST_NUMNOTESKINS+1
+								end;
+								--SCREENMAN:SystemMessage(curRow)
+								if curRow>OPLIST_ScrollAt then
+									optionsListActor:stoptweening():linear(.2):y((SCREEN_CENTER_Y-100)+THEME:GetMetric("OptionsList","ItemsSpacingY")*(OPLIST_ScrollAt-curRow))
+								else
+									optionsListActor:stoptweening():linear(.2):y(SCREEN_CENTER_Y-100)
 								end;
 							end;
 						end;
 					end;
 					OptionsMenuChangedMessageCommand=function(self,params)
 						--SCREENMAN:SystemMessage("MenuChanged: Menu="..params.Menu);
-						currentOpListP2=params.Menu
-						if params.Menu ~= "SongMenu" and params.Menu ~= "System" then
-							self:settext(THEME:GetString("OptionExplanations",params.Menu))
+						if params.Player == pn then
+							currentOpList=params.Menu
+							optionsListActor:y(SCREEN_CENTER_Y-100) --Reset the positioning
+							if params.Menu ~= "SongMenu" and params.Menu ~= "System" then
+								self:settext(THEME:GetString("OptionExplanations",params.Menu))
+							else
+								--SCREENMAN:SystemMessage(params.Size);
+								numRows = tonumber(THEME:GetMetric("ScreenOptionsMaster",currentOpList))
+							end;
 						end;
 					end;
 				};
+				LoadFont("Common Normal")..{
+					Text="Current Velocity:";
+					InitCommand=cmd(draworder,999;y,_screen.cy-(olhei/2.25)+35;vertalign,top;zoom,.5;wrapwidthpixels,350;diffusebottomedge,Color("HoloBlue");visible,false);
+					UpdateTextCommand=function(self,params)
+						if params.Player == pn then
+							if GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
+								self:settext("Current Velocity: "..GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod());
+							else
+								self:settext("Current Velocity: None");
+							end;
+						end;
+					end;
+					MModChangedMessageCommand=function(self,params)
+						if params.Player == pn and currentOpList == "SpeedMods" then
+							self:playcommand("UpdateText",params);
+						end;
+					end;
+					AdjustCommand=function(self,params)
+						if currentOpList == "SongMenu" then
+							if params.Selection == 5 then
+								self:playcommand("UpdateText",params);
+								self:visible(true);
+							else
+								self:visible(false);
+							end;
+						end;
+					end;
+					OptionsListRightMessageCommand=function(self,params)
+						if params.Player == pn then
+							self:playcommand("Adjust",params);
+						end;
+					end;
+					OptionsListLeftMessageCommand=function(self,params)
+						if params.Player == pn then
+							self:playcommand("Adjust",params);
+						end;
+					end;
+				};
+				--For the combo judgement only
+				Def.Sprite{
+					InitCommand=cmd(y,SCREEN_CENTER_Y;draworder,999);
+					OptionsMenuChangedMessageCommand=function(self,params)
+						if params.Player == pn then
+							if params.Menu == "JudgmentType" then
+								if ActiveModifiers[pname(pn)]["JudgmentGraphic"] ~= "None" then
+									self:Load(THEME:GetPathG("Judgment", ActiveModifiers[pname(pn)]["JudgmentGraphic"])):SetAllStateDelays(1);
+								end;
+								self:stoptweening():visible(true)--[[:diffusealpha(0):linear(.2):diffusealpha(1)]];
+							else
+								self:visible(false)
+							end;
+						end;
+					end;
+					AdjustCommand=function(self,params)
+						if params.Player == pn and currentOpList == "JudgmentType" then
+							if params.Selection == #OptionRowJudgmentGraphic().Choices then
+								self:Load(THEME:GetPathG("Judgment", ActiveModifiers[pname(pn)]["JudgmentGraphic"])):SetAllStateDelays(1);
+							elseif OptionRowJudgmentGraphic().judgementFileNames[params.Selection+1] ~= "None" then
+								self:Load(THEME:GetPathG("Judgment", OptionRowJudgmentGraphic().judgementFileNames[params.Selection+1])):SetAllStateDelays(1);
+							else
+								--SCREENMAN:SystemMessage(params.Selection..", "..#OptionRowJudgmentGraphic().Choices)
+								self:Load(nil);
+							end;
+						end;
+					end;
+					OptionsListRightMessageCommand=function(self, params)
+						self:playcommand("Adjust",params);
+					end;
+					OptionsListLeftMessageCommand=function(self,params)
+						self:playcommand("Adjust", params);
+					end;
+				
+				};
+				--Using an ActorFrame here causes draworder issues.
+				LoadActor("optionIcon")..{
+					InitCommand=cmd(draworder,100;zoomy,0.34;zoomx,0.425;diffusealpha,.75;y,_screen.cy-(olhei/2.25)+40;draworder,998);
+					OptionsMenuChangedMessageCommand=function(self,params)
+						--SCREENMAN:SystemMessage("MenuChanged: Menu="..params.Menu);
+						if params.Player == pn then
+							if params.Menu == "NoteSkins" then
+								self:stoptweening():linear(.3):diffusealpha(1);
+							else
+								self:diffusealpha(0);
+							end;
+						end;
+					end;
+				};
+		
+				Def.Sprite{
+					InitCommand=cmd(x,1;y,_screen.cy-(olhei/2.25)+40;draworder,999);
+					OptionsMenuChangedMessageCommand=function(self,params)
+						if params.Player == pn then
+							if params.Menu == "NoteSkins" then
+								self:playcommand("On")
+								self:stoptweening():linear(.3):diffusealpha(1);
+							else
+								self:diffusealpha(0);
+							end;
+						end;
+					end;
+					OnCommand=function(self)
+						local arrow = "UpLeft";
+						local name = "Tap note";
+						if CurrentNoteSkin(pn) == "delta" then
+							name = "Ready Receptor";
+						elseif CurrentNoteSkin(pn) == "delta-note" or CurrentNoteSkin(pn) == "rhythm" then
+							arrow = "_UpLeft";
+						end
+						local path = NOTESKIN:GetPathForNoteSkin(arrow, name, CurrentNoteSkin(pn));
+						
+						self:Load(path);
+						self:croptop(0);
+						self:cropright(0);
+						self:zoom(0.35);
+					end;
+					AdjustCommand=function(self,params)
+						if params.Player == pn then
+							if params.Selection < OPTIONSLIST_NUMNOTESKINS then
+								local highlightedNoteSkin = OPTIONSLIST_NOTESKINS[params.Selection+1];
+								local arrow = "UpLeft";
+								local name = "Tap note";
+								if highlightedNoteSkin == "delta" then
+									name = "Ready Receptor";
+								elseif highlightedNoteSkin == "delta-note" or highlightedNoteSkin == "rhythm" then
+									arrow = "_UpLeft";
+								end
+								local path = NOTESKIN:GetPathForNoteSkin(arrow, name, highlightedNoteSkin);
+								
+								self:Load(path);
+								self:croptop(0);
+								self:cropright(0);
+								self:zoom(0.35);
+							else
+								self:playcommand("On");
+							end;
+						end;
+					end;
+					OptionsListRightMessageCommand=function(self,params)
+						self:playcommand("Adjust",params);
+					end;
+					OptionsListLeftMessageCommand=function(self,params)
+						self:playcommand("Adjust",params);
+					end;
+				};
 			};
-		};
+		end;
 	end;
 end;
  
