@@ -46,55 +46,17 @@ return Def.ActorFrame{
 				InitCommand=cmd(x,-120*negativeOffset;y,-175;zoom,0.215;uppercase,true;maxwidth,900);
 				PlayerJoinedMessageCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn);queuecommand,"CurrentSteps"..pname(pn).."ChangedMessage");
 				["CurrentSteps"..pname(pn).."ChangedMessageCommand"]=function(self)
-				--	local author = GAMESTATE:GetCurrentSteps(pn):GetAuthorCredit()	--this is the Thor that is the auThor... lol get it? yes but... ah ok...
-																							--lolXD  - road
-					-- TODO: there's a special error only when reloading the screen, should i avoid or fix ??
-					if GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() then
-						author = GAMESTATE:GetCurrentCourse():GetScripter();
-						if author == "" then
-								artist = "Not available"
-								self:maxwidth(1000);
-							else
-								if DoDebug then		--what is code and/or stepmania... without jokes? (only for p1)
-									if author == "C.Cortes" then
-										artist = "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
-									elseif author == "F.Rodriguez" then
-										artist = "I LIEK TURTLES"
-									else
-										artist = author
-									end
-								else
-									artist = author
-								end
-							end
-							self:visible(GAMESTATE:IsHumanPlayer(pn));
-							self:settext(artist);
+					if GAMESTATE:IsHumanPlayer(pn) and GAMESTATE:GetCurrentSong() then
+						local author = GAMESTATE:GetCurrentSteps(pn):GetAuthorCredit();
+						if author ~= "" then
+							self:maxwidth(900); --the original code did not do this but it appears like it intended to... -tertu
+							self:settext(author);
+						else
+							self:maxwidth(1000);
+							self:settext "Not available";
+						end
 					else
-						if GAMESTATE:GetCurrentSteps(pn) then
-							author = GAMESTATE:GetCurrentSteps(pn):GetAuthorCredit();		--Cortes got lazy and opt to use Description tag lol
-							if GAMESTATE:GetCurrentSong() then		--set text display
-								if author == "" then
-									artist = "Not available"
-									self:maxwidth(1000);
-								else
-									if DoDebug then		--what is code and/or stepmania... without jokes? (only for p1)
-										if author == "C.Cortes" then
-											artist = "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
-										elseif author == "F.Rodriguez" then
-											artist = "I LIEK TURTLES"
-										else
-											artist = author
-										end
-									else
-										artist = author
-									end
-								end
-								self:visible(GAMESTATE:IsHumanPlayer(pn));
-								self:settext(artist);
-							else
-								self:visible(false);
-							end;
-						end;
+						self:visible(false);
 					end;
 				end;
 			};
@@ -102,48 +64,18 @@ return Def.ActorFrame{
 				InitCommand=cmd(x,-120*negativeOffset;y,-160;zoom,0.215;uppercase,true;maxwidth,900);
 				PlayerJoinedMessageCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn);queuecommand,"CurrentSteps"..pname(pn).."ChangedMessage");
 				["CurrentSteps"..pname(pn).."ChangedMessageCommand"]=function(self)
-					if GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse() then
-						self:settext("TODO: Implement this");
+					if GAMESTATE:GetCurrentSteps(pn) then
+						self:settext(StepsTypeToString(GAMESTATE:GetCurrentSteps(pn)));
+						--self:settext("123456789012345678901234567890");
+						self:visible(true);
 					else
-						if GAMESTATE:GetCurrentSteps(pn) then
-							self:settext(StepsTypeToString(GAMESTATE:GetCurrentSteps(pn)));
-							--self:settext("123456789012345678901234567890");
-							self:visible(true);
-						else
-							self:visible(false);
-						end;
+						self:visible(false);
 					end;
 				end;
 			};
-
-			LoadFont("Common normal")..{
-				Text="Song List:";
-				InitCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn);x,-infx-txxtune;y,-infy+txytune+25;zoom,0.5;skewx,-0.25;horizalign,right;vertalign,top;);
-				PlayerJoinedMessageCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn));
-				OnCommand=function(self)
-					if GAMESTATE:IsCourseMode() then
-						self:settext("Song List:")
-					else
-						self:settext("");
-					end;
-				end;
-			};
-
-
-			LoadFont("Common normal")..{--"Song list from current course"
-				Text="";
-				InitCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn);x,-infx-txxtune;y,-infy+txytune+70;zoom,0.4;horizalign,right;vertalign,middle;);
-				PlayerJoinedMessageCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn));
-				OnCommand=function(self)
-					list = File.Read(THEME:GetCurrentThemeDirectory().."BGAnimations/ScreenSelectCourse decorations/courses_list.txt");
-					if GAMESTATE:IsCourseMode() then
-						self:settext(list)
-					else
-						self:settext("");
-					end;
-				end;
-			};
-
+			
+			--there was some course stuff here but as it never worked properly i just removed it -tertu
+			
 			LoadFont("monsterrat/_montserrat semi bold 60px")..{								--SPEEDMOD Display
 				InitCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn);x,(infx+txxtune-120)*negativeOffset;y,-infy+txytune+10+3+20;addy,26.25;zoom,0.185;vertalign,top;maxwidth,900);
 				OnCommand=function(self)

@@ -28,30 +28,11 @@ local IsP2On =		GAMESTATE:IsPlayerEnabled(PLAYER_2)	--Is player 2 present? BRETT
 
 local notefxp1 =	THEME:GetMetric("ScreenGameplay","PlayerP1OnePlayerOneSideX")	--Note field X position P1
 local notefxp2 =	THEME:GetMetric("ScreenGameplay","PlayerP2OnePlayerOneSideX")	--Note field X position P2
-if IsP1On then
-
-	if GAMESTATE:IsCourseMode() then
-		stepsp1 = GAMESTATE:GetCurrentCourse():GetAllTrails()[1]:GetStepsType();
-	else
-		stepsp1 = GAMESTATE:GetCurrentSteps(PLAYER_1):GetStepsType();
-	end
-
-	if stepsp1 ~= "StepsType_Pump_Single" then		--"if not single mode"
-		notefxp1 = SCREEN_CENTER_X		--HALFDOUBLE/DOUBLE/ROUTINE--Note field X position P1
-	end
+if CenterGameplayWidgets() then
+	notefxp1 = SCREEN_CENTER_X
+	notefxp2 = SCREEN_CENTER_X
 end
-if IsP2On then
 
-	if GAMESTATE:IsCourseMode() then
-		stepsp2 = GAMESTATE:GetCurrentCourse():GetAllTrails()[1]:GetStepsType();
-	else
-		stepsp2 = GAMESTATE:GetCurrentSteps(PLAYER_2):GetStepsType();
-	end
-
-	if stepsp2 ~= "StepsType_Pump_Single" then		--"if not single mode"
-		notefxp2 = SCREEN_CENTER_X		--HALFDOUBLE/DOUBLE/ROUTINE--Note field X position P2
-	end
-end
 local profil1 = 	PROFILEMAN:GetProfile(PLAYER_1);	--short for prfnam1
 local prfnam1 = 	profil1:GetDisplayName();			--Profile Display Name in player 1 slot
 local profil2 = 	PROFILEMAN:GetProfile(PLAYER_2);	--short for prfnam2
@@ -150,7 +131,6 @@ if activeModP1 == "Black" or activeModP2 == "Black" then
 	t[#t+1] = Def.Quad{InitCommand=cmd(setsize,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color("Black");Center)};
 elseif activeModP1 == "Off" or activeModP2 == "Off" or (ReadPrefFromFile("StreamSafeEnabled") == "true" and has_value(STREAM_UNSAFE_VIDEO, GAMESTATE:GetCurrentSong():GetDisplayFullTitle())) then
 	local BGAOffcolors = {
-		["Mixtape"] = "#C771F3",
 		["Special"] = "#F3CE71",
 		["Pro"] = "#F3718D",
 		["Easy"] = "#86f482",

@@ -5,26 +5,18 @@ local IsP2On =		GAMESTATE:IsPlayerEnabled(PLAYER_2)	--Is player 2 present? BRETT
 p1meter = 0;
 p2meter = 0;
 
-if GAMESTATE:IsCourseMode() then
-	song = GAMESTATE:GetCurrentCourse(); -- Get current Course xD
-	songdir = song:GetCourseDir();--Get current course directory xD
-	p1meter =		GAMESTATE:GetCurrentCourse():GetAllTrails()[1]:GetMeter();
-	p2meter =		GAMESTATE:GetCurrentCourse():GetAllTrails()[1]:GetMeter();
-	meterhighest = math.max(p1meter,p2meter)
-else
-	song = GAMESTATE:GetCurrentSong(); 	--Get current song lel
-	songdir = song:GetSongDir();--Get current song directory lel
-	-- again sanity checks !!!
-	local p1CurrentSteps = GAMESTATE:GetCurrentSteps(PLAYER_1);
-	local p2CurrentSteps = GAMESTATE:GetCurrentSteps(PLAYER_2);
-	if p1CurrentSteps then
-		p1meter =		p1CurrentSteps:GetMeter();
-	end;
-	if p2CurrentSteps then
-		p2meter =		p2CurrentSteps:GetMeter();
-	end;
-	meterhighest = math.max(p1meter,p2meter)
-end
+song = GAMESTATE:GetCurrentSong(); 	--Get current song lel
+songdir = song:GetSongDir();--Get current song directory lel
+-- again sanity checks !!!
+local p1CurrentSteps = GAMESTATE:GetCurrentSteps(PLAYER_1);
+local p2CurrentSteps = GAMESTATE:GetCurrentSteps(PLAYER_2);
+if p1CurrentSteps then
+	p1meter =		p1CurrentSteps:GetMeter();
+end;
+if p2CurrentSteps then
+	p2meter =		p2CurrentSteps:GetMeter();
+end;
+meterhighest = math.max(p1meter,p2meter)
 
 local sttype =		GAMESTATE:GetCurrentStyle():GetStepsType()
 local cstyle;

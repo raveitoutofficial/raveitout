@@ -102,6 +102,7 @@ end;
 ]]
 
 --By Accelerator
+--[[
 function MixtapeModeConfig()
 	local t = {
 		Name = "MixtapeModeConfig";
@@ -133,7 +134,7 @@ function MixtapeModeConfig()
 	};
 	setmetatable( t, t );
 	return t;
-end;
+end;]]
 
 --By Accelerator, same as above
 function SpecialModeConfig()

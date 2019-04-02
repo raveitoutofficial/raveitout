@@ -1,4 +1,5 @@
 local EasterEggs = PREFSMAN:GetPreference("EasterEggs");
+local master_player = GAMESTATE:GetMasterPlayerNumber();
 
 local curstage = GAMESTATE:GetCurrentStage()
 
@@ -31,33 +32,13 @@ else
 end
 
 
---This stupid code is used for the demo text and nothing else
 local notefxp1 =	THEME:GetMetric("ScreenGameplay","PlayerP1OnePlayerOneSideX")	--Note field X position P1
 local notefxp2 =	THEME:GetMetric("ScreenGameplay","PlayerP2OnePlayerOneSideX")	--Note field X position P2
-if IsP1On then
-
-	if GAMESTATE:IsCourseMode() then
-		stepsp1 = GAMESTATE:GetCurrentCourse():GetAllTrails()[1]:GetStepsType();
-	else
-		stepsp1 = GAMESTATE:GetCurrentSteps(PLAYER_1):GetStepsType();
-	end
-
-	if stepsp1 == "StepsType_Pump_Single" and PREFSMAN:GetPreference("Center1Player") then		--"if not single mode"
-		notefxp1 = SCREEN_CENTER_X		--HALFDOUBLE/DOUBLE/ROUTINE--Note field X position P1
-	end
+if CenterGameplayWidgets() then
+	notefxp1 = SCREEN_CENTER_X
+	notefxp2 = SCREEN_CENTER_X
 end
-if IsP2On then
 
-	if GAMESTATE:IsCourseMode() then
-		stepsp2 = GAMESTATE:GetCurrentCourse():GetAllTrails()[1]:GetStepsType();
-	else
-		stepsp2 = GAMESTATE:GetCurrentSteps(PLAYER_2):GetStepsType();
-	end
-
-	if stepsp2 == "StepsType_Pump_Single" and PREFSMAN:GetPreference("Center1Player") then		--"if not single mode"
-		notefxp2 = SCREEN_CENTER_X		--HALFDOUBLE/DOUBLE/ROUTINE--Note field X position P2
-	end
-end
 
 				
 local t = Def.ActorFrame{
@@ -204,12 +185,7 @@ for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 	if (style == "OnePlayerOneSide" and PREFSMAN:GetPreference("Center1Player")) or style == "OnePlayerTwoSides" then
 		notefxp = SCREEN_CENTER_X;
 	end;
-	local steps;
-	if GAMESTATE:IsCourseMode() then
-		steps = GAMESTATE:GetCurrentCourse():GetAllTrails()[1]:GetStepsType();
-	else
-		steps = GAMESTATE:GetCurrentSteps(pn):GetStepsType();
-	end
+	local steps = GAMESTATE:GetCurrentSteps(pn):GetStepsType();
 	
 	--Percentage thing
 	t[#t+1] = Def.ActorFrame{

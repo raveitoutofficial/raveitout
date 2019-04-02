@@ -23,29 +23,9 @@ local IsP1On =		GAMESTATE:IsPlayerEnabled(PLAYER_1)	--Is player 1 present? BRETT
 local IsP2On =		GAMESTATE:IsPlayerEnabled(PLAYER_2)	--Is player 2 present? BRETTY OBIOS :DDDD
 local notefxp1 =	THEME:GetMetric("ScreenGameplay","PlayerP1OnePlayerOneSideX")	--Note field X position P1
 local notefxp2 =	THEME:GetMetric("ScreenGameplay","PlayerP2OnePlayerOneSideX")	--Note field X position P2
-if IsP1On then
-
-	if GAMESTATE:IsCourseMode() then
-		stepsp1 = GAMESTATE:GetCurrentCourse():GetAllTrails()[1]:GetStepsType();
-	else
-		stepsp1 = GAMESTATE:GetCurrentSteps(PLAYER_1):GetStepsType();
-	end
-
-	if stepsp1 ~= "StepsType_Pump_Single" or PREFSMAN:GetPreference("Center1Player") then		--"if not single mode"
-		notefxp1 = SCREEN_CENTER_X		--HALFDOUBLE/DOUBLE/ROUTINE--Note field X position P1
-	end
-end
-if IsP2On then
-
-	if GAMESTATE:IsCourseMode() then
-		stepsp2 = GAMESTATE:GetCurrentCourse():GetAllTrails()[1]:GetStepsType();
-	else
-		stepsp2 = GAMESTATE:GetCurrentSteps(PLAYER_2):GetStepsType();
-	end
-
-	if stepsp2 ~= "StepsType_Pump_Single" or PREFSMAN:GetPreference("Center1Player") then		--"if not single mode"
-		notefxp2 = SCREEN_CENTER_X		--HALFDOUBLE/DOUBLE/ROUTINE--Note field X position P2
-	end
+if CenterGameplayWidgets() then
+	notefxp1 = SCREEN_CENTER_X
+	notefxp2 = SCREEN_CENTER_X
 end
 
 local stagemaxscore = 100000000*GAMESTATE:GetNumStagesForCurrentSongAndStepsOrCourse()

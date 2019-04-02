@@ -34,12 +34,12 @@ return Def.ActorFrame {
 			end;
 
 			LoadActor("player2cur")..{
-				InitCommand=cmd(x,-9;y,10;zoom,0.425;thump,1;effectmagnitude,1,1.05,4;effectclock,'beat';visible,not GAMESTATE:IsCourseMode() or GAMESTATE:IsSideJoined(PLAYER_2););
+				InitCommand=cmd(x,-9;y,10;zoom,0.425;thump,1;effectmagnitude,1,1.05,4;effectclock,'beat';visible,GAMESTATE:IsSideJoined(PLAYER_2););
 				OnCommand=function(self)
 					if not GAMESTATE:IsSideJoined(PLAYER_2) then
 						self:visible(false);
 					else
-						self:visible(not GAMESTATE:IsCourseMode() or GAMESTATE:IsSideJoined(PLAYER_2));
+						self:visible(GAMESTATE:IsSideJoined(PLAYER_2));
 					end;
 				end;
 				PlayerJoinedMessageCommand=function(self, params)
@@ -78,18 +78,18 @@ return Def.ActorFrame {
 		};
 
 		CursorP1 = Def.ActorFrame {
-			InitCommand=cmd(visible,GAMESTATE:IsSideJoined(PLAYER_1) and not GAMESTATE:IsCourseMode();draworder,201;);
+			InitCommand=cmd(visible,GAMESTATE:IsSideJoined(PLAYER_1);draworder,201;);
 			OnCommand=cmd(rotationz,90;);
 			PlayerJoinedMessageCommand=function(self, params)
 
 				if params.Player == PLAYER_1 then
-					self:visible(GAMESTATE:IsSideJoined(PLAYER_1) and not GAMESTATE:IsCourseMode());
+					self:visible(GAMESTATE:IsSideJoined(PLAYER_1));
 					(cmd(zoom,0;bounceend,0.3;zoom,1))(self);
 				end;
 			end;
 			PlayerUnjoinedMessageCommand=function(self, params)
 				if params.Player == PLAYER_1 then
-					self:visible(GAMESTATE:IsSideJoined(PLAYER_1) and not GAMESTATE:IsCourseMode());
+					self:visible(GAMESTATE:IsSideJoined(PLAYER_1));
 					(cmd(bouncebegin,0.3;zoom,0))(self);
 				end;
 			end;

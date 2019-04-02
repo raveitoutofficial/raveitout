@@ -143,11 +143,7 @@ end;
 --Get available choices for ScreenSelectPlayMode
 --TODO: Is ReadPrefFromFile slow? Need to check
 function getPlayModeChoices()
-	if ReadPrefFromFile("MixtapeModeEnabled") == "true" and ReadPrefFromFile("SpecialModeEnabled") == "true" then
-		return "Easy,Arcade,Pro,Mixtapes,Special";
-	elseif ReadPrefFromFile("MixtapeModeEnabled") == "true" then
-		return "Easy,Arcade,Pro,Mixtapes"
-	elseif ReadPrefFromFile("SpecialModeEnabled") == "true" then
+	if ReadPrefFromFile("SpecialModeEnabled") == "true" then
 		return "Easy,Arcade,Pro,Special"
 	else
 		return "Easy,Arcade,Pro";
@@ -441,4 +437,19 @@ function Sprite:Resize(setwidth,sethight)
     else 
         return 1
     end
+end
+
+--returns whether the current style is not 1 player/1 side unless Center1Player is on.
+--so called because it is used to determine if various gameplay UI elements should be centered
+function CenterGameplayWidgets()
+	if not PREFSMAN:GetPreference("Center1Player") then
+		if GAMESTATE then
+			local style = GAMESTATE:GetCurrentStyle()
+			if style and style:GetStyleType() ~= 'StyleType_OnePlayerOneSide' then
+				return false
+			end
+		end
+	end
+	--safe bet
+	return true
 end

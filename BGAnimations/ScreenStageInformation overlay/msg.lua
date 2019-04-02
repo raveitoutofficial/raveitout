@@ -2,9 +2,8 @@ local phrases = {
 "Perfectionist Mode is best used for obtaining SS scores without wasting time. You won't regret it. Heh.",
 "Some modifiers will not affect certain charts. Use this to your advantage in 2 player head to head. Or just to be a dick in general. Fuck you.",
 "Report any bugs to \"http://facebook.com/raveitoutgame\". Make sure you report them in a very aggresive manner. Memes are appreciated but not mandatory.",
-"Make sure to hit hold heads accurately or you will be punished with worse judgements on following holds. Yea it is bullshit but who cares? Screw you.",
+"Make sure to hit hold heads accurately or you will be punished with worse judgements on following holds. Yeah, it's bullshit but who cares? Screw you.",
 "Check the options list for the Screen Filter feature. It will allow a BGA to be viewed without affecting any gameplay. Loser.",
-"Enjoying arcade mode? Give \"Mixtapes\" a try and blow your stamina away. That's if that feature doesn't crash during gameplay.",
 "If you already played for awhile, give \"Pro mode\" a whirl and test your timing skills. Also helps determine what is on and off sync.",
 "The cuter the song, the harder the charts will be. We guarantee it.",
 "Rave It Out is basically \"Pitbull: The Game\". Dale.",
@@ -14,24 +13,17 @@ local phrases = {
 };
 
 local message;
-local songhasmsg; --Declared here for debugging purposes.
-if GAMESTATE:IsCourseMode() then
-	message = GAMESTATE:GetCurrentCourse():GetDescription()
-	if message == "" then
-		message = phrases[math.random(#phrases)];
-	end;
+
+local songmsgpath = GAMESTATE:GetCurrentSong():GetSongDir().."msg.txt";
+local songhasmsg = FILEMAN:DoesFileExist(songmsgpath)
+if songhasmsg then
+	local file = File.Read(songmsgpath)
+	messages = file:split("\r\n");
+	--SCREENMAN:SystemMessage(tostring(#messages).." "..strArrayToString(messages));
+	message = messages[math.random(#messages)];
 else
-	local songmsgpath = GAMESTATE:GetCurrentSong():GetSongDir().."msg.txt";
-	songhasmsg = FILEMAN:DoesFileExist(songmsgpath)
-	if songhasmsg then
-		local file = File.Read(songmsgpath)
-		messages = file:split("\r\n");
-		--SCREENMAN:SystemMessage(tostring(#messages).." "..strArrayToString(messages));
-		message = messages[math.random(#messages)];
-	else
-		message = phrases[math.random(#phrases)];
-	end;
-end
+	message = phrases[math.random(#phrases)];
+end;
 
 
 --animation controls

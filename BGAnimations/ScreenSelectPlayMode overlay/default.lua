@@ -114,9 +114,6 @@ t[#t+1] = Def.ActorFrame{
 			end;
 			
 			PREFSMAN:SetPreference("AllowW1",'AllowW1_Everywhere');
-		elseif choice == "Mixtapes" then
-			-- Mixtapes Mode
-			setenv("PlayMode","Mixtapes");
 		elseif choice == "Special" then
 			-- Special Mode
 			local folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["SpecialFolder"]);
