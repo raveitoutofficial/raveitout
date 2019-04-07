@@ -11,6 +11,30 @@ The standard structure of a song is something like:
 However, in RIO things are different.
 Note: A directory starting with a "/" means the root of the stepmania directory, usually containing Songs, Data, Logs, Scripts, Cache, Themes, etc
 
+An example of a RIO song with everything self contained:
+/Songs/02-EDM/Shelter/
+	Shelter.ogg (Audio)
+	Shelter.ssc (Stepfile)
+	jacket.png (Jacket, 300x300)
+	largejk.png (High resolution jacket for ScreenStageInformation)
+	Shelter-background.png (Background)
+	preview.mpg (PreviewVid)
+	Video.mpg (BGA)
+	msg.txt (Random tidbits shown during ScreenStageInformation)
+	
+An example of a RIO song where everything is spread out everywhere:
+/Songs/02-EDM/Shelter/
+	Shelter.ogg (Audio)
+	Shelter.ssc (Stepfile)
+	jacket.png (Jacket, 300x300)
+	msg.txt
+/SongJacketsLarge/Shelter.png (High resolution jacket)
+/SongBackgrounds/HD/Shelter-bg.png (Widescreen Background)
+/SongBackgrounds/SD/Shelter (SD)-bg.png (non widescreen background)
+/SongPreviews/Shelter-preview.mpg (PreviewVid)
+/SongMovies/EDM001-Shelter.mpg (BGA)
+
+
 BANNERS:
 Rave it out does not use Banners at all (although our dev team refers to jackets as banners for some reason). The theme will search for jacket then banner using standard StepMania functions.
 
