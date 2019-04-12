@@ -46,7 +46,7 @@ return Def.ActorFrame{
 				InitCommand=cmd(x,-120*negativeOffset;y,-175;zoom,0.215;uppercase,true;maxwidth,900);
 				PlayerJoinedMessageCommand=cmd(visible,GAMESTATE:IsHumanPlayer(pn);queuecommand,"CurrentSteps"..pname(pn).."ChangedMessage");
 				["CurrentSteps"..pname(pn).."ChangedMessageCommand"]=function(self)
-					if GAMESTATE:IsHumanPlayer(pn) and GAMESTATE:GetCurrentSong() then
+					if GAMESTATE:IsHumanPlayer(pn) and GAMESTATE:GetCurrentSteps(pn) then
 						local author = GAMESTATE:GetCurrentSteps(pn):GetAuthorCredit();
 						if author ~= "" then
 							self:maxwidth(900); --the original code did not do this but it appears like it intended to... -tertu

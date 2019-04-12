@@ -613,7 +613,14 @@ t[#t+1] = LoadActor("code_detector.lua")..{};
 --t[#t+1] = LoadActor("PlayerMods")..{};
 t[#t+1] = LoadActor("GenreSounds.lua")..{};
 if getenv("PlayMode") == "Arcade" or getenv("PlayMode") == "Pro" then 
-	t[#t+1] = LoadActor("channel_system")..{};
+	if GetSmallestNumHeartsLeftForAnyHumanPlayer() > 1 then
+		t[#t+1] = LoadActor("channel_system")..{};
+	else
+		local folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["SnapTracksFolder"]);
+		local randomSong = folder[math.random(1,#folder)]
+		GAMESTATE:SetCurrentSong(randomSong);
+		GAMESTATE:SetPreferredSong(randomSong);
+	end;
 end;
 
 t[#t+1] = LoadActor(THEME:GetPathG("","USB_stuff"))..{};
