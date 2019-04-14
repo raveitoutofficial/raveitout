@@ -145,6 +145,20 @@ local t = Def.ActorFrame{
 			end;
 		end;
 	};
+	LoadFont("Common Normal")..{
+		Text="Snap Tracks Group: ";
+		InitCommand=cmd(xy,20,375;horizalign,left);
+		OnCommand=function(self)
+			if SONGMAN:DoesSongGroupExist(RIO_FOLDER_NAMES["SnapTracksFolder"]) == false then
+				self:settext(self:GetText().." Missing!");
+				self:diffuse(Color("Red"));
+			else
+				self:settext(self:GetText().." Ok! | "..#SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["SnapTracksFolder"]).." songs");
+				self:diffuse(Color("Green"));
+			end;
+			self:settext(self:GetText().." | "..RIO_FOLDER_NAMES["SnapTracksFolder"])
+		end;
+	};
 	--[[LoadFont("Common Normal")..{
 		Text="asdadadsassadasdad: "..#SONGMAN:GetSongsInGroup("test");
 		InitCommand=cmd(xy,20,375;horizalign,left);

@@ -55,6 +55,7 @@ function GetNumHeartsForSong()
 	return GetSongExtraData(s, "Hearts")
 end;
 
+--TODO: This should be renamed to GetLargestNumHeartsLeftForAnyHumanPlayer, not smallest...
 function GetSmallestNumHeartsLeftForAnyHumanPlayer()
 	if GAMESTATE:IsHumanPlayer(PLAYER_1) and GAMESTATE:IsHumanPlayer(PLAYER_2) then
 		return math.max(NumHeartsLeft[PLAYER_1], NumHeartsLeft[PLAYER_2])

@@ -79,10 +79,12 @@ STEPMAKER_NAMES_BLACKLIST = {
 };
 
 
+--Based on GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
 --List of songs that will get your recording blocked worldwide
 STREAM_UNSAFE_AUDIO = {
 	"Breaking The Habit",
 	"She Wolf (Falling to Pieces)",
+	"Untouched",
 	"Face My Fears" --Test song
 };
 
@@ -91,7 +93,8 @@ STREAM_UNSAFE_VIDEO = {
 	"Good Feeling",
 	"I Wanna Go",
 	"Jaleo",
-	"Breakin' A Sweat"
+	"Breakin' A Sweat",
+	"Through the Fire and Flames"
 };
 
 --Looking for titles and avatars? Check unlocks.lua.

@@ -128,6 +128,7 @@ if not GAMESTATE:IsEventMode() then
 	end;
 end;
 
-t[#t+1] = LoadActor(THEME:GetPathG("","USB_stuff"), bonus[PLAYER_1], bonus[PLAYER_2])..{};
+t[#t+1] = LoadActor(THEME:GetPathG("","USB_stuff"), bonus[PLAYER_1], bonus[PLAYER_2])..{
+};
 
 return t;

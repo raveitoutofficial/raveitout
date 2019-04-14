@@ -278,7 +278,7 @@ t[#t+1] = Def.ActorFrame{
 	};
 }
 
-for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+for pn in ivalues(GAMESTATE:GetEnabledPlayers()) do
 	t[#t+1] = LoadActor("DifficultySelectObjects", pn, infx, infy);
 end;
 
@@ -616,6 +616,7 @@ if getenv("PlayMode") == "Arcade" or getenv("PlayMode") == "Pro" then
 	if GetSmallestNumHeartsLeftForAnyHumanPlayer() > 1 then
 		t[#t+1] = LoadActor("channel_system")..{};
 	else
+		assert(SONGMAN:DoesSongGroupExist(RIO_FOLDER_NAMES["SnapTracksFolder"]),"You are missing the snap tracks folder from SYSTEM_PARAMETERS.lua which is required. The game cannot continue.");
 		local folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["SnapTracksFolder"]);
 		local randomSong = folder[math.random(1,#folder)]
 		GAMESTATE:SetCurrentSong(randomSong);

@@ -5,16 +5,17 @@ local t = Def.ActorFrame{
 			Question = "Enter a cheat code.",
 			MaxInputLength = 255,
 			OnOK = function(answer)
-				if answer == "DebugOn" then
+				--[[if answer == "DebugOn" then
 					DoDebug = true;
 					SCREENMAN:SystemMessage("Debug enabled.");
 				elseif answer == "DebugOff" then
 					DoDebug = false;
 					SCREENMAN:SystemMessage("Debug disabled.");
-				end;
+				end;]]
+				--unlockAnswer = answer
 				--SCREENMAN:SystemMessage(answer)
 				--SCREENMAN:SetNewScreen("ScreenOptionsTH")
-				MESSAGEMAN:Broadcast("ScreenOver");
+				MESSAGEMAN:Broadcast("ScreenOver",{answer=answer});
 				--SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 			end,
 		};
@@ -32,12 +33,17 @@ local t = Def.ActorFrame{
 		InitCommand=cmd(Center;);
 		ScreenOverMessageCommand=function(self, param)
 			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
-			local unlockmsg = param
-			if unlockmsg then
-				self:settextf("%s unlocked!",unlockmsg)
-				--self:settext("awdad");
+			local unlockmsg = param.answer
+			if unlockmsg == "DebugOn" then
+				DoDebug = true;
+				self:settext("Debug Enabled.")
+			elseif unlockmsg == "DebugOff" then
+				DoDebug = false
+				self:settext("Debug Disabled.")
+			elseif unlockmsg == "ExportData" then
+				parseData();
 			else
-				self:settext("Invalid cheat code.");
+				self:settext("Invalid unlock code.");
 			end;
 		end;
 	};

@@ -10,9 +10,12 @@ local t = Def.ActorFrame{
 local curstage = GAMESTATE:GetCurrentStage()
 if IsExtraStagePIU() then
 	curstage = "Stage_Extra1"
-elseif curstage == "Stage_Final" then
+elseif GAMESTATE:GetCurrentStageIndex() > 3 then
 	curstage = Stage[4];
+elseif curstage == "Stage_Extra1" or curstage == "Stage_Final" then --It will say this if you use snap tracks, which we don't want because it's not actually the extra stage.
+	curstage = Stage[GAMESTATE:GetCurrentStageIndex()+1]
 end;
+--SCREENMAN:SystemMessage(curstage)
 
 --Time until each video ends, I guess.
 local delay_time = {
@@ -76,8 +79,13 @@ t[#t+1] = Def.Actor {
 			local profileDir = PROFILEMAN:GetProfileDir(ProfileSlot[PlayerNumber:Reverse()[player]+1]);
 			SaveProfileCustom(PROFILEMAN:GetProfile(player),profileDir);
 			--If there are no stages left, save extra data needed for memory cards.
-			if not UseNextStage and PROFILEMAN:ProfileWasLoadedFromMemoryCard(player) then
-				SaveMemcardProfileData(player);
+			if NumHeartsLeft[player] < 1 then
+				if PROFILEMAN:ProfileWasLoadedFromMemoryCard(player) then
+					SaveMemcardProfileData(player);
+				end;
+				--Remove player manually because SM doesn't know when to do it because we're using hearts.
+				GAMESTATE:UnjoinPlayer(player)
+				--SCREENMAN:SystemMessage("Unjoined "..player)
 			end;
 		end;
 		SCREENMAN:GetTopScreen():Continue();
@@ -88,6 +96,11 @@ if DoDebug then
 	t[#t+1] = LoadFont("Common Normal")..{	--percentage scoring P1
 		InitCommand=cmd(zoom,2;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
 		Text=curstage.." - Delay: "..NextStageSleepTime;
+	};
+	
+	t[#t+1] = LoadFont("Common Normal")..{
+		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;addy,100);
+		Text="P1 HEARTS: "..NumHeartsLeft[PLAYER_1].."\nP2 HEARTS: "..NumHeartsLeft[PLAYER_2].."\nMAX HEARTS: "..GetSmallestNumHeartsLeftForAnyHumanPlayer();
 	};
 end;
 return t;

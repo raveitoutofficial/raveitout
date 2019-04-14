@@ -243,6 +243,22 @@ Branch = {
 			end
 		end
 	end,
+	AfterProfileSave = function()
+		-- Might be a little too broken? -- Midiman
+		if GAMESTATE:IsEventMode() then
+			return SelectMusicOrCourse()
+		elseif STATSMAN:GetCurStageStats():AllFailed() then
+			return GameOverOrContinue()
+		elseif GetSmallestNumHeartsLeftForAnyHumanPlayer() == 0 then
+			if not GAMESTATE:IsCourseMode() then
+				return "ScreenEvaluationSummary"
+			else
+				return GameOverOrContinue()
+			end
+		else
+			return SelectMusicOrCourse()
+		end
+	end,
 	AfterSummary = function()
 		return "ScreenProfileSaveSummary"
 	end,

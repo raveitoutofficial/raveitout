@@ -45,6 +45,12 @@ elseif LastSongPlayedArtist == "Logic feat. Alessia Cara & Khalid" then
 	SpecialTransition = getSpecialRandom("_SpecialTransitions/SuicidePrevention")
 end;
 
+local bonusSongBG = nil;
+if LastStageAccuracyHighest >= 90 and FILEMAN:DoesFileExist(LastSong:GetSongDir().."/specialBG.png") then
+	bonusSongBG = LastSong:GetSongDir().."/specialBG.png"
+	ShowRIOLogo = true;
+end;
+
 if SpecialTransition then		--load wallpaper or special transition
 	t[#t+1] = Def.ActorFrame{
 		LoadActor(SpecialTransition)..{
@@ -68,6 +74,12 @@ if SpecialTransition then		--load wallpaper or special transition
 			end;
 		};]]
 	};
+elseif bonusSongBG then
+	t[#t+1] = Def.ActorFrame{
+		LoadActor(bonusSongBG)..{
+			InitCommand=cmd(Cover);
+		};
+	};
 else
 	t[#t+1] = Def.ActorFrame{
 		LoadActor(getRandomWall())..{
@@ -82,7 +94,10 @@ else
 
 end;
 if ShowRIOLogo then				--load rio logo in bottom right corner
-	t[#t+1] = LoadActor("_wallpaperriologo.lua");
+	--t[#t+1] = LoadActor("_wallpaperriologo.lua");
+	t[#t+1] = LoadActor(THEME:GetPathG("","logo"))..{
+		InitCommand=cmd(xy,SCREEN_RIGHT*.8,SCREEN_BOTTOM*.9;zoom,.25);
+	};
 end;
 
 
