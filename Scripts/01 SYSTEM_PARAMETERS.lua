@@ -94,7 +94,9 @@ STREAM_UNSAFE_VIDEO = {
 	"I Wanna Go",
 	"Jaleo",
 	"Breakin' A Sweat",
-	"Through the Fire and Flames"
+	"Through the Fire and Flames",
+	"How I Feel",
+	"Don't Stop The Party"
 };
 
 --Looking for titles and avatars? Check unlocks.lua.
