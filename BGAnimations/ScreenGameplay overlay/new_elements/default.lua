@@ -40,7 +40,7 @@ t[#t+1] = Def.ActorFrame {
 	OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_TOP+15;diffusealpha,0;sleep,1;linear,0.5;diffusealpha,1;);
 	
 		LoadFont("facu/_zona pro bold 20px")..{	--SONG + (SUBTITLE)
-		InitCommand=cmd(uppercase,true;zoom,0.45;diffuse,1,1,1,1;horizalign,center;maxwidth,620);
+		InitCommand=cmd(uppercase,true;zoom,0.45;diffuse,1,1,1,1;horizalign,center;maxwidth,1280);
 		OnCommand=function(self)
 			if GAMESTATE:IsCourseMode() then
 				self:settext(GAMESTATE:GetCurrentCourse():GetDisplayArtist().." - "..GAMESTATE:GetCurrentCourse():GetDisplayFullTitle());
