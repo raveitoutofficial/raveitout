@@ -20,16 +20,28 @@ return Def.ActorFrame{
 			CurrentSongChangedMessageCommand=function(self)
 				self:stoptweening():diffusealpha(0);
 				if GAMESTATE:GetCurrentSong() then
-					if GAMESTATE:GetCurrentSong():GetPreviewVidPath() then
-						--Do nothing
-					else
+					if GAMESTATE:GetCurrentSong():GetPreviewVidPath() == nil then
 						self:sleep(.4):queuecommand("Load2");
 					end;
 				end;
 			end;
 			Load2Command=function(self)
-				self:LoadFromCurrentSongBackground():zoomto(384,232);
-				self:linear(.2):diffusealpha(1);
+				local bg = GetSongBackground(true)
+				if bg then
+					--SCREENMAN:SystemMessage(bg)
+					self:Load(bg):zoomto(384,232);
+				else
+					local randomBGAs = FILEMAN:GetDirListing("/RandomMovies/SD/")
+					if #randomBGAs > 1 then
+						local bga = randomBGAs[math.random(1,#randomBGAs)]
+						--SCREENMAN:SystemMessage(bga);
+						self:Load("/RandomMovies/SD/"..bga);
+					else
+						--SCREENMAN:SystemMessage("/RandomMovies/SD/"..randomBGAs[1]);
+						self:Load("/RandomMovies/SD/"..randomBGAs[1])
+					end;
+				end;
+				self:zoomto(384,232):linear(.2):diffusealpha(1);
 			end;
 		};
 		Def.Sprite{
@@ -38,10 +50,16 @@ return Def.ActorFrame{
 			CurrentSongChangedMessageCommand=cmd(stoptweening;Load,nil;sleep,.4;queuecommand,"PlayVid2");
 			PlayVid2Command=function(self)
 				--self:Load(nil);
-				local song = GAMESTATE:GetCurrentSong()
-				path = GetBGAPreviewPath("PREVIEWVID");
-				--path = song:GetBannerPath();
-				self:Load(path);
+				if streamSafeMode and has_value(STREAM_UNSAFE_AUDIO, GAMESTATE:GetCurrentSong():GetDisplayFullTitle()) then
+					self:diffusealpha(0);
+					self:Load(nil);
+					return;
+				else
+					local song = GAMESTATE:GetCurrentSong()
+					path = GetBGAPreviewPath("PREVIEWVID");
+					--path = song:GetBannerPath();
+					self:Load(path);
+				end;
 				self:diffusealpha(0);
 				self:zoomto(384,232);
 				self:linear(0.2);
@@ -52,22 +70,31 @@ return Def.ActorFrame{
 				end
 			end;
 		};
-		
+		--TODO: Remove this when hiding songs works correctly!
 		Def.ActorFrame{
 			InitCommand=cmd(x,_screen.cx;y,_screen.cy-30;visible,false);
 			CurrentSongChangedMessageCommand=function(self)
 				if streamSafeMode and has_value(STREAM_UNSAFE_AUDIO, GAMESTATE:GetCurrentSong():GetDisplayFullTitle()) then
 					self:visible(true);
+					self:sleep(.8):queuecommand("MuteAudio");
 				else
 					self:visible(false);
 				end;
 			end;
-			Def.Quad{
-				InitCommand=cmd(setsize,384,232;diffuse,color("0,0,0,.9"));
+			MuteAudioCommand=function(self)
+				--SOUND:DimMusic(0,65536);
+				SOUND:StopMusic();
+			end;
+			LoadActor(THEME:GetPathG("","noise"))..{
+				InitCommand=cmd(texcoordvelocity,0,8;customtexturerect,0,0,1,1;cropto,384,232;diffuse,color(".5,.5,.5,1"));
+			};
+			LoadActor("temp_contentid")..{
+				InitCommand=cmd(zoom,.5;diffuse,color(".5,.5,.5,1"));
+			
 			};
 			LoadFont("Common Normal")..{
 				Text=THEME:GetString("ScreenSelectMusic","StreamUnsafe");
-				InitCommand=cmd(wrapwidthpixels,380);
+				InitCommand=cmd(wrapwidthpixels,300;);
 			};
 		};
 	

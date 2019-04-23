@@ -192,6 +192,10 @@ local function inputs(event)
 		button_history[4] = button
 		if button_history[1] == "UpLeft" and button_history[2] == "UpRight" and button_history[3] == "UpLeft" and button_history[4] == "UpRight" then
 			--SCREENMAN:AddNewScreenToTop("ScreenSelectSort");
+			if musicwheel:ChangeSort('SortOrder_BPM') then
+				--SCREENMAN:SystemMessage("SortChanged")
+				MESSAGEMAN:Broadcast("SortChanged")
+			end;
 		end;
 		--SCREENMAN:SystemMessage(strArrayToString(button_history));
 		--musicwheel:SetOpenSection("");
@@ -367,5 +371,21 @@ t[#t+1] = LoadFont("monsterrat/_montserrat light 60px")..{
 };
 
 t[#t+1] = 	LoadActor("arrow_shine")..{};
+--[[t[#t+1] = Def.Quad{
+	InitCommand=cmd(diffuse,color("0,0,0,.8");setsize,SCREEN_WIDTH,SCREEN_HEIGHT;Center);
+
+};
+t[#t+1] = LoadFont("monsterrat/_montserrat light 60px")..{
+	InitCommand=cmd(Center;diffuse,Color("White");zoom,.25;addy,100;);
+	OnCommand=function(self)
+		local sect = musicwheel:GetCurrentSections()
+		local aa = ""
+		for i = 1, #sect do
+			aa = aa..sect[i].."\n,"
+		end;
+		self:settext(aa);
+	end;
+	SortChangedMessageCommand=cmd(playcommand,"On");
+};]]
 
 return t;

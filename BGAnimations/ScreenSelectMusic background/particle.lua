@@ -6,6 +6,22 @@ if MonthOfYear() == 11 then --Christmas
 	likeSnow = true
 elseif MonthOfYear() == 1 and DayOfMonth() >= 11 and DayOfMonth() <= 15 then --Near Valentine's Day
 	toLoad = "heart (doubleres)"
+elseif MonthOfYear() == 3 then
+	--[[
+    local C = Math.floor(Y/100);
+    local N = Y - 19*Math.floor(Y/19);
+    local K = Math.floor((C - 17)/25);
+    local I = C - Math.floor(C/4) - Math.floor((C - K)/3) + 19*N + 15;
+    I = I - 30*Math.floor((I/30));
+    I = I - Math.floor(I/28)*(1 - Math.floor(I/28)*Math.floor(29/(I + 1))*Math.floor((21 - N)/11));
+    local J = Y + Math.floor(Y/4) + I + 2 - C + Math.floor(C/4);
+    J = J - 7*Math.floor(J/7);
+    local L = I - J;
+    local M = 3 + Math.floor((L + 40)/44);
+    local D = L + 28 - 31*Math.floor(M/4);
+	if DayOfMonth() <= D+5 and DayOfMonth() >= D-5 then
+		toLoad = "easter (doubleres)"
+	end;]]
 end;
 
 if toLoad then --Only process if there is something we should be displaying.

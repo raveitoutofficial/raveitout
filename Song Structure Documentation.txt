@@ -21,6 +21,7 @@ An example of a RIO song with everything self contained:
 	preview.mpg (PreviewVid)
 	Video.mpg (BGA)
 	msg.txt (Random tidbits shown during ScreenStageInformation)
+	specialBG.png
 	
 An example of a RIO song where everything is spread out everywhere:
 /Songs/02-EDM/Shelter/
@@ -54,6 +55,9 @@ The theme will search /SongBackgrounds/HD/ if using widescreen, else it will sea
 HD backgrounds MUST be named after the song folder and have "-bg.png" at the end.
 SD backgrounds MUST be named after the song folder and have " (SD)-bg.png" at the end.
 If an HD/SD background is not found (Depending on your aspect ratio), the standard background in the #BACKGROUND tag of the .ssc will be checked using standard StepMania functions.
+
+LOADING SCREEN BACKGROUND:
+If you have a specialBG.png inside your song folder, it will show if you got >=90 accuracy.
 
 SONGMOVIES:
 *This is not implemented, ignore it.

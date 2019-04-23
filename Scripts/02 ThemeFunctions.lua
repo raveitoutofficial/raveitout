@@ -365,7 +365,8 @@ function GetSongBackground(return_nil_on_fail)
 			return path;
 		end;
 	end;
-	return return_nil_on_fail and nil or THEME:GetPathG("Common","fallback background")
+	--return nil
+	if return_nil_on_fail then return nil else return THEME:GetPathG("Common","fallback background") end;
 end
 --Override the function to use above function.
 function Sprite:LoadFromCurrentSongBackground()
