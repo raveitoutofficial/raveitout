@@ -78,7 +78,8 @@ LEVEL:
 Songs at lv99 or more will show up as "??".
 
 STEPS INFO:
-Put something in the #CHARTNAME tag for your steps if you want it to display something custom.
+The top line is the chart author, which is the #CREDIT tag in your ssc.
+Put something in the #CHARTNAME tag for your steps if you want it to display something custom for the bottom line.
 It will also show instead of the regular "SINGLE Lv.XX" in the results screen.
 
 HEARTS:

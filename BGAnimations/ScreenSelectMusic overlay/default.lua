@@ -463,16 +463,19 @@ else
 				LoadFont("Common Normal")..{
 					Text="Current Velocity:";
 					InitCommand=cmd(draworder,999;y,_screen.cy-(olhei/2.25)+35;vertalign,top;zoom,.5;wrapwidthpixels,350;diffusebottomedge,Color("HoloBlue");visible,false);
+					OnCommand=function(self,params)
+						self:playcommand("UpdateText",{Player=pn});
+					end;
 					UpdateTextCommand=function(self,params)
 						if params.Player == pn then
-							if GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
+							if GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod() then
 								self:settext("Current Velocity: "..GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod());
 							else
 								self:settext("Current Velocity: None");
 							end;
 						end;
 					end;
-					MModChangedMessageCommand=function(self,params)
+					SpeedModChangedMessageCommand=function(self,params)
 						if params.Player == pn and currentOpList == "SpeedMods" then
 							self:playcommand("UpdateText",params);
 						end;
@@ -500,7 +503,7 @@ else
 				};
 				--For the combo judgement only
 				Def.Sprite{
-					InitCommand=cmd(y,SCREEN_CENTER_Y;draworder,999);
+					InitCommand=cmd(y,SCREEN_CENTER_Y+20;draworder,999);
 					OptionsMenuChangedMessageCommand=function(self,params)
 						if params.Player == pn then
 							if params.Menu == "JudgmentType" then

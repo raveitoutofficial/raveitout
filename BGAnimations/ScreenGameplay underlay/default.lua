@@ -287,7 +287,7 @@ t[#t+1] = Def.ActorFrame{		--Limit break by ROAD24 and NeobeatIKK
 		};		--]]
 	};
 
-t[#t+1] = 	Def.ActorFrame{		-- Write data to PlayerProfile/RIO_SongData
+--[[t[#t+1] = 	Def.ActorFrame{		-- Write data to PlayerProfile/RIO_SongData
 		Def.Actor{		-- Write SpeedMod to Profile (PLAYER_1) by NeobeatIKK
 			OnCommand=function(self)
 				if IsP1On then
@@ -344,7 +344,7 @@ t[#t+1] = 	Def.ActorFrame{		-- Write data to PlayerProfile/RIO_SongData
 		};
 	};
 
-
+]]
 
 --/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 t[#t+1] = 	Def.ActorFrame{		-- DEBUG STUFF

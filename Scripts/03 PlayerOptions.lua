@@ -288,7 +288,7 @@ end;
 
 function OptionRowJudgmentGraphic()
 	--The true name of the graphic is stored in ActiveModifiers to make it easier to load.
-	local judgementNames = {"Season 1", "Season 2", "Montserrat", "None"}
+	local judgementNames = {"Season 1", "Season 2", "Zona", "Simply Love", "None"}
 	local t = {
 		Name="JudgmentType",
 		LayoutType = "ShowAllInRow",
@@ -297,7 +297,7 @@ function OptionRowJudgmentGraphic()
 		ExportOnChange = false,
 		Choices = judgementNames,
 		--Embedded in the metatable because the ScreenSelectMusic needs to access it too
-		judgementFileNames = { "Season1", "Season2", "Montserrat", "None"},
+		judgementFileNames = { "Season1", "Season2", "Zona", "Simply Love", "None"},
 		LoadSelections = function(self, list, pn)
 			local found = false;
 			for i=1,#list do
@@ -377,7 +377,7 @@ function SpeedMods()
 					local speed = (math.ceil(GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():XMod()*100)/100)+0.75;
 					GAMESTATE:ApplyGameCommand("mod,"..speed.."x",pn);
 				end
-				MESSAGEMAN:Broadcast("SpeedModChange");
+				MESSAGEMAN:Broadcast("SpeedModChanged",{Player=pn});
 		end
 	};
 	setmetatable( t, t );
@@ -452,7 +452,8 @@ function SpeedMods2()
 					speed = adjustPlayerMMod(pn, 100);
 				end;
 			end;
-			MESSAGEMAN:Broadcast("MModChanged", {Player=pn,Speed=speed});
+			--MESSAGEMAN:Broadcast("MModChanged", {Player=pn,Speed=speed});
+			MESSAGEMAN:Broadcast("SpeedModChanged",{Player=pn});
 			--Always return true because we don't want anything to get highlighted.
 			return true;
 			
