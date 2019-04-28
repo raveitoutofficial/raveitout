@@ -129,20 +129,20 @@ return Def.ActorFrame{
 		LoadFont("monsterrat/_montserrat semi bold 60px")..{								--SPEEDMOD Display
 			InitCommand=cmd(x,-60*negativeOffset;y,-infy+txytune+10+3+20+26.25+30/3;zoom,0.215;horizalign,alignment;vertalign,top;maxwidth,900;skewx,-0.25;);
 			OnCommand=function(self)
-				local steps = GAMESTATE:GetCurrentSteps(pn)
-				if steps then
-					local rawbpm = steps:GetDisplayBpms();
+				local s = GAMESTATE:GetCurrentSong()
+				if s then
+					local rawbpm = s:GetDisplayBpms();
 					local lobpm = math.ceil(rawbpm[1]);
 					local hibpm = math.ceil(rawbpm[2]);
 					local songBPMString;
-					if steps:IsDisplayBpmRandom() then
+					if s:IsDisplayBpmRandom() then
 						songBPMString = "????"
 					elseif lobpm == hibpm then
 						songBPMString = lobpm
 					else
 						songBPMString = lobpm.."-"..hibpm
 					end;
-					self:settext("CHART BPM: "..songBPMString);
+					self:settext("SONG BPM: "..songBPMString);
 				end;
 			end;
 			["CurrentSteps"..pname(pn).."ChangedMessageCommand"]=cmd(playcommand,"On");
@@ -211,7 +211,7 @@ return Def.ActorFrame{
 		LoadFont("monsterrat/_montserrat semi bold 60px")..{								--SPEEDMOD Display
 			InitCommand=cmd(x,-60*negativeOffset;y,-infy+txytune+10+3+20+26.25+22;zoom,0.215;horizalign,alignment;vertalign,top;maxwidth,900;skewx,-0.25;);
 			OnCommand=function(self)
-				local steps = GAMESTATE:GetCurrentSteps(pn)
+				local steps = GAMESTATE:GetCurrentSong()
 				if steps and not steps:IsDisplayBpmRandom() then
 					local xmod = GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():XMod();
 					local cmod = GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():CMod();

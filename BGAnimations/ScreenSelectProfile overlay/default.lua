@@ -286,14 +286,7 @@ function LoadPlayerStuff(Player)
 			};
 		};]]
 		
-		LoadActor(THEME:GetPathG("Common", "Mask"))..{
-			InitCommand=cmd(diffuse,PlayerColor(Player);zoomtowidth,PROFILE_FRAME_WIDTH+50;zoomtoheight,PROFILE_FRAME_HEIGHT);
-			OnCommand=function(self)
-				if pn == 2 then
-					self:rotationy(180);
-				end;
-			end;
-		};
+
 		
 	
 	}
@@ -587,21 +580,6 @@ function LoadPlayerStuff(Player)
 		};
 		
 		
-		
-		
-		--[[LoadActor("playdata_cover_"..pname(Player))..{
-			InitCommand=cmd(y,10;);
-			OnCommand=cmd(zoomy,1;diffusealpha,1;sleep,1;decelerate,.2;zoomy,0;diffusealpha,0);
-			--OffCommand=cmd(zoomy,1);
-			ProfileChosenMessageCommand=function(self, param)
-				if param.Player == Player then
-					self:finishtweening();
-					self:queuecommand("On");
-				end;
-			end;
-		};]]
-		
-		
 		--[[LoadActor("operate_game_start")..{
 			InitCommand=cmd(y,290);
 		};]]
@@ -633,6 +611,28 @@ function LoadPlayerStuff(Player)
 	--???
 	t[#t+1] = Def.ActorFrame {
 		Name = "EffectFrame";
+	};
+	t[#t+1] = Def.ActorFrame{
+		LoadActor("playdata_cover_"..pname(Player))..{
+			InitCommand=cmd(setsize,PROFILE_FRAME_WIDTH+25,PROFILE_FRAME_HEIGHT-35;zoomy,0);
+			AnimCommand=cmd(decelerate,.3;zoomy,1;diffusealpha,1;sleep,.4;decelerate,.3;zoomy,0;diffusealpha,0);
+			--OffCommand=cmd(zoomy,1);
+			ProfileChosenMessageCommand=function(self, param)
+				if param.Player == Player then
+					--self:finishtweening();
+					self:queuecommand("Anim");
+				end;
+			end;
+		};
+	
+		LoadActor(THEME:GetPathG("Common", "Mask"))..{
+			InitCommand=cmd(diffuse,PlayerColor(Player);zoomtowidth,PROFILE_FRAME_WIDTH+50;zoomtoheight,PROFILE_FRAME_HEIGHT);
+			OnCommand=function(self)
+				if pn == 2 then
+					self:rotationy(180);
+				end;
+			end;
+		};
 	};
 
 
@@ -745,7 +745,7 @@ local t = Def.ActorFrame {
 				if curProfileScreen[params.PlayerNumber] == 0 then
 					curProfileScreen[params.PlayerNumber] = 1;
 					--SCREENMAN:SystemMessage(curProfileScreen[params.PlayerNumber]);
-					self:queuecommand("UpdateInternal2");
+					self:sleep(.2):queuecommand("UpdateInternal2");
 					--Because SM's own messagecommands isn't consistent...
 					MESSAGEMAN:Broadcast("ProfileChosen",{Player=params.PlayerNumber});
 				else

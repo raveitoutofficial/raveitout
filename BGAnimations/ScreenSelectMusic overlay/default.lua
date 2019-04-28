@@ -568,7 +568,7 @@ else
 						local name = "Tap note";
 						if CurrentNoteSkin(pn) == "delta" then
 							name = "Ready Receptor";
-						elseif CurrentNoteSkin(pn) == "delta-note" or CurrentNoteSkin(pn) == "rhythm" then
+						elseif CurrentNoteSkin(pn) == "delta-note" or string.ends(CurrentNoteSkin(pn), "rhythm") then
 							arrow = "_UpLeft";
 						end
 						local path = NOTESKIN:GetPathForNoteSkin(arrow, name, CurrentNoteSkin(pn));
@@ -586,7 +586,7 @@ else
 								local name = "Tap note";
 								if highlightedNoteSkin == "delta" then
 									name = "Ready Receptor";
-								elseif highlightedNoteSkin == "delta-note" or highlightedNoteSkin == "rhythm" then
+								elseif highlightedNoteSkin == "delta-note" or string.ends(highlightedNoteSkin, "rhythm") then
 									arrow = "_UpLeft";
 								end
 								local path = NOTESKIN:GetPathForNoteSkin(arrow, name, highlightedNoteSkin);

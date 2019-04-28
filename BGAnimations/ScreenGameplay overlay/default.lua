@@ -177,7 +177,7 @@ local t = Def.ActorFrame{
 	LoadActor("MenuOptions");	
 };
 
-local competitionMode = (ActiveModifiers["P1"]["CompetitionMode"] and ActiveModifiers["P2"]["CompetitionMode"])
+local competitionMode = (ActiveModifiers["P1"]["CompetitionMode"] and ActiveModifiers["P2"]["CompetitionMode"]) and not CenterGameplayWidgets()
 
 for pn in ivalues(GAMESTATE:GetHumanPlayers()) do	
 	local notefxp =	THEME:GetMetric("ScreenGameplay","Player"..pname(pn).."OnePlayerOneSideX")	--Note field X position P1/P2 (pname evaluates to P1/P2 so it would be doing ScreenGameplay PlayerP1OnePlayerOneSideX)
@@ -207,7 +207,7 @@ for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 				--Hide the "completed" text in competition mode... I'm sorry for this
 				OnCommand=function(self)
 					if competitionMode then
-						self:cropbottom(.3);
+						self:cropbottom(.33);
 					end;
 				end;
 			};
