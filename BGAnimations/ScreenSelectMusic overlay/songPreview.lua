@@ -50,7 +50,7 @@ return Def.ActorFrame{
 			CurrentSongChangedMessageCommand=cmd(stoptweening;Load,nil;sleep,.4;queuecommand,"PlayVid2");
 			PlayVid2Command=function(self)
 				--self:Load(nil);
-				if streamSafeMode and has_value(STREAM_UNSAFE_AUDIO, GAMESTATE:GetCurrentSong():GetDisplayFullTitle().."||"..GAMESTATE:GetCurrentSong():GetDisplayFullArtist()) then
+				if streamSafeMode and has_value(STREAM_UNSAFE_AUDIO, GAMESTATE:GetCurrentSong():GetDisplayFullTitle() .. "||" .. GAMESTATE:GetCurrentSong():GetDisplayArtist()) then
 					self:diffusealpha(0);
 					self:Load(nil);
 					return;
@@ -74,7 +74,7 @@ return Def.ActorFrame{
 		Def.ActorFrame{
 			InitCommand=cmd(x,_screen.cx;y,_screen.cy-30;visible,false);
 			CurrentSongChangedMessageCommand=function(self)
-				if streamSafeMode and has_value(STREAM_UNSAFE_AUDIO, GAMESTATE:GetCurrentSong():GetDisplayFullTitle().."||"..GAMESTATE:GetCurrentSong():GetDisplayFullArtist()) then
+				if streamSafeMode and has_value(STREAM_UNSAFE_AUDIO, GAMESTATE:GetCurrentSong():GetDisplayFullTitle() .. "||" .. GAMESTATE:GetCurrentSong():GetDisplayArtist()) then
 					self:visible(true);
 					self:sleep(.8):queuecommand("MuteAudio");
 				else
@@ -84,7 +84,7 @@ return Def.ActorFrame{
 			MuteAudioCommand=function(self)
 				--SOUND:DimMusic(0,65536);
 				SOUND:StopMusic();
-				SOUND:PlayOnce(THEME:GetPathS("","ScreenSelectMusic StreamWarning"));
+				--SOUND:PlayOnce(THEME:GetPathS("","ScreenSelectMusic StreamWarning"));
 			end;
 			LoadActor(THEME:GetPathG("","noise"))..{
 				InitCommand=cmd(texcoordvelocity,0,8;customtexturerect,0,0,1,1;cropto,384,232;diffuse,color(".5,.5,.5,1"));
