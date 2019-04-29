@@ -212,15 +212,15 @@ if STATSMAN:GetCurStageStats():GetPlayerStageStats(player):IsDisqualified()==fal
 	if getenv("StageFailed") == true then
 		gradep1="_failed";
 	elseif p1accuracy == 100 then
-		gradep1="S_S";
+		gradep1="S3";
 	elseif p1accuracy >= 97 and p1misses == 0 and p1w4 == 0 and p1w3 == 0 then
 		if PREFSMAN:GetPreference("AllowW1") == "AllowW1_Never" then 
-			gradep1="S_S";
+			gradep1="S3";
 		else 
-			gradep1="S_plus"; 
+			gradep1="S2"; 
 		end;
 	elseif p1accuracy >= 96 and p1misses == 0 and p1w4 == 0 then
-		gradep1="S_normal";
+		gradep1="S1";
 	elseif p1accuracy >= 80 then
 		gradep1="A";
 	elseif p1accuracy >= 70 then
@@ -230,9 +230,9 @@ if STATSMAN:GetCurStageStats():GetPlayerStageStats(player):IsDisqualified()==fal
 	elseif p1accuracy >= 50 then
 		gradep1="D";
 	elseif p1accuracy < 50 then
-		gradep1="F";
+		gradep1="E";
 	else
-		gradep1="blank";
+		gradep1="F";
 	end;
 
 	t[#t+1] = LoadActor(THEME:GetPathG("","GradeDisplayEval/"..gradep1))..{

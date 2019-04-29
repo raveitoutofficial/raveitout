@@ -1,4 +1,5 @@
-local phrases = {
+local phrases = {"The original correct title of Hybrid Song is Funky Stars, as evidenced by its ModPlug source file.."}
+local phrases_ = {
 "Perfectionist Mode is best used for obtaining SS scores without wasting time. You won’t regret it. Heh.",
 "Some modifiers will be overridden by certain charts.",
 "Report any bugs to “http://facebook.com/raveitoutgame”. Make sure you report them in a very aggresive manner. Memes are appreciated but not mandatory.",
