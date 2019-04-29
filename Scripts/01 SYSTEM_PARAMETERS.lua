@@ -1,4 +1,4 @@
---[[
+﻿--[[
 For title screen. Will show InternalName:Version
 Ex:
 RIO:2018-10-04
@@ -79,13 +79,15 @@ STEPMAKER_NAMES_BLACKLIST = {
 };
 
 
---Based on GAMESTATE:GetCurrentSong():GetDisplayFullTitle()
+--Based on GAMESTATE:GetCurrentSong():GetDisplayFullTitle().."||"..GAMESTATE:GetCurrentSong():GetDisplayFullArtist()
 --List of songs that will get your recording blocked worldwide
 STREAM_UNSAFE_AUDIO = {
-	"Breaking The Habit",
-	"She Wolf (Falling to Pieces)",
-	"Untouched",
-	"Face My Fears" --Test song
+	"Breaking The Habit||Linkin Park",
+	"She Wolf (Falling to Pieces)||David Guetta ft. Sia",
+	"Untouched||The Veronicas",
+	"Cold||Crossfade",
+	"Sexy Bitch||David Guetta feat. Akon"
+	"Face My Fears||Utada Hikaru ft. Skrillex" --Test song
 };
 
 --List of BGAs that will get your recording blocked worldwide
