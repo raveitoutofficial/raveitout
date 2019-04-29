@@ -291,7 +291,7 @@ else
 	--Difficulty List Orbs Shadows
 	for i=1,12 do
 		t[#t+1] = LoadActor("DifficultyList/background_orb") .. {
-			InitCommand=cmd(diffusealpha,0.5;zoom,0.7;x,_screen.cx-245+i*35;y,_screen.cy+107;horizalign,left);
+			InitCommand=cmd(diffusealpha,0.85;zoom,0.375;x,_screen.cx-245+i*35;y,_screen.cy+107;horizalign,left);
 		};
 	end;
 	--Difficulty List Orbs

@@ -34,7 +34,7 @@ t[#t+1] = Def.ActorFrame{
 		if GAMESTATE:GetCurrentSong() then self:visible(true); else self:visible(false); end;
 	end;
 	LoadActor("_icon")..{
-		InitCommand=cmd(visible,true;zoom,0.7;animate,false);--draworder,140;);
+		InitCommand=cmd(visible,true;zoom,0.55;addy,2;animate,false);--draworder,140;);
 		SetMessageCommand=function(self,param)
 			customx = -12
 			self:x(customx);
@@ -84,9 +84,8 @@ t[#t+1] = Def.ActorFrame{
 	};
 
 	-- NEW LABEL
-	LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
-		Text="";
-		InitCommand=cmd(zoom,0.4; maxwidth,120;skewx,-0.05;x,-8;y,-17);--draworder,151;);
+	LoadActor("new")..{
+		InitCommand=cmd(zoom,0.5;x,-8;y,-17);--draworder,151;);
 		SetMessageCommand=function(self,param)
 			profile = PROFILEMAN:GetMachineProfile();
 			scorelist = profile:GetHighScoreList(GAMESTATE:GetCurrentSong(),param.Steps);
@@ -94,9 +93,9 @@ t[#t+1] = Def.ActorFrame{
 			topscore = scores[1];
 			
 			if #scores < 1 then
-				self:settext("NEW!");
+				self:visible(true);
 			else
-				self:settext("");
+				self:visible(false);
 			end;
 		
 		end;
