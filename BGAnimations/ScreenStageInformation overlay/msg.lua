@@ -1,15 +1,16 @@
 local phrases = {
-"Perfectionist Mode is best used for obtaining SS scores without wasting time. You won't regret it. Heh.",
-"Some modifiers will not affect certain charts. Use this to your advantage in 2 player head to head. Or just to be a dick in general. Fuck you.",
-"Report any bugs to \"http://facebook.com/raveitoutgame\". Make sure you report them in a very aggresive manner. Memes are appreciated but not mandatory.",
-"Make sure to hit hold heads accurately or you will be punished with worse judgements on following holds. Yeah, it's bullshit but who cares? Screw you.",
+"Perfectionist Mode is best used for obtaining SS scores without wasting time. You won’t regret it. Heh.",
+"Some modifiers will be overridden by certain charts.",
+"Report any bugs to “http://facebook.com/raveitoutgame”. Make sure you report them in a very aggresive manner. Memes are appreciated but not mandatory.",
+"Make sure to hit hold heads accurately, or you will be punished with worse judgements on following holds. Yeah, it’s bullshit. Nah, we don’t care.",
 "Check the options list for the Screen Filter feature. It will allow a BGA to be viewed without affecting any gameplay. Loser.",
-"If you already played for awhile, give \"Pro mode\" a whirl and test your timing skills. Also helps determine what is on and off sync.",
+"If you already played for awhile, give “Pro mode” a whirl and test your timing skills. Also helps determine what is on and off sync.",
 "The cuter the song, the harder the charts will be. We guarantee it.",
-"Rave It Out is basically \"Pitbull: The Game\". Dale.",
+"Rave It Out is basically “Pitbull: The Game”: every song has some reason to make someone angry. Dale.",
 "Play a song that is by Kanye West by himself. Trust me.",
 "Playing Rave It Out during certain times of the year can cause weather changes in game.",
-"Quad and Quint arrow combinations are a norm in Rave It Out. Learning how to hit them will be to your benefit."
+"Quad and Quint arrow combinations are a norm in Rave It Out. Learning how to hit them will be to your benefit.",
+"Some songs have specific trivia. This song is not one of them."
 };
 
 local message;
