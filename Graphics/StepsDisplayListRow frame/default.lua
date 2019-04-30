@@ -85,7 +85,7 @@ t[#t+1] = Def.ActorFrame{
 
 	-- NEW LABEL
 	LoadActor("new")..{
-		InitCommand=cmd(zoom,0.5;x,-8;y,-17);--draworder,151;);
+		InitCommand=cmd(zoom,0.4;x,-8;y,-17);--draworder,151;);
 		SetMessageCommand=function(self,param)
 			profile = PROFILEMAN:GetMachineProfile();
 			scorelist = profile:GetHighScoreList(GAMESTATE:GetCurrentSong(),param.Steps);
@@ -93,6 +93,27 @@ t[#t+1] = Def.ActorFrame{
 			topscore = scores[1];
 			
 			if #scores < 1 then
+				self:visible(true);
+			else
+				self:visible(false);
+			end;
+		
+		end;
+	};
+
+	-- NEW LABEL
+	LoadActor("danger")..{
+		InitCommand=cmd(zoom,0.5;x,-8;y,22);--draworder,151;);
+		OnCommand=cmd(diffuseshift; effectoffset,1; effectperiod, 0.5; effectcolor1, 1,1,0,1; effectcolor2, 1,1,1,1;);
+		SetMessageCommand=function(self,param)
+			profile = PROFILEMAN:GetMachineProfile();
+			scorelist = profile:GetHighScoreList(GAMESTATE:GetCurrentSong(),param.Steps);
+			scores = scorelist:GetHighScores();
+			topscore = scores[1];
+			
+			local descrp = param.Steps:GetDescription();
+
+			if descrp == "DANGER!" then
 				self:visible(true);
 			else
 				self:visible(false);
@@ -115,7 +136,7 @@ t[#t+1] = Def.ActorFrame{
 			
 			--Check for "DANGER!" before checking blacklist
 			if descrp == "DANGER!" then
-				label = descrp
+				label = ""
 			--If string in description is in the STEPMAKER_NAMES_BLACKLIST table
 			elseif has_value(STEPMAKER_NAMES_BLACKLIST, descrp) then
 				--Do nothing, string is already empty.
