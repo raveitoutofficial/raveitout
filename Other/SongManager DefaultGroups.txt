@@ -1,0 +1,324 @@
+---05-PRO
+05-PRO/(2) PE26 - Infection
+05-PRO/(2) PE34 - Oasis
+---06-PRO2
+06-PRO2/(1) PE324 - Elder God Shrine
+06-PRO2/(1) PE348 - Oh Oh Oh Sexy Vampire
+---07-INFINITY
+07-INFINITY/(1) 1304 - Baroque Virus
+07-INFINITY/(1) 1305 - Elise
+---08-1ST~3RD
+08-1ST~3RD/(2) 204 - Final Audition
+08-1ST~3RD/(3) 102 - Hypnosis
+---09-S.E.~EXTRA
+09-S.E.~EXTRA/(4) 401 - Oh! Rosa
+09-S.E.~EXTRA/(4) 405 - Mr. Larpus
+---10-REBIRTH~PREX 3
+10-REBIRTH~PREX 3/(2) 711 - Winter
+10-REBIRTH~PREX 3/(2) 735 - Vook
+---11-EXCEED~ZERO
+11-EXCEED~ZERO/(1) C01 - Beat of the War 2
+11-EXCEED~ZERO/(1) C04 - Love is a Danger Zone 2
+---12-NX~NX2
+12-NX~NX2/(1) E27 - Dance all Night
+12-NX~NX2/(2) D03 - Chimera
+---13-NX ABSOLUTE
+13-NX ABSOLUTE/F01 - Blaze Emotion
+13-NX ABSOLUTE/F09 - Chocolate
+---14-FIESTA
+14-FIESTA/1002 - Sorceress Elise
+14-FIESTA/1017 - Vacuum
+---15-FIESTA EX
+15-FIESTA EX/1101 - Cleaner
+15-FIESTA EX/1102 - Interference
+---16-FIESTA 2
+16-FIESTA 2/(1) 1304 - Baroque Virus
+16-FIESTA 2/(1) 1310 - Unique
+---17-PRIME
+17-PRIME/1437 - Bar Bar Bar
+17-PRIME/1481 - Bad Apple!! (feat. Nomico)
+17-PRIME/1494 - Just Hold On
+---18-PRIME 2
+18-PRIME 2/(1) 1551 - Boombayah
+18-PRIME 2/(2) 15A6 - Death Moon
+18-PRIME 2/1517 - Kasou Shinja
+18-PRIME 2/1517 - Kasou Shinja Alt
+---19-DELTA NEX REBIRTH
+19-DELTA NEX REBIRTH/(1) !DelaDap - Crazy Swing (Original Radio Remix)
+19-DELTA NEX REBIRTH/(1) DesRow feat Shige - Funky Sonic World
+19-DELTA NEX REBIRTH/(1) Hyadain - Rap de Chocobo
+19-DELTA NEX REBIRTH/(1) Mad Cow _ the Nevskij Avenue Girls - Matrioska Niet Katiuska
+19-DELTA NEX REBIRTH/(1) Momiji Yamamoto - Totsugeki! Glass no kneeso hime!
+19-DELTA NEX REBIRTH/(1) MrWeebl - Doge Adventure
+19-DELTA NEX REBIRTH/(1) Sakuzyo - Vallista
+19-DELTA NEX REBIRTH/(1) Terra - Revolution
+19-DELTA NEX REBIRTH/(1) tpazolite - Chaos Time
+19-DELTA NEX REBIRTH/(2) Dynamic Yakyuu Kyoudai v.s. Cross Fire Prim - Todoroke! Koi no beanball!!
+19-DELTA NEX REBIRTH/(2) Massive New Krew - HADES
+19-DELTA NEX REBIRTH/(2) Reol X nqrse - Luvoratorrrrry!
+19-DELTA NEX REBIRTH/(2) kors k - Monkey Business
+19-DELTA NEX REBIRTH/Chronophantasma
+19-DELTA NEX REBIRTH/Final Dance
+19-DELTA NEX REBIRTH/Wish
+19-DELTA NEX REBIRTH/[Couples] Romantic Love
+19-DELTA NEX REBIRTH/[Full Song] (1) Renard ft Futret - Gabberstag
+19-DELTA NEX REBIRTH/[Full Song] Helblinde - Aura
+19-DELTA NEX REBIRTH/[J-Music] Yotogibanashi no Kamakakushi LEGGENDARIA
+19-DELTA NEX REBIRTH/[Short Cut] Continuum Shift
+19-DELTA NEX REBIRTH/[Short Cut] Lionheart
+19-DELTA NEX REBIRTH/[Short Cut] Utada Hikaru - Face My Fears
+19-DELTA NEX REBIRTH/[World Music] Narkotik Kal
+19-DELTA NEX REBIRTH/[Xross] 3y3s
+19-DELTA NEX REBIRTH/[Xross] CANDY HEART
+19-DELTA NEX REBIRTH/[Xross] Entrance
+19-DELTA NEX REBIRTH/[Xross] Freedom Dive
+19-DELTA NEX REBIRTH/[Xross] I
+19-DELTA NEX REBIRTH/[Xross] Nexta
+19-DELTA NEX REBIRTH/[Xross] Routing
+---23-MUSIC TRAIN
+23-MUSIC TRAIN/B.P.M. Collections
+23-MUSIC TRAIN/Do It Hip Hop Style
+23-MUSIC TRAIN/Es and c. Collection
+23-MUSIC TRAIN/Esc. Station
+23-MUSIC TRAIN/H&H Station
+23-MUSIC TRAIN/Msgoon Series
+23-MUSIC TRAIN/Novarain
+23-MUSIC TRAIN/SMA HP SERVICE CENTER
+23-MUSIC TRAIN/The Episode Series
+23-MUSIC TRAIN/The Famous Classics Hard
+23-MUSIC TRAIN/The Girls Train
+23-MUSIC TRAIN/The Historic Clasic The Remix A
+23-MUSIC TRAIN/The Historic Clasic The Remix B
+23-MUSIC TRAIN/The Memorial Crazies
+23-MUSIC TRAIN/Tricky
+23-MUSIC TRAIN/Wanna´s Train
+23-MUSIC TRAIN/You Spin Me
+---50-Custom Music
+50-Custom Music/Valkyrie dimension
+50-Custom Music/[Step1BONUS] Barbara Streisand
+50-Custom Music/[Step1BONUS] ISLTASCTBH
+50-Custom Music/[Step1BONUS] The Ballad of Ian
+50-Custom Music/[Step1BONUS] Turn Down For Which
+50-Custom Music/[Step1BONUS] Where Have You Gone
+50-Custom Music/[Step1BONUS] mawaru1
+50-Custom Music/[Step1BONUS] mawaru2
+50-Custom Music/[Step1BONUS] mawaru3
+50-Custom Music/[Step1BONUS] mawaru4
+50-Custom Music/[Step1BONUS] mawaru5
+50-Custom Music/[Step1] Atropos
+50-Custom Music/[Step1] Fukyagaku Replace
+50-Custom Music/[Step1] Home Of Big Beat
+50-Custom Music/[Step1] Ma Chouchoute
+50-Custom Music/[Step1] Posession
+50-Custom Music/[Step1] Ririze
+50-Custom Music/[Step1] Run Run Bodywash
+50-Custom Music/[Step1] Song of Solomon
+50-Custom Music/[Step1] Teknopathetic
+50-Custom Music/[Step1] Youthful
+---9V LEGGENDARIA
+9V LEGGENDARIA/Ancient Scapes†LEGGENDARIA
+9V LEGGENDARIA/Close the World feat.aru†LEGGENDARIA
+9V LEGGENDARIA/Feel The Beat†LEGGENDARIA
+9V LEGGENDARIA/GAMBOL†LEGGENDARIA
+9V LEGGENDARIA/Shippuujinrai†LEGGENDARIA
+9V LEGGENDARIA/Sigmund†LEGGENDARIA
+9V LEGGENDARIA/Verflucht†LEGGENDARIA
+9V LEGGENDARIA/invoker†LEGGENDARIA
+---Anything else
+Anything else/(2) 15F3 - PRIME 2 Opening Shortcut
+Anything else/15001 MENDES
+Anything else/2r_bbkkbkk
+Anything else/5. deed
+Anything else/9_wav
+Anything else/ACE FOR ACES
+Anything else/ANiMA
+Anything else/Booths of Fighters
+Anything else/Brain+Power
+Anything else/CRAZY LOVE
+Anything else/Death by Glamour
+Anything else/Dodon ga do~n
+Anything else/Encrypted 1491 - Bad End Night
+Anything else/Entrance
+Anything else/Everlasting Message
+Anything else/FREEDOM DiVE
+Anything else/For UltraPlayers
+Anything else/Got Item
+Anything else/Honest Eyes
+Anything else/Horrible Joke Song
+Anything else/Infinitude
+Anything else/MAX 300
+Anything else/Megalovania SM5 [TaroNuke]
+Anything else/Oshama Scramble！
+Anything else/Private Eye
+Anything else/U.N.オーエンは彼女なのか？(TO-HOlic mix)
+Anything else/XROSS INFECTION
+Anything else/[7-STM] IMAGE -MATERIAL-[Version 0]
+Anything else/csp_eternal_drain_ogg
+Anything else/l9999
+Anything else/m1dy deluxe
+Anything else/snow halation
+---April Fools
+April Fools/1-Shortcut Test Song
+April Fools/1481 - Bad Apple!! (feat. Nomico)
+April Fools/2-Normal Test Song
+April Fools/3-Remix Test Song
+April Fools/4-Long Test Song
+April Fools/5-Marathon Test Song
+April Fools/Do not play this song
+April Fools/Shelter
+April Fools/Show Time under Leaden Skies
+April Fools/deltaMAX (DM Ashura's Steps)
+---BasicModeGroup
+BasicModeGroup/(AA) 1000B06 - Deja Vu
+BasicModeGroup/(AA) 1000D05 - Fly
+BasicModeGroup/(AA) 1000F04 - La La La
+BasicModeGroup/(AA) 1009 - To The Sky
+BasicModeGroup/(AA) 1108 - Magic
+BasicModeGroup/(AA) 1116 - Mother
+BasicModeGroup/(AA) 1316 - Bad Girl Good Girl
+BasicModeGroup/(AA) 1323 - Heart Breaker
+BasicModeGroup/(AA) 1335 - Online
+BasicModeGroup/(AA) 1336 - Dam
+BasicModeGroup/(AA) 1337 - Sugar Eyes
+BasicModeGroup/(AA) 1341 - Yeo Rae A
+BasicModeGroup/(AA) 1425 - Sugar Conspiracy Theory
+BasicModeGroup/(AA) 1452 - One
+BasicModeGroup/(AA) 1479 - Mitosudaira
+BasicModeGroup/(AA) 1481 - Bad Apple!! (feat. Nomico) - Copia
+BasicModeGroup/(AA) 1481_JE - Bad Apple
+BasicModeGroup/(AA) 1484 - Four Seasons of Loneliness ver.B - Copia
+BasicModeGroup/(AA) 1485 - Ai, Yurete
+BasicModeGroup/(AA) 1486 - Setsuna Trip
+BasicModeGroup/(AA) 1487 - Trashy Innocence
+BasicModeGroup/(AB) 0109 - Funky Tonight
+BasicModeGroup/(AB) 0213 - Mobius Strip
+BasicModeGroup/(AB) 0318 - We Are
+BasicModeGroup/(AB) 0713 - Till The End of Time
+BasicModeGroup/(AB) 0906 - Starian
+BasicModeGroup/(AB) 1000B02 - Hot
+BasicModeGroup/(AB) 1000B13 - I'll Give You All My Love
+BasicModeGroup/(AB) 1007 - By Chance
+BasicModeGroup/(AB) 1016 - Wanna
+BasicModeGroup/(AB) 1094 - Tepris
+BasicModeGroup/(AB) 1113 - Last Farewell
+BasicModeGroup/(AB) 1315 - Nobody
+BasicModeGroup/(AB) 1317 - Step
+BasicModeGroup/(AB) 1318 - I'm The Best
+BasicModeGroup/(AB) 1319 - Can't Nobody
+BasicModeGroup/(AB) 1322 - Lie
+BasicModeGroup/(AB) 1325 - Be Mine
+BasicModeGroup/(AB) 1330 - Rabiosa
+BasicModeGroup/(AB) 1331 - Lovumba
+BasicModeGroup/(AB) 1438 - On and On
+BasicModeGroup/(AB) 1439 - Elvis
+BasicModeGroup/(AB) 1442 - Pandora
+BasicModeGroup/(AB) 1443 - Venus
+BasicModeGroup/(AB) 1444 - Hate, Don't Hate!
+BasicModeGroup/(AB) 1445 - Supermagic
+BasicModeGroup/(AB) 1448 - NoNoNo
+BasicModeGroup/(AB) 1467 - Limbo
+BasicModeGroup/(AB) 1468 - Melodia
+BasicModeGroup/(AB) 1491 - Bad End Night
+BasicModeGroup/(AB) 1495 - Unlock
+BasicModeGroup/(AB) 1496 - Heavy Rotation
+BasicModeGroup/(AC) 0112 - Another Truth
+BasicModeGroup/(AC) 0303 - Turkey March
+BasicModeGroup/(AC) 0503 - Rolling Christmas
+BasicModeGroup/(AC) 0701 - Dr. M
+BasicModeGroup/(AC) 0704 - Love is a Danger Zone
+BasicModeGroup/(AC) 0736 - Csikos Post
+BasicModeGroup/(AC) 1000A03 - Monkey Fingers
+BasicModeGroup/(AC) 1000B19 - Canon-D
+BasicModeGroup/(AC) 1000E13 - Pumptris Quattro
+BasicModeGroup/(AC) 1000F02 - Cannon X1
+BasicModeGroup/(AC) 1000F14 - Procedimientos para Llegar a un Comun Acuerdo
+BasicModeGroup/(AC) 1015 - Fire
+BasicModeGroup/(AC) 1018 - Narcisista por Excelencia
+BasicModeGroup/(AC) 1026 - Turkey March Minimal Tunes
+BasicModeGroup/(AC) 1109 - Hot Issue
+BasicModeGroup/(AC) 1112 - Shock
+BasicModeGroup/(AC) 1321 - Fantastic Baby
+BasicModeGroup/(AC) 1324 - Hands Up (East4A Mix)
+BasicModeGroup/(AC) 1332 - One Two Three Go!
+BasicModeGroup/(AC) 1334 - Sik Asik
+BasicModeGroup/(AC) 1403 - Latino Virus
+BasicModeGroup/(AC) 1428 - Move That Body
+BasicModeGroup/(AC) 1437 - Bar Bar Bar
+BasicModeGroup/(AC) 1440 - Very Good
+BasicModeGroup/(AC) 1449 - Loner
+BasicModeGroup/(AC) 1450 - Flying Duck
+BasicModeGroup/(AC) 1457 - Cosmical Rhythm
+BasicModeGroup/(AC) 1473 - Reminiscence
+BasicModeGroup/(AC) 1474 - Moment Day
+BasicModeGroup/(AD) 0205 - Extravaganza
+BasicModeGroup/(AD) 0212 - Com' Back
+BasicModeGroup/(AD) 0312 - Don't Bother Me
+BasicModeGroup/(AD) 0505 - Beethoven Virus
+BasicModeGroup/(AD) 0711 - Winter
+BasicModeGroup/(AD) 1000C02 - Moonlight
+BasicModeGroup/(AD) 1000D03 - Chimera
+BasicModeGroup/(AD) 1000E03 - Caprice of Otada
+BasicModeGroup/(AD) 1000E12 - Faster Z
+BasicModeGroup/(AD) 1000F23 - Dj Otada
+BasicModeGroup/(AD) 1002 - Sorceress Elise
+BasicModeGroup/(AD) 1014 - Twist King
+BasicModeGroup/(AD) 1022 - Xenesis
+BasicModeGroup/(AD) 1025 - Hello William
+BasicModeGroup/(AD) 1027 - Get Up (And Go)
+BasicModeGroup/(AD) 1104 - Take Out
+BasicModeGroup/(AD) 1110 - Magic Girl
+BasicModeGroup/(AD) 1114 - Superman
+BasicModeGroup/(AD) 1124 - The Devil
+BasicModeGroup/(AD) 1305 - Elise
+BasicModeGroup/(AD) 1311 - Accident
+BasicModeGroup/(AD) 1312 - D
+BasicModeGroup/(AD) 1314 - Lucid (PIU Edit)
+BasicModeGroup/(AD) 1320 - Shanghai Romance
+BasicModeGroup/(AD) 1326 - Crayon
+BasicModeGroup/(AD) 1327 - Mackerel
+BasicModeGroup/(AD) 1329 - Danza Kuduro
+BasicModeGroup/(AD) 1333 - Los Malaventurados No Lloran
+BasicModeGroup/(AD) 1340 - Follow Me
+BasicModeGroup/(AD) 1401 - Nemesis
+BasicModeGroup/(AD) 1407 - Chinese Restaurant
+BasicModeGroup/(AD) 1408 - Avalanche
+BasicModeGroup/(AD) 1410 - Requiem
+BasicModeGroup/(AD) 1411 - U Got Me Crazy
+BasicModeGroup/(AD) 1419 - Super Fantasy
+BasicModeGroup/(AD) 1426 - Allegro PIU Mosso
+BasicModeGroup/(AD) 1441 - I'm Sorry
+BasicModeGroup/(AD) 1446 - Sugar Free
+BasicModeGroup/(AD) 1447 - Her
+BasicModeGroup/(AD) 1451 - Ineffective Boss Without Power
+BasicModeGroup/(AD) 1459 - Matador
+BasicModeGroup/(AD) 1477 - Imprinting
+BasicModeGroup/(AD) 1478 - Sudden Romance
+BasicModeGroup/(AD) 1480 - Smile Diary
+---Routine
+06-PRO2/(1) PE324 - Elder God Shrine
+06-PRO2/(1) PE348 - Oh Oh Oh Sexy Vampire
+07-INFINITY/(1) 1304 - Baroque Virus
+07-INFINITY/(1) 1305 - Elise
+08-1ST~3RD/(2) 204 - Final Audition
+08-1ST~3RD/(3) 102 - Hypnosis
+09-S.E.~EXTRA/(4) 405 - Mr. Larpus
+11-EXCEED~ZERO/(1) C04 - Love is a Danger Zone 2
+12-NX~NX2/(2) D03 - Chimera
+14-FIESTA/1002 - Sorceress Elise
+16-FIESTA 2/(1) 1304 - Baroque Virus
+16-FIESTA 2/(1) 1310 - Unique
+17-PRIME/1481 - Bad Apple!! (feat. Nomico)
+18-PRIME 2/(1) 1551 - Boombayah
+18-PRIME 2/(2) 15A6 - Death Moon
+18-PRIME 2/1517 - Kasou Shinja
+18-PRIME 2/1517 - Kasou Shinja Alt
+50-Custom Music/[Step1] Atropos
+50-Custom Music/[Step1] Ma Chouchoute
+50-Custom Music/[Step1] Ririze
+April Fools/1481 - Bad Apple!! (feat. Nomico)
+---StepMania 5
+StepMania 5/Goin' Under
+StepMania 5/How To Play
+StepMania 5/How To Play_old
+StepMania 5/MechaTribe Assault
+StepMania 5/Springtime

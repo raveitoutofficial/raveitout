@@ -1,4 +1,4 @@
-﻿--[[
+--[[
 For title screen. Will show InternalName:Version
 Ex:
 RIO:2018-10-04
@@ -6,7 +6,7 @@ DISPLAY TYPE: HD
 ]]
 SysInfo = {
 	InternalName = "RIOS2",
-	Version = "Alpha",
+	Version = "Beta",
 }
 
 RIO_FOLDER_NAMES = {
@@ -86,7 +86,8 @@ STREAM_UNSAFE_AUDIO = {
 	"She Wolf (Falling to Pieces)||David Guetta ft. Sia",
 	"Untouched||The Veronicas",
 	"Cold||Crossfade",
-	"Sexy Bitch||David Guetta feat. Akon"
+	"Sexy Bitch||David Guetta feat. Akon",
+	"Talk Dirty||Jason DeRulo feat. 2 Chainz",
 	"Face My Fears||Utada Hikaru ft. Skrillex" --Test song
 };
 
