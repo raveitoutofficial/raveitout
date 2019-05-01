@@ -208,19 +208,19 @@ if STATSMAN:GetCurStageStats():GetPlayerStageStats(player):IsDisqualified()==fal
 		initzoomp1 = 0
 		finalzoomp1 = 0
 	end]]
-
+	-- old convention is commented
 	if getenv("StageFailed") == true then
-		gradep1="_failed";
+		gradep1="F"; -- _failed
 	elseif p1accuracy == 100 then
-		gradep1="S3";
+		gradep1="S3"; -- S_S
 	elseif p1accuracy >= 97 and p1misses == 0 and p1w4 == 0 and p1w3 == 0 then
 		if PREFSMAN:GetPreference("AllowW1") == "AllowW1_Never" then 
-			gradep1="S3";
+			gradep1="S3"; -- S_S
 		else 
-			gradep1="S2"; 
+			gradep1="S2"; -- S_plus
 		end;
 	elseif p1accuracy >= 96 and p1misses == 0 and p1w4 == 0 then
-		gradep1="S1";
+		gradep1="S1"; -- S_normal
 	elseif p1accuracy >= 80 then
 		gradep1="A";
 	elseif p1accuracy >= 70 then
@@ -230,12 +230,12 @@ if STATSMAN:GetCurStageStats():GetPlayerStageStats(player):IsDisqualified()==fal
 	elseif p1accuracy >= 50 then
 		gradep1="D";
 	elseif p1accuracy < 50 then
-		gradep1="E";
+		gradep1="E"; -- F
 	else
-		gradep1="F";
+		gradep1="F"; -- _failed
 	end;
 
-	t[#t+1] = LoadActor(THEME:GetPathG("","GradeDisplayEval/"..gradep1))..{
+	t[#t+1] = LoadActor(THEME:GetPathG("","GradeDisplayEval/Grade-"..gradep1))..{
 		InitCommand=cmd(x,p1initx;y,p1inity;draworder,100;diffusealpha,0;zoom,initzoomp1;sleep,3;linear,.2;diffusealpha,1;zoom,initzoomp1-0.25;linear,.3;zoom,finalzoomp1);
 	};
 
@@ -243,7 +243,7 @@ if STATSMAN:GetCurStageStats():GetPlayerStageStats(player):IsDisqualified()==fal
 		InitCommand=cmd(blend,Blend.Add;x,p1initx;y,p1inity;draworder,100;diffusealpha,0;zoom,initzoomp1;sleep,3;diffusealpha,1;linear,.5;diffusealpha,0;zoom,finalzoomp1;);
 	};
 
-	t[#t+1] = LoadActor(THEME:GetPathG("","GradeDisplayEval/"..gradep1))..{
+	t[#t+1] = LoadActor(THEME:GetPathG("","GradeDisplayEval/Grade-"..gradep1))..{
 		InitCommand=cmd(horizalign,center;blend,Blend.Add;x,p1initx;y,p1inity;draworder,101;diffusealpha,0;zoom,initzoomp1;sleep,3;linear,.2;diffusealpha,1;zoom,initzoomp1-0.25;linear,.5;diffusealpha,0;zoom,finalzoomp1;);
 	};
 
