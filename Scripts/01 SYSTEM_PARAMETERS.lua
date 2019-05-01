@@ -1,4 +1,4 @@
-﻿--[[
+--[[
 For title screen. Will show InternalName:Version
 Ex:
 RIO:2018-10-04
@@ -6,7 +6,7 @@ DISPLAY TYPE: HD
 ]]
 SysInfo = {
 	InternalName = "RIOS2",
-	Version = "Alpha",
+	Version = "Alpha"
 }
 
 RIO_FOLDER_NAMES = {
@@ -22,10 +22,7 @@ RIO_FOLDER_NAMES = {
 	DefaultArcadeFolder,
 	--The groups that are shown in the group select in the order you want them displayed.
 	--If this is empty all groups will be shown.
-	PREDEFINED_GROUP_LIST = {
-	
-	
-	}
+	PREDEFINED_GROUP_LIST = {}
 }
 --The song that gets picked for the One More Extra Stage.
 OMES_SONG = "Ace For Aces"
@@ -76,19 +73,19 @@ STEPMAKER_NAMES_BLACKLIST = {
 	"A.Sora",
 	"Accelerator",
 	"G.Shawn"
-};
+}
 
 
---Based on GAMESTATE:GetCurrentSong():GetDisplayFullTitle().."||"..GAMESTATE:GetCurrentSong():GetDisplayFullArtist()
+--Based on GAMESTATE:GetCurrentSong():GetDisplayFullTitle().."||"..GAMESTATE:GetCurrentSong():GetDisplayArtist()
 --List of songs that will get your recording blocked worldwide
 STREAM_UNSAFE_AUDIO = {
 	"Breaking The Habit||Linkin Park",
 	"She Wolf (Falling to Pieces)||David Guetta ft. Sia",
 	"Untouched||The Veronicas",
 	"Cold||Crossfade",
-	"Sexy Bitch||David Guetta feat. Akon"
+	"Sexy Bitch||David Guetta feat. Akon",
 	"Face My Fears||Utada Hikaru ft. Skrillex" --Test song
-};
+}
 
 --List of BGAs that will get your recording blocked worldwide
 STREAM_UNSAFE_VIDEO = {
@@ -99,6 +96,6 @@ STREAM_UNSAFE_VIDEO = {
 	"Through the Fire and Flames",
 	"How I Feel",
 	"Don't Stop The Party"
-};
+}
 
 --Looking for titles and avatars? Check unlocks.lua.
