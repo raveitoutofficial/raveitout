@@ -73,7 +73,8 @@ local item_mt= {
 		self.container:GetChild("banner"):scaletofit(-500,-200,500,200);
 	end,
 	--[[gettext=function(self)
-		return self.container:GetChild("text"):gettext()
+		--return self.container:GetChild("text"):gettext()
+		return self.get_info_at_focus_pos();
 	end,]]
 }}
 
@@ -147,6 +148,7 @@ local function inputs(event)
 	if event.type == "InputEventType_Release" then return end
 	
 	if button == "Center" or button == "Start" then
+		SCREENMAN:SystemMessage(scroller:get_info_at_focus_pos());
 		SCREENMAN:set_input_redirected(PLAYER_1, false);
 		SCREENMAN:set_input_redirected(PLAYER_2, false);
 		MESSAGEMAN:Broadcast("StartSelectingSong");
@@ -191,11 +193,11 @@ local function inputs(event)
 		button_history[3] = button_history[4]
 		button_history[4] = button
 		if button_history[1] == "UpLeft" and button_history[2] == "UpRight" and button_history[3] == "UpLeft" and button_history[4] == "UpRight" then
-			--SCREENMAN:AddNewScreenToTop("ScreenSelectSort");
-			if musicwheel:ChangeSort('SortOrder_BPM') then
+			SCREENMAN:AddNewScreenToTop("ScreenSelectSort");
+			--[[if musicwheel:ChangeSort('SortOrder_BPM') then
 				--SCREENMAN:SystemMessage("SortChanged")
 				MESSAGEMAN:Broadcast("SortChanged")
-			end;
+			end;]]
 		end;
 		--SCREENMAN:SystemMessage(strArrayToString(button_history));
 		--musicwheel:SetOpenSection("");
@@ -262,6 +264,19 @@ local t = Def.ActorFrame{
 		self:linear(.3):diffusealpha(0);
 		scroller:get_actor_item_at_focus_pos().container:GetChild("banner"):linear(.3):zoom(0);
 	end;
+	
+	SortChangedMessageCommand=function(self,params)
+		--Reset button history when the sort selection screen closes.
+		button_history = {"none", "none", "none", "none"};
+	
+		if musicwheel:ChangeSort(params.newSort) then
+			groups = musicwheel:GetCurrentSections()
+			selection = 1
+			--SCREENMAN:SystemMessage("SortChanged")
+			scroller:set_info_set(groups, 1);
+			--scroller:set_info_set({"aaa","bbb","ccc","ddd"},1);
+		end;
+	end;
 }
 
 -- GENRE SOUNDS
@@ -269,10 +284,12 @@ t[#t+1] = LoadActor(THEME:GetPathS("","nosound.ogg"))..{
 	InitCommand=cmd(stop);
 	StartSelectingSongMessageCommand=function(self)
 		SOUND:DimMusic(1,65536);
-		SCREENMAN:GetTopScreen():GetMusicWheel():ChangeSort('SortOrder_Group');
+		
+		--SCREENMAN:GetTopScreen():GetMusicWheel():ChangeSort('SortOrder_Group');
 		SCREENMAN:GetTopScreen():GetMusicWheel():SetOpenSection(groups[selection]);
 		SCREENMAN:GetTopScreen():PostScreenMessage( 'SM_SongChanged', 0.5 );
-		state = 1;
+		--The fuck is this global variable doing here?
+		--state = 1;
 		--SCREENMAN:SystemMessage(SONGMAN:GetSongGroupBannerPath(getenv("cur_group")))
 		
 		--It works... But only if there's a banner.
@@ -376,7 +393,7 @@ t[#t+1] = 	LoadActor("arrow_shine")..{};
 
 };
 t[#t+1] = LoadFont("monsterrat/_montserrat light 60px")..{
-	InitCommand=cmd(Center;diffuse,Color("White");zoom,.25;addy,100;);
+	InitCommand=cmd(x,SCREEN_CENTER_X;vertalign,top;diffuse,Color("White");zoom,.25;addy,100;);
 	OnCommand=function(self)
 		local sect = musicwheel:GetCurrentSections()
 		local aa = ""

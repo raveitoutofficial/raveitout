@@ -42,6 +42,9 @@ local t = Def.ActorFrame{
 				self:settext("Debug Disabled.")
 			elseif unlockmsg == "ExportData" then
 				parseData();
+			elseif unlockmsg == "Assemble" then
+				AssembleDefaultGroups();
+				self:settext("Groups generated.");
 			else
 				self:settext("Invalid unlock code.");
 			end;

@@ -6,7 +6,7 @@ DISPLAY TYPE: HD
 ]]
 SysInfo = {
 	InternalName = "RIOS2",
-	Version = "Alpha"
+	Version = "Beta",
 }
 
 RIO_FOLDER_NAMES = {
@@ -84,10 +84,12 @@ STREAM_UNSAFE_AUDIO = {
 	"Untouched||The Veronicas",
 	"Cold||Crossfade",
 	"Sexy Bitch||David Guetta feat. Akon",
+	"Talk Dirty||Jason DeRulo feat. 2 Chainz",
 	"Face My Fears||Utada Hikaru ft. Skrillex" --Test song
 }
 
 --List of BGAs that will get your recording blocked worldwide
+--Where is this parameter used?
 STREAM_UNSAFE_VIDEO = {
 	"Good Feeling",
 	"I Wanna Go",
