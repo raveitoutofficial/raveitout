@@ -1,5 +1,7 @@
 local player = ...;
 --fuck barely
+-- -- Season 2 asset designer A.Sora here
+-- -- If we decide to add W5 back, it'll be called Failin'
 --local p1w5 =		css1:GetTapNoteScores("TapNoteScore_W5")				--BARELY
 --local p2w5 =		css2:GetTapNoteScores("TapNoteScore_W5")				--BARELY
 local t =			Def.ActorFrame {};
@@ -13,13 +15,13 @@ local stagemaxscore = 100000000*GAMESTATE:GetNumStagesForCurrentSongAndStepsOrCo
 
 
 -- players stage data
-local p1holdstr	=	css1:GetTapNoteScores("TapNoteScore_CheckpointHit")		--AMAZING (HOLD STREAM)
-local p1w1 =		css1:GetTapNoteScores("TapNoteScore_W1")				--AMAZING
+local p1holdstr	=	css1:GetTapNoteScores("TapNoteScore_CheckpointHit")		--AMAZING (HOLD STREAM) -> Amazin'
+local p1w1 =		css1:GetTapNoteScores("TapNoteScore_W1")				--AMAZING -> Amazin'
 local p1nomine =	css1:GetTapNoteScores("TapNoteScore_AvoidMine")			--Avoided Mines
-local p1w2 =		css1:GetTapNoteScores("TapNoteScore_W2")				--RAVIN'
-local p1w3 =		css1:GetTapNoteScores("TapNoteScore_W3")				--COOL
-local p1w4 =		css1:GetTapNoteScores("TapNoteScore_W4")				--OKAY
-local p1misses =		css1:GetTapNoteScores("TapNoteScore_Miss")				--MISS
+local p1w2 =		css1:GetTapNoteScores("TapNoteScore_W2")				--RAVIN' -> same in S2
+local p1w3 =		css1:GetTapNoteScores("TapNoteScore_W3")				--COOL -> Stylin'
+local p1w4 =		css1:GetTapNoteScores("TapNoteScore_W4")				--OKAY -> Trippin'
+local p1misses =		css1:GetTapNoteScores("TapNoteScore_Miss")				--MISS - Missin'
 local p1holdmiss =	css1:GetTapNoteScores("TapNoteScore_CheckpointMiss")	--MISS (HOLD STREAM)
 local p1minest =	css1:GetTapNoteScores("TapNoteScore_HitMine")			--MISS (MINE HIT)
 local maxcp1 =		css1:MaxCombo()											--Max Combo for this stage
@@ -196,7 +198,7 @@ t[#t+1] = Def.ActorFrame{
 
 local initzoomp1 = 0.8;
 local finalzoomp1 = 0.6;
-local p1initx = (player == PLAYER_1) and SCREEN_WIDTH/4.5 or SCREEN_RIGHT-SCREEN_WIDTH/4.5;
+local p1initx = (player == PLAYER_1) and (SCREEN_WIDTH/2 - SCREEN_HEIGHT/4) or (SCREEN_WIDTH/2 + SCREEN_HEIGHT/4);
 local p1inity = SCREEN_CENTER_Y-30;
 
 
@@ -245,7 +247,7 @@ if STATSMAN:GetCurStageStats():GetPlayerStageStats(player):IsDisqualified()==fal
 
 	t[#t+1] = LoadActor(THEME:GetPathG("","GradeDisplayEval/Grade-"..gradep1))..{
 		InitCommand=cmd(horizalign,center;blend,Blend.Add;x,p1initx;y,p1inity;draworder,101;diffusealpha,0;zoom,initzoomp1;sleep,3;linear,.2;diffusealpha,1;zoom,initzoomp1-0.25;linear,.5;diffusealpha,0;zoom,finalzoomp1;);
-	};
+	};64
 
 	if MonthOfYear() == 11 then
 		t[#t+1] = LoadActor("xmas_hat")..{
