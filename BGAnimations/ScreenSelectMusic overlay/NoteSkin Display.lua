@@ -27,13 +27,18 @@ return Def.ActorFrame{
 			OnCommand=function(self)
 				local arrow = "UpLeft";
 				local name = "Tap note";
+				--[[ This code is rendered obsolete by the addition of __RIO_THUMB
 				if CurrentNoteSkin(pn) == "delta" then
 					name = "Ready Receptor";
 				elseif CurrentNoteSkin(pn) == "delta-note" or CurrentNoteSkin(pn) == "rhythm" then
 					arrow = "_UpLeft";
 				end
 				local path = NOTESKIN:GetPathForNoteSkin(arrow, name, CurrentNoteSkin(pn));
-				
+				]]
+				local path = NOTESKIN:GetPathForNoteskin("", "__RIO_THUMB", CurrentNoteSkin(pn));
+				if not path then --Not sure if this failsafe works. Replace if it doesn't --A.Sora
+					path = NOTESKIN:GetPathForNoteskin("UpLeft", "Tap Note", CurrentNoteskin(pn));
+				end;
 				self:Load(path);
 				self:croptop(0);
 				self:cropright(0);
