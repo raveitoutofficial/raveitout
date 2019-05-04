@@ -247,7 +247,7 @@ if STATSMAN:GetCurStageStats():GetPlayerStageStats(player):IsDisqualified()==fal
 
 	t[#t+1] = LoadActor(THEME:GetPathG("","GradeDisplayEval/Grade-"..gradep1))..{
 		InitCommand=cmd(horizalign,center;blend,Blend.Add;x,p1initx;y,p1inity;draworder,101;diffusealpha,0;zoom,initzoomp1;sleep,3;linear,.2;diffusealpha,1;zoom,initzoomp1-0.25;linear,.5;diffusealpha,0;zoom,finalzoomp1;);
-	};64
+	};
 
 	if MonthOfYear() == 11 then
 		t[#t+1] = LoadActor("xmas_hat")..{
