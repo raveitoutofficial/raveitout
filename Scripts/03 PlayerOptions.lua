@@ -288,7 +288,7 @@ end;
 
 function OptionRowJudgmentGraphic()
 	--The true name of the graphic is stored in ActiveModifiers to make it easier to load.
-	local judgementNames = {"Season 1", "Season 2", "Zona", "Simply Love", "Mikado", "Ace", "None"}
+	local judgementNames = {"Season 1", "Season 2", "Zona", "Simply Love", "Mikado", "Ace", "Infinity", "None"}
 	local t = {
 		Name="JudgmentType",
 		LayoutType = "ShowAllInRow",
@@ -297,7 +297,7 @@ function OptionRowJudgmentGraphic()
 		ExportOnChange = false,
 		Choices = judgementNames,
 		--Embedded in the metatable because the ScreenSelectMusic needs to access it too
-		judgementFileNames = { "Season1", "Season2", "Zona", "Simply Love", "Mikado", "Ace", "None"},
+		judgementFileNames = { "Season1", "Season2", "Zona", "Simply Love", "Mikado", "Ace", "Infinity", "None"},
 		LoadSelections = function(self, list, pn)
 			local found = false;
 			for i=1,#list do
