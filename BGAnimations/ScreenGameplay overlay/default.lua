@@ -329,7 +329,7 @@ for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 	};
 	
 	--The judgement stats above the note receptors
-	if not PerfectionistMode[pn] then	--p1 live stats
+	if not PerfectionistMode[pn] and not getenv("IsOMES_RIO") then	--p1 live stats
 		t[#t+1] = LoadActor("stats", pn)..{
 			InitCommand=cmd(xy,notefxp,35);
 		};

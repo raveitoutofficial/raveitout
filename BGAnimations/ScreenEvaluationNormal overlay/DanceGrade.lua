@@ -57,13 +57,13 @@ function gs(s)
 	return THEME:GetString("JudgmentLine",s)
 end
 
-local datalabelslist = {gs("W1"),gs("W2"),gs("W3"),gs("W4"),gs("Miss"),gs("MaxCombo"),"PRECISION","CALORIE (KCAL)","TOTAL SCORE"};
-local p1datalist =	{p1ravins,string.format("%03d",p1w2),string.format("%03d",p1w3),string.format("%03d",p1w4),string.format("%03d",p1misses),maxcp1,string.format("%3.2f",p1accuracy).."%",p1kcal,p1score};
+local datalabelslist = {gs("W1"),gs("W2"),gs("W3"),gs("W4"),gs("Miss"),gs("MaxCombo"),"TOTAL SCORE","PRECISION","CALORIE (KCAL)"};
+local p1datalist =	{p1ravins,string.format("%03d",p1w2),string.format("%03d",p1w3),string.format("%03d",p1w4),string.format("%03d",p1misses),maxcp1,p1score,p1accuracy.."%",p1kcal};
 
 local noFantastics = (PREFSMAN:GetPreference("AllowW1") == "AllowW1_Never") --Used in two places
 if noFantastics then
-	datalabelslist = {gs("W2"),gs("W3"),gs("W4"),gs("Miss"),gs("MaxCombo"),"PRECISION","CALORIE (KCAL)","TOTAL SCORE"};
-	p1datalist =	{p1ravins+p1w2,string.format("%03d",p1w3),string.format("%03d",p1w4),string.format("%03d",p1misses),maxcp1,string.format("%3.2f",p1accuracy).."%",p1kcal,p1score};
+	datalabelslist = {gs("W2"),gs("W3"),gs("W4"),gs("Miss"),gs("MaxCombo"),"PRECISION","TOTAL SCORE","CALORIE (KCAL)"};
+	p1datalist =	{p1ravins+p1w2,string.format("%03d",p1w3),string.format("%03d",p1w4),string.format("%03d",p1misses),maxcp1,p1accuracy.."%",p1score,p1kcal};
 end;
 	
 t[#t+1] = Def.ActorFrame{
@@ -196,10 +196,12 @@ t[#t+1] = Def.ActorFrame{
 };
 --]]
 
-local initzoomp1 = 0.666667;
-local finalzoomp1 = 0.5;
-local p1initx = (player == PLAYER_1) and (SCREEN_WIDTH/2 - SCREEN_HEIGHT/2) or (SCREEN_WIDTH/2 + SCREEN_HEIGHT/2);
-local p1inity = SCREEN_CENTER_Y-30;
+local initzoomp1 = 0.8;
+--The graphics aren't centered properly and using SCREEN_WIDTH isn't really the best either
+--Should use the aspect ratio to calculate, but whatever..
+local finalzoomp1 = 0.45;
+local p1initx = (player == PLAYER_1) and SCREEN_WIDTH/4.5 or SCREEN_RIGHT-SCREEN_WIDTH/4.5;
+local p1inity = SCREEN_CENTER_Y-50;
 
 
 --P1 RANK CODE

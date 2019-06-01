@@ -9,8 +9,11 @@ local phrases = {
 "Rave It Out is basically “Pitbull: The Game”: every song has some reason to make someone angry. Dale.",
 "Play a song that is by Kanye West by himself. Trust me.",
 "Playing Rave It Out during certain times of the year can cause weather changes in game.",
+"Some songs have specific trivia. This song is not one of them.",
+"Some songs have unique loading screen backgrounds.",
 "Quad and Quint arrow combinations are a norm in Rave It Out. Learning how to hit them will be to your benefit.",
-"Some songs have specific trivia. This song is not one of them."
+"Getting >90% accuracy in a song that requires 2 hearts will get you an extra heart which can be used to play another song.",
+"If you're on the bonus stage and the song title is glowing red, try getting >95% accuracy for a surprise..."
 };
 
 local message;
@@ -75,17 +78,31 @@ return Def.ActorFrame{
 			end;
 		};
 	};
-	Def.ActorFrame{	--debug
-		OnCommand=cmd(visible,DoDebug);
-		LoadFont(DebugFont)..{	--songhasmsg
-			InitCommand=cmd(xy,SCREEN_RIGHT,SCREEN_BOTTOM-(itemy*1);horizalign,right;zoom,0.5);
-			OnCommand=function(self)
-				if songhasmsg then
-					self:settext("songhasmsg: true");
-				else
-					self:settext("songhasmsg: false");
-				end;
+	LoadFont("letters/_ek mukta Bold 40px")..{
+		Condition=UnlockedOMES_RIO();
+		Text=THEME:GetString("ScreenStageInformation","GetFullCombo");
+		InitCommand=cmd(Center;addx,600;diffusealpha,0;--[[diffuseleftedge,Color("Purple");faderight,1]]);
+		OnCommand=cmd(decelerate,inanit+inefft;addx,-600;diffusealpha,.5;linear,stayat;diffusealpha,1;);
+		OffCommand=cmd(decelerate,outtwt;diffusealpha,0);
+	};
+	LoadFont("letters/_ek mukta Bold 40px")..{
+		Condition=UnlockedOMES_RIO();
+		Text=THEME:GetString("ScreenStageInformation","GetFullCombo");
+		InitCommand=cmd(Center;addx,-600;diffusealpha,0;--[[diffuserightedge,Color("Blue");fadeleft,1]]);
+		OnCommand=cmd(decelerate,inanit+inefft;addx,600;diffusealpha,.5;linear,stayat;diffusealpha,1;);
+		OffCommand=cmd(decelerate,outtwt;diffusealpha,0);
+	};
+	
+	--Debug
+	LoadFont(DebugFont)..{	--songhasmsg
+		Condition=DoDebug;
+		InitCommand=cmd(xy,SCREEN_RIGHT,SCREEN_BOTTOM-(itemy*1);horizalign,right;zoom,0.5);
+		OnCommand=function(self)
+			if songhasmsg then
+				self:settext("songhasmsg: true");
+			else
+				self:settext("songhasmsg: false");
 			end;
-		};
+		end;
 	};
 };

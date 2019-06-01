@@ -34,7 +34,8 @@ local MemcardProfileInfocache = {
 };
 for player in ivalues({PLAYER_1, PLAYER_2}) do
 	if MEMCARDMAN:GetCardState(player) == 'MemoryCardState_ready' then
-		MemcardProfileInfocache[player] = LoadMemcardProfileData(player)
+		--Nonfunctional right now.
+		--MemcardProfileInfocache[player] = LoadMemcardProfileData(player)
 	end;
 end;
 
@@ -156,13 +157,15 @@ function LoadPlayerStuff(Player)
 		Name = "LoginFrame";
 		
 		LoadFont("Common Normal")..{
-			Text="Or select a local profile below";
-			InitCommand=cmd(vertalign,top;horizalign,left;xy,-PROFILE_FRAME_WIDTH/2,-40);
+			Condition=(PROFILEMAN:GetNumLocalProfiles() > 0);
+			Text=THEME:GetString("ScreenSelectProfile","Or select a local profile below");
+			InitCommand=cmd(vertalign,top;horizalign,left;xy,-PROFILE_FRAME_WIDTH/2,-40;);
 		};
 		
 		--Scroller selection graphic.
 		Def.ActorFrame {
-			InitCommand=cmd(y,25-2);
+			Condition=(PROFILEMAN:GetNumLocalProfiles() > 0);
+			InitCommand=cmd(y,25-2;);
 			Def.Quad {
 				InitCommand=cmd(zoomto,PROFILE_FRAME_WIDTH,40+2);
 				OnCommand=cmd(diffuse,Color('Black');diffusealpha,0.5);
@@ -184,6 +187,7 @@ function LoadPlayerStuff(Player)
 		Def.ActorScroller{
 			Name = 'Scroller';
 			NumItemsToDraw=6;
+			
 	 		--InitCommand=cmd(y,-230/2+20;);
 			OnCommand=cmd(y,1;SetFastCatchup,true;SetMask,200,5;SetSecondsPerItem,0.15);
 			TransformFunction=function(self, offset, itemIndex, numItems)
@@ -225,12 +229,20 @@ function LoadPlayerStuff(Player)
 			OnCommand=cmd(queuecommand,"Loop");
 			LoopCommand=cmd(decelerate,1;diffusealpha,1;zoom,1.5;sleep,.5;linear,.5;diffusealpha,0;sleep,0;zoom,3.5;queuecommand,"Loop");
 		};
+		LoadActor("x")..{
+			Condition=(not IsMemcardEnabled());
+			InitCommand=cmd(y,-PROFILE_FRAME_HEIGHT/2+100;diffusealpha,.5);
+		};
 		LoadFont("Common Normal")..{
-			Text="Insert your USB stick to login";
+			Text=THEME:GetString("ScreenSelectProfile","Insert your USB stick to login");
 			InitCommand=cmd(y,-PROFILE_FRAME_HEIGHT/2+25;vertalign,top);
 			OnCommand=function(self)
 				if not IsMemcardEnabled() then
-					self:settext("Memory cards are disabled.\nSelect a local profile below.");
+					if PROFILEMAN:GetNumLocalProfiles() > 0 then
+						self:settext(THEME:GetString("ScreenSelectProfile","Memory cards are disabled"));
+					else
+						self:settext(THEME:GetString("ScreenSelectProfile","Memory cards are disabled no profiles"));
+					end;
 				end;
 			end;
 			--OnCommand=cmd(diffuseshift;effectperiod,2;effectcolor1,color("1,1,1,1");effectcolor2,color("1,1,1,0"));
@@ -401,7 +413,7 @@ function LoadPlayerStuff(Player)
 								self:x(-40);
 							end;
 						end;
-						Text="SUBTITLE COMING SOON";
+						Text="WELCOME TO RAVE IT OUT";
 					};
 					
 				};
@@ -442,7 +454,7 @@ function LoadPlayerStuff(Player)
 					};
 					
 				};
-				Def.ActorFrame{
+				--[[Def.ActorFrame{
 					InitCommand=cmd(y,-20);
 				
 					LoadFont("bebas/_bebas neue bold 90px")..{
@@ -510,7 +522,7 @@ function LoadPlayerStuff(Player)
 					Def.Quad{
 						InitCommand=cmd(setsize,PROFILE_FRAME_WIDTH,1;diffuse,color("#AAAAAAFF");y,18);
 					};
-				};
+				};]]
 				Def.ActorFrame{
 					Name="PlayCountFrame";
 					InitCommand=cmd(y,170);
@@ -670,14 +682,15 @@ function UpdateInternal3(self, Player)
 		if MEMCARDMAN:GetCardState(Player) == 'MemoryCardState_none' then
 			--using profile if any
 			joinframe:visible(false);
-			loginframe:visible(false);
 			bigframe:visible(false);
+			loginframe:visible(false);
 			--seltext:visible(true);
 
 			local ind = SCREENMAN:GetTopScreen():GetProfileIndex(Player);
 
 
 			if ind > 0 then --If profile
+			
 				local profile = PROFILEMAN:GetLocalProfileFromIndex(ind-1);
 				scroller:SetDestinationItem(ind-1);
 				if curProfileScreen[Player] == 1 then
@@ -698,10 +711,15 @@ function UpdateInternal3(self, Player)
 					scroller:SetDestinationItem(0);
 					self:queuecommand('UpdateInternal2');
 				else
+					playerName:settext('No profile');
 					joinframe:visible(false);
-					bigframe:visible(false);
 					scroller:visible(false);
-					--seltext:settext('No profile');
+					if curProfileScreen[Player] == 0 then
+						loginframe:visible(true);
+					else
+						loginframe:visible(false);
+						bigframe:visible(true);
+					end;
 					--selectPlayerUID:settext('------------');
           
 				end;
@@ -718,7 +736,8 @@ function UpdateInternal3(self, Player)
 				playerDP:settext(MemcardProfileInfocache[Player]["DancePoints"]);
 			else
 				playerName:settext("Missing stats");
-				playerTitle:settext("This profile needs to be migrated!");
+				playerName:settext(MEMCARDMAN:GetName(Player));
+				--playerTitle:settext("This profile needs to be migrated!");
 			end;
 			SCREENMAN:GetTopScreen():SetProfileIndex(Player, 0);
 		end;
@@ -746,6 +765,7 @@ local t = Def.ActorFrame {
 					curProfileScreen[params.PlayerNumber] = 1;
 					--SCREENMAN:SystemMessage(curProfileScreen[params.PlayerNumber]);
 					self:sleep(.2):queuecommand("UpdateInternal2");
+					self:GetChild("CardReadySound"):playforplayer(params.PlayerNumber);
 					--Because SM's own messagecommands isn't consistent...
 					MESSAGEMAN:Broadcast("ProfileChosen",{Player=params.PlayerNumber});
 				else
@@ -864,6 +884,11 @@ local t = Def.ActorFrame {
 					self:play();
 				end;
 			end;
+		};
+		Def.Sound{
+			File=THEME:GetPathS("ScreenSelectProfile","CardReady");
+			Name="CardReadySound";
+			SupportPan=true
 		};
 	};
 };

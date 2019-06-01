@@ -6,8 +6,8 @@ local t = Def.ActorFrame {
 t[#t+1] = LoadActor("AR Results")..{OnCommand=cmd(play)};	--Music
 
 
-t[#t+1] = LoadActor("Music (loop)")..{						--The original coder made the music loop a stupid way, when you could literally just put (loop) in the filename.
-		OnCommand=cmd(sleep,4;queuecommand,"PlaySound");	--Are you fucking serious? Come on, it's literally the easiest thing in the world to make music loop.
+t[#t+1] = LoadActor(THEME:GetPathS("_ScreenEvaluation","Music (loop)"))..{						
+		OnCommand=cmd(sleep,4;queuecommand,"PlaySound");
 		PlaySoundCommand=cmd(play);
 		OffCommand=cmd(stop)
 	};
@@ -76,7 +76,7 @@ end;
 	};
 
 
-t[#t+1] = LoadActor("unlocks.lua");								--Unlock system
+--t[#t+1] = LoadActor("unlocks.lua");								--Unlock system
 
 --this is the dim for the numbers, it's kind of confusing right now since the numbers and bg is separated
 local listcount = (PREFSMAN:GetPreference("AllowW1") == "AllowW1_Never") and 8 or 9;
@@ -93,6 +93,18 @@ end;
 for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 	t[#t+1] = LoadActor("DanceGrade",pn);
 end;
+--UnlockedOMES_RIO()
+if UnlockedOMES_RIO() then
+	t[#t+1] = LoadFont("monsterrat/_montserrat semi bold 60px")..{
+		Text=THEME:GetString("ScreenEvaluation","TryOneMoreExtraStage");
+		InitCommand=cmd(xy,SCREEN_CENTER_X,SCREEN_BOTTOM-100;diffusealpha,0;zoom,3;skewx,-0.2;);
+		OnCommand=cmd(sleep,2;accelerate,1;diffusealpha,1;zoom,.3;queuecommand,"PlaySound");
+		PlaySoundCommand=function(self)
+			self:diffuseshift():effectcolor1(Color("White")):effectcolor2(Color("Yellow")):effectperiod(1);
+			SOUND:PlayOnce(THEME:GetPathS("ScreenEvaluation","OMESUnlocked"));
+		end;
+	};
+end;
 
 t[#t+1] = Def.ActorFrame{
 	InitCommand=cmd(zoom,0;x,SCREEN_CENTER_X;y,SCREEN_BOTTOM+150;);
@@ -101,6 +113,7 @@ t[#t+1] = Def.ActorFrame{
 
 	LoadFont("monsterrat/_montserrat semi bold 60px")..{
 		InitCommand=cmd(zoom,0.3;skewx,-0.2;horizalign,center;vertalign,middle;);
+		--Text=string.format(THEME:GetString("ScreenMemoryCardTest","InsertCard"),pname(side));
 		Text="PRESS           OR          \nTO CONTINUE.";
 	};
 

@@ -6,7 +6,7 @@ DISPLAY TYPE: HD
 ]]
 SysInfo = {
 	InternalName = "RIOS2",
-	Version = "Beta",
+	Version = "Storm 2019",
 }
 
 RIO_FOLDER_NAMES = {
@@ -25,7 +25,7 @@ RIO_FOLDER_NAMES = {
 	PREDEFINED_GROUP_LIST = {}
 }
 --The song that gets picked for the One More Extra Stage.
-OMES_SONG = "Ace For Aces"
+OMES_SONG = "Ace For Aces (OMES Test)"
 
 -- These names will not show up over the difficulty icons.
 STEPMAKER_NAMES_BLACKLIST = {
@@ -80,12 +80,17 @@ STEPMAKER_NAMES_BLACKLIST = {
 --List of songs that will get your recording blocked worldwide
 STREAM_UNSAFE_AUDIO = {
 	"Breaking The Habit||Linkin Park",
-	"She Wolf (Falling to Pieces)||David Guetta ft. Sia",
+	"She Wolf (Falling To Pieces)||David Guetta feat. Sia",
 	"Untouched||The Veronicas",
 	"Cold||Crossfade",
 	"Sexy Bitch||David Guetta feat. Akon",
 	"Talk Dirty||Jason DeRulo feat. 2 Chainz",
-	"Face My Fears||Utada Hikaru ft. Skrillex" --Test song
+	"Titanium||David Guetta feat. Sia",
+	"Done||The Band Perry",
+	"Can't Hold Us||Macklemore & Ryan Lewis feat. Ray Dalton",
+	"Wow||Post Malone",
+	"Misery Business||Paramore",
+	"Turn Me On||David Guetta feat. Nicki Minaj"
 }
 
 --List of BGAs that will get your recording blocked worldwide

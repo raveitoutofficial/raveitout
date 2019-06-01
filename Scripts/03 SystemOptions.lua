@@ -1,52 +1,38 @@
-function VideoMode()		--ScreenFilter (requested by Cortes)		by NeobeatIKK, based on BGAMode by Alisson A2 (Alisson de Oliveira)
+--ScreenFilter (requested by Cortes)		by NeobeatIKK, based on BGAMode by Alisson A2 (Alisson de Oliveira)
+--Modified by Accelerator, now only sets TextureResolution because color depth is pointless
+function VideoMode()
 	local t = {
 		Name = "Graphics Details";
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
 		OneChoiceForAllPlayers = true;		--ojo
-		ExportOnChange = true;
-		Choices = { "SD", "HD"};
+		ExportOnChange = false;
+		Choices = {"SD", "HD"}; --Maybe add an Auto option.
 		LoadSelections = function(self, list, pn)
-			if ReadPrefFromFile("VideoMode") == nil then
-				list[1] = true
-				WritePrefToFile("VideoMode","SD");
+			if PREFSMAN:GetPreference("MaxTextureResolution") == 2048 then
+				list[2] = true;
 			else
-				if GetUserPref("VideoMode") == "SD" then
-					list[1] = true;
-				end;
-				if GetUserPref("VideoMode") == "HD" then
-					list[2] = true;
-				end;
-				
+				list[1] = true;
 			end;
 		end;
 		SaveSelections = function(self, list, pn)
-			local val;
-				if list[1] then
-					val = "SD"
-					DisplayAspectRatio = 1.777778
-					DisplayColorDepth= 16
-					TextureColorDepth= 16
-					MovieColorDepth= 16
-				end;
-				if list[2] then
-					val = "HD"
-					DisplayAspectRatio = 1.777778
-					DisplayColorDepth= 32
-					TextureColorDepth= 32
-					MovieColorDepth= 32
-				end;
-			WritePrefToFile("VideoMode",val);
-			PREFSMAN:SetPreference("DisplayAspectRatio",DisplayAspectRatio);
-			PREFSMAN:SetPreference("DisplayColorDepth",DisplayColorDepth);
-			PREFSMAN:SetPreference("MovieColorDepth",MovieColorDepth);
-			PREFSMAN:SetPreference("TextureColorDepth",TextureColorDepth);
+			--Want more options? TOO BAD!
+			if list[1] then
+				PREFSMAN:SetPreference("MaxTextureResolution",1024);
+			else
+				PREFSMAN:SetPreference("MaxTextureResolution",2048);
+			end;
+			--Always do 32bit
+			PREFSMAN:SetPreference("DisplayColorDepth",32);
+			PREFSMAN:SetPreference("MovieColorDepth",32);
+			PREFSMAN:SetPreference("TextureColorDepth",32);
 			PREFSMAN:SavePreferences();
 		end;
 	};
 	setmetatable( t, t );
 	return t;
 end;
+
 --Depreciated
 --[[
 function CustomSongsPerPlay() -- by Alisson A2 (Alisson de Oliveira)

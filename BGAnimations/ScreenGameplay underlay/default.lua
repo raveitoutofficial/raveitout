@@ -173,6 +173,8 @@ elseif activeModP1 == "Off" or activeModP2 == "Off" or (ReadPrefFromFile("Stream
 	end;]]
 end;
 
+--Hide elements if we're on the OMES
+if not getenv("IsOMES_RIO") then
 	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 		local negativeOffset = (pn == PLAYER_1) and -1 or 1;
 		local barposX = (pn == PLAYER_1) and 25*PREFSMAN:GetPreference("DisplayAspectRatio") or SCREEN_RIGHT-(25*PREFSMAN:GetPreference("DisplayAspectRatio"));
@@ -186,106 +188,101 @@ end;
 			OnCommand=cmd(sleep,1.5;accelerate,0.25;x,barposX);
 		};
 	end;
-
+end;
 --/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 t[#t+1] = Def.ActorFrame{		--Limit break by ROAD24 and NeobeatIKK
-		--el modo "Perfectionist" hace que el jugador instantaneamente falle si obtiene algo igual o menor a un W3 (un Good) -NeobeatIKK
-		ComboChangedMessageCommand=function(self,params)
-			local css1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1);
-			local css2 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2);
-			local p1w1 = css1:GetTapNoteScores("TapNoteScore_W1");local p1w2 = css1:GetTapNoteScores("TapNoteScore_W2");local p1w3 = css1:GetTapNoteScores("TapNoteScore_W3");local p1w4 = css1:GetTapNoteScores("TapNoteScore_W4");local p1w5 = css1:GetTapNoteScores("TapNoteScore_W5");local p1ms = css1:GetTapNoteScores("TapNoteScore_Miss");local p1cm = css1:GetTapNoteScores("TapNoteScore_CheckpointMiss");local p1hm = css1:GetTapNoteScores("TapNoteScore_HitMine");
-			local p2w1 = css2:GetTapNoteScores("TapNoteScore_W1");local p2w2 = css2:GetTapNoteScores("TapNoteScore_W2");local p2w3 = css2:GetTapNoteScores("TapNoteScore_W3");local p2w4 = css2:GetTapNoteScores("TapNoteScore_W4");local p2w5 = css2:GetTapNoteScores("TapNoteScore_W5");local p2ms = css2:GetTapNoteScores("TapNoteScore_Miss");local p2cm = css2:GetTapNoteScores("TapNoteScore_CheckpointMiss");local p2hm = css2:GetTapNoteScores("TapNoteScore_HitMine");
-			local GTS = SCREENMAN:GetTopScreen();
-			local PlayerStageStats = params.PlayerStageStats;
-			local bFailed = PlayerStageStats:GetCurrentMissCombo() >= GetBreakCombo();
-			local OpositePlayer = GetOpositePlayer(params.Player);
-			local OpositeStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(OpositePlayer);
-			local bOpositePlayerFailed = OpositeStats:GetCurrentMissCombo() >= GetBreakCombo();
-			--Shit code
-			for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
-				if PerfectionistMode[pn] then
-					local OppositePlayer = GetOpositePlayer(pn);
-					local css = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn);
-					--[[local w1 = css:GetTapNoteScores("TapNoteScore_W1");
-					local w2 = css:GetTapNoteScores("TapNoteScore_W2");]]
-					local w3 = css:GetTapNoteScores("TapNoteScore_W3");
-					local w4 = css:GetTapNoteScores("TapNoteScore_W4");
-					local w5 = css:GetTapNoteScores("TapNoteScore_W5");
-					local ms = css:GetTapNoteScores("TapNoteScore_Miss");
-					local cm = css:GetTapNoteScores("TapNoteScore_CheckpointMiss");
-					local hm = css:GetTapNoteScores("TapNoteScore_HitMine");
-					if w3 >= 1 or w4 >= 1 or w5 >= 1 or ms >= 1 or cm >= 1 then								-- Only W1s (AKA RAVINs / Marvelouses)
-						--GTS:PostScreenMessage("SM_BeginFailed",0);
-						if GAMESTATE:GetCurrentStage() == "Stage_1st" and Enjoy1stStagePMode == true then
-							return nil
-						else
-							--SCREENMAN:SystemMessage("Player "..pn.." failed");
-							css:FailPlayer();
-							if GAMESTATE:IsSideJoined(OppositePlayer) and STATSMAN:GetCurStageStats():GetPlayerStageStats(OppositePlayer):GetFailed() then
-								setenv("StageFailed",true);
-								GTS:PostScreenMessage("SM_BeginFailed",0);
-							elseif not GAMESTATE:IsSideJoined(OppositePlayer) then
-								setenv("StageFailed",true);
-								GTS:PostScreenMessage("SM_BeginFailed",0);
-							end;
-						end;
-					end;
-				end;
-			end;
-			
-			if IsBreakOn() then			-- Si no esta activado el break no tiene caso revisar todo lo demas
-				if THEME:GetMetric("CustomRIO","GamePlayMenu") == false then
-					if GAMESTATE:IsPlayerEnabled( OpositePlayer ) then
-						bFailed = bFailed and bOpositePlayerFailed;
-					end;
-					if bFailed then
-						GTS:PostScreenMessage("SM_BeginFailed",0);
-						if GAMESTATE:GetCurrentStage() == "Stage_1st" and Enjoy1stStage == true then
-							return nil
-						else				-- No creo que haya problema en forzar el fail de ambos players, ya que el break requiere que ambos deben alcanzar el combo miss -NeobeatIKK
-							PSS1:FailPlayer();
-							PSS2:FailPlayer();
+	--el modo "Perfectionist" hace que el jugador instantaneamente falle si obtiene algo igual o menor a un W3 (un Good) -NeobeatIKK
+	ComboChangedMessageCommand=function(self,params)
+		local css1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1);
+		local css2 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2);
+		local p1w1 = css1:GetTapNoteScores("TapNoteScore_W1");local p1w2 = css1:GetTapNoteScores("TapNoteScore_W2");local p1w3 = css1:GetTapNoteScores("TapNoteScore_W3");local p1w4 = css1:GetTapNoteScores("TapNoteScore_W4");local p1w5 = css1:GetTapNoteScores("TapNoteScore_W5");local p1ms = css1:GetTapNoteScores("TapNoteScore_Miss");local p1cm = css1:GetTapNoteScores("TapNoteScore_CheckpointMiss");local p1hm = css1:GetTapNoteScores("TapNoteScore_HitMine");
+		local p2w1 = css2:GetTapNoteScores("TapNoteScore_W1");local p2w2 = css2:GetTapNoteScores("TapNoteScore_W2");local p2w3 = css2:GetTapNoteScores("TapNoteScore_W3");local p2w4 = css2:GetTapNoteScores("TapNoteScore_W4");local p2w5 = css2:GetTapNoteScores("TapNoteScore_W5");local p2ms = css2:GetTapNoteScores("TapNoteScore_Miss");local p2cm = css2:GetTapNoteScores("TapNoteScore_CheckpointMiss");local p2hm = css2:GetTapNoteScores("TapNoteScore_HitMine");
+		local GTS = SCREENMAN:GetTopScreen();
+		local PlayerStageStats = params.PlayerStageStats;
+		local bFailed = PlayerStageStats:GetCurrentMissCombo() >= GetBreakCombo();
+		local OpositePlayer = GetOpositePlayer(params.Player);
+		local OpositeStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(OpositePlayer);
+		local bOpositePlayerFailed = OpositeStats:GetCurrentMissCombo() >= GetBreakCombo();
+		--Shit code
+		for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+			if PerfectionistMode[pn] then
+				local OppositePlayer = GetOpositePlayer(pn);
+				local css = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn);
+				--[[local w1 = css:GetTapNoteScores("TapNoteScore_W1");
+				local w2 = css:GetTapNoteScores("TapNoteScore_W2");]]
+				local w3 = css:GetTapNoteScores("TapNoteScore_W3");
+				local w4 = css:GetTapNoteScores("TapNoteScore_W4");
+				local w5 = css:GetTapNoteScores("TapNoteScore_W5");
+				local ms = css:GetTapNoteScores("TapNoteScore_Miss");
+				local cm = css:GetTapNoteScores("TapNoteScore_CheckpointMiss");
+				local hm = css:GetTapNoteScores("TapNoteScore_HitMine");
+				if w3 >= 1 or w4 >= 1 or w5 >= 1 or ms >= 1 or cm >= 1 then								-- Only W1s (AKA RAVINs / Marvelouses)
+					--GTS:PostScreenMessage("SM_BeginFailed",0);
+					if GAMESTATE:GetCurrentStage() == "Stage_1st" and Enjoy1stStagePMode == true then
+						return nil
+					else
+						--SCREENMAN:SystemMessage("Player "..pn.." failed");
+						css:FailPlayer();
+						if GAMESTATE:IsSideJoined(OppositePlayer) and STATSMAN:GetCurStageStats():GetPlayerStageStats(OppositePlayer):GetFailed() then
 							setenv("StageFailed",true);
+							GTS:PostScreenMessage("SM_BeginFailed",0);
+						elseif not GAMESTATE:IsSideJoined(OppositePlayer) then
+							setenv("StageFailed",true);
+							GTS:PostScreenMessage("SM_BeginFailed",0);
 						end;
 					end;
 				end;
 			end;
 		end;
-		JudgmentMessageCommand=function(self,params)
-		--if not IsComoSeLlameModeEnabled then	--activar cuando este el modo listo
-			if 	params.TapNoteScore == 'TapNoteScore_HitMine' then
-					local Combo = getenv("BreakCombo");
-					-- Disminuyo el combo
-					setenv("BreakCombo",Combo-1);
-					--SCREENMAN:SystemMessage("BreakCombo: "..GetBreakCombo());
+		
+		if IsBreakOn() then			-- Si no esta activado el break no tiene caso revisar todo lo demas
+			if THEME:GetMetric("CustomRIO","GamePlayMenu") == false then
+				if GAMESTATE:IsPlayerEnabled( OpositePlayer ) then
+					bFailed = bFailed and bOpositePlayerFailed;
+				end;
+				if bFailed then
+					GTS:PostScreenMessage("SM_BeginFailed",0);
+					if GAMESTATE:GetCurrentStage() == "Stage_1st" and Enjoy1stStage == true then
+						return nil
+					else				-- No creo que haya problema en forzar el fail de ambos players, ya que el break requiere que ambos deben alcanzar el combo miss -NeobeatIKK
+						PSS1:FailPlayer();
+						PSS2:FailPlayer();
+						setenv("StageFailed",true);
+					end;
+				end;
 			end;
-		--end;
 		end;
-		LoadFont("Common Normal")..{	--Stage break + value, message
-			InitCommand=cmd(x,_screen.cx;y,SCREEN_BOTTOM-30;zoom,0.5);
-			OnCommand=function(self)
-				if PerfectionistMode[PLAYER_1] and PerfectionistMode[PLAYER_2] then		--don't do shit if Perfectionist Mode is activated
-					return false
-				end;
-				-- TODO: Add a GetBreakCombo
-				self:settext("Limit Break: "..GetBreakCombo());
-				if stage == "ScreenGameplay stage Demo" then self:settext(""); else self:settext("Limit Break: "..GetBreakCombo()); end;
-				p1stype = GAMESTATE:GetCurrentSteps(PLAYER_1):GetStepsType();
-				p2stype = GAMESTATE:GetCurrentSteps(PLAYER_2):GetStepsType();
-				if p1stype ~= "StepsType_Pump_Single" or p2stype ~= "StepsType_Pump_Single" or PREFSMAN:GetPreference("Center1Player") then
-					self:y(SCREEN_BOTTOM-60);
-				end;
+	end;
+	JudgmentMessageCommand=function(self,params)
+	--if not IsComoSeLlameModeEnabled then	--activar cuando este el modo listo
+		if 	params.TapNoteScore == 'TapNoteScore_HitMine' then
+				local Combo = getenv("BreakCombo");
+				-- Disminuyo el combo
+				setenv("BreakCombo",Combo-1);
+				--SCREENMAN:SystemMessage("BreakCombo: "..GetBreakCombo());
+		end;
+	--end;
+	end;
+	LoadFont("Common Normal")..{	--Stage break + value, message
+		InitCommand=cmd(x,_screen.cx;y,SCREEN_BOTTOM-30;zoom,0.5);
+		OnCommand=function(self)
+			if PerfectionistMode[PLAYER_1] and PerfectionistMode[PLAYER_2] then		--don't do shit if Perfectionist Mode is activated
+				return false
 			end;
-		--[[	JudgmentMessageCommand=function(self,params)
-				if	params.TapNoteScore == 'TapNoteScore_HitMine' then
-					self:playcommand("On");
-				end;
-			end;--]]
-			LifeChangedMessageCommand=function(self)	--ya que las effortbar reaccionan tan bien al limit break entonces pensé "porqué no actualizarlas de igual forma?" xD -NeobeatIKK
-				self:playcommand("On");
-			end;--]]
-		};		--]]
+			-- TODO: Add a GetBreakCombo
+			self:settext("Limit Break: "..GetBreakCombo());
+			if stage == "ScreenGameplay stage Demo" then self:settext(""); else self:settext("Limit Break: "..GetBreakCombo()); end;
+			p1stype = GAMESTATE:GetCurrentSteps(PLAYER_1):GetStepsType();
+			p2stype = GAMESTATE:GetCurrentSteps(PLAYER_2):GetStepsType();
+			if p1stype ~= "StepsType_Pump_Single" or p2stype ~= "StepsType_Pump_Single" or PREFSMAN:GetPreference("Center1Player") then
+				self:y(SCREEN_BOTTOM-60);
+			end;
+		end;
+		LifeChangedMessageCommand=function(self)	--ya que las effortbar reaccionan tan bien al limit break entonces pensé "porqué no actualizarlas de igual forma?" xD -NeobeatIKK
+			self:playcommand("On");
+		end;
 	};
+};
 
 --[[t[#t+1] = 	Def.ActorFrame{		-- Write data to PlayerProfile/RIO_SongData
 		Def.Actor{		-- Write SpeedMod to Profile (PLAYER_1) by NeobeatIKK
@@ -346,9 +343,8 @@ t[#t+1] = Def.ActorFrame{		--Limit break by ROAD24 and NeobeatIKK
 
 ]]
 
---/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-t[#t+1] = 	Def.ActorFrame{		-- DEBUG STUFF
-		OnCommand=cmd(visible,DoDebug);
+if DoDebug then
+	t[#t+1] = 	Def.ActorFrame{		-- DEBUG STUFF
 		--[[LoadFont(DebugFont)..{		--Hit Mine button
 			InitCommand=cmd(xy,_screen.cx,_screen.cy-20;zoom,0.5;settext,"MINE HIT BUTTON");
 			HitMineMessageCommand=cmd(stoptweening;zoom,1;linear,0.25;zoom,0.5;);
@@ -505,4 +501,6 @@ t[#t+1] = 	Def.ActorFrame{		-- DEBUG STUFF
 			end;
 		};--]]
 	};
+end;
+	
 return t;

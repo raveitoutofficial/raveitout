@@ -7,6 +7,9 @@ return Def.ActorFrame{
 	LoadActor(THEME:GetPathS("","SongChosen"))..{
 		SongChosenMessageCommand=cmd(playcommand,"Check1";);
 		StartSelectingSongMessageCommand=cmd(playcommand,"Check2";);
+		SongUnchosenMessageCommand=function(self)
+			state = 1;
+		end;
 		Check1Command=function(self)
 			self:stoptweening(); self:play(); state = 2;--SelectSong 
 		end;

@@ -13,6 +13,24 @@ end;
 local Choices = getPlayModeChoices():split(",");
 local numChoices = #Choices --Precalculate it instead of iterating every time
 
+local function pickRandomSong()
+	local group = RIO_FOLDER_NAMES["DefaultArcadeFolder"]
+	if not group then
+		local groups = getAvailableGroups();
+		local numGroups = #groups
+		if numGroups > 1 then
+			group = groups[math.random(numGroups)];
+		else
+			group = groups[1];
+		end;
+	end;
+	local songs = SONGMAN:GetSongsInGroup(group);
+	local randomSong = songs[math.random(#songs)]
+	GAMESTATE:SetCurrentSong(randomSong);
+	GAMESTATE:SetPreferredSong(randomSong);
+	--assert(randomSong,"Attempted to get a valid song in group "..group.." and failed. Bad things will happen now.")
+end;
+
 local t = Def.ActorFrame{}
 
 local Static = Def.ActorFrame{
@@ -260,15 +278,6 @@ t[#t+1] = Def.ActorFrame{
 t[#t+1] = LoadActor(THEME:GetPathG("","PlayModes/splash/Arcade"))..{
 	OnCommand=function(self)
 		self:diffusealpha(0):FullScreen();
-		if not RIO_FOLDER_NAMES["DefaultArcadeFolder"] then
-			groups = getAvailableGroups();
-			--TODO: Is this global or something? What's going on?
-			total_arcade_folders = #groups;
-			RIO_FOLDER_NAMES["DefaultArcadeFolder"] = groups[math.random(2,total_arcade_folders)];
-			
-			--What?
-			--if RIO_FOLDER_NAMES["DefaultArcadeFolder"] == groups[1] then RIO_FOLDER_NAMES["DefaultArcadeFolder"] = groups[7]; end;
-		end;
 	end;
 	
 	RefreshCommand=function(self)
@@ -304,7 +313,7 @@ t[#t+1] = LoadActor(THEME:GetPathG("","PlayModes/splash/Arcade"))..{
 			setenv("HeaderTitle","SELECT MUSIC");
 			assert(SONGMAN:DoesSongGroupExist(RIO_FOLDER_NAMES["EasyFolder"]),"Easy folder is missing!")
 			local folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["EasyFolder"]);
-			randomSong = folder[math.random(1,#folder)]
+			local randomSong = folder[math.random(1,#folder)]
 			GAMESTATE:SetCurrentSong(randomSong);
 			GAMESTATE:SetPreferredSong(randomSong);
 		elseif choice == "Arcade" then
@@ -326,10 +335,7 @@ t[#t+1] = LoadActor(THEME:GetPathG("","PlayModes/splash/Arcade"))..{
 			end;
 			
 			if pickRandom then
-				folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["DefaultArcadeFolder"]);
-				randomSong = folder[math.random(#folder)]
-				GAMESTATE:SetCurrentSong(randomSong);
-				GAMESTATE:SetPreferredSong(randomSong);
+				pickRandomSong()
 			else
 				GAMESTATE:SetCurrentSong(lastPlayedSong);
 			end;
@@ -351,10 +357,7 @@ t[#t+1] = LoadActor(THEME:GetPathG("","PlayModes/splash/Arcade"))..{
 			end;
 			
 			if pickRandom then
-				folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["DefaultArcadeFolder"]);
-				randomSong = folder[math.random(#folder)]
-				GAMESTATE:SetCurrentSong(randomSong);
-				GAMESTATE:SetPreferredSong(randomSong);
+				pickRandomSong()
 			else
 				GAMESTATE:SetCurrentSong(lastPlayedSong);
 			end;

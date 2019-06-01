@@ -119,7 +119,7 @@ function getRandomProfileIcon(pn)
 		return THEME:GetPathG("","USB_stuff/avatars/"..bg);
 	end;
 	
-	assert("No backgrounds found!");
+	assert(false,"No backgrounds found!");
 	return nil
 end;
 

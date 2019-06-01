@@ -83,12 +83,7 @@ elseif bonusSongBG then
 else
 	t[#t+1] = Def.ActorFrame{
 		LoadActor(getRandomWall())..{
-			-- Algunas imagenes pierden calidad enormemente con FullScreen, por que?	--ni idea, pero al menos ya sé que hay una diferencia... -NeobeatIKK
-			--OnCommand=cmd(FullScreen);
-			OnCommand=function(self)
-				self:Center();
-				self:zoomto(SCREEN_WIDTH,SCREEN_HEIGHT);
-			end;
+			InitCommand=cmd(Cover);
 		};
 	};
 

@@ -38,12 +38,21 @@ function IsExtraStagePIU()
 	return NumHeartsRemoved[PLAYER_1] >= HeartsPerPlay or NumHeartsRemoved[PLAYER_2] >= HeartsPerPlay;
 end;
 
---TODO: Check if the last extra stage played was in the Extra Savior folder.
+
+--This is a static function meaning DO NOT do any setting of variables here! Do it in the branch.lua that checks this function!
 function UnlockedOMES_RIO()
-	if IsExtraStagePIU() then
-		local acc = getenv(pname(player).."_accuracy") or 0
-		return (acc > 95 and GetNumHeartsForSong() == 2);
+	--do return true end; --For debugging
+	--If they just played the extra stage, and there is an extra stage song defined, and they played said extra stage song...
+	if IsExtraStagePIU() and extraStageSong and GAMESTATE:GetCurrentSong():GetMainTitle() == extraStageSong then
+		--Loop through both players, if one of them got >95% then both of them can play the OMES.
+		for pn in ivalues(GAMESTATE:GetEnabledPlayers()) do
+			local acc = getenv(pname(pn).."_accuracy") or 0
+			if (acc > 95 and GetNumHeartsForSong() == 2) then
+				return true;
+			end;
+		end;
 	end;
+	--Didn't achieve it.
 	return false;
 end;
 

@@ -1,4 +1,5 @@
 return Def.ActorFrame{
+	Condition=IsMemcardEnabled();
 	InitCommand=cmd(xy,THEME:GetMetric("ScreenTitleJoin","ScrollerX"),THEME:GetMetric("ScreenTitleJoin","ScrollerY")+80;);
 	--Causes input locking problems, don't use
 	--OnCommand=cmd(decelerate,1;diffusealpha,0;accelerate,1;diffusealpha,1;sleep,.5;queuecommand,"On");

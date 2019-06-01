@@ -2,6 +2,32 @@ local isWheelCustom = ...
 local shine_index = 0;
 local streamSafeMode = (ReadPrefFromFile("StreamSafeEnabled") == "true");
 
+--GAMESTATE:SetCurrentSong(SONGMAN:FindSong("3y3s"))
+extraStageSong = nil;
+local isExtraStage = IsExtraStagePIU()
+if isExtraStage then
+	local sDir = GAMESTATE:GetCurrentSong():GetSongDir()
+	local arr = split("/",sDir)
+	--SCREENMAN:SystemMessage(strArrayToString(arr));
+	sDir = arr[2].."/"..arr[3].."/extra1.crs"
+	--SCREENMAN:SystemMessage(sDir);
+	--sDir = arr[1].."/"
+	if FILEMAN:DoesFileExist(sDir) then
+		local songName = split(":",GetTagValue(sDir,"SONG"))[1];
+		--SCREENMAN:SystemMessage(songName);
+		local songsInGroup = SONGMAN:GetSongsInGroup(arr[3])
+		for i,song in ipairs(songsInGroup) do
+			if song:GetMainTitle() == songName then
+				extraStageSong = song:GetMainTitle()
+				GAMESTATE:SetPreferredSong(song);
+				break
+			end;
+		end;
+		if not extraStageSong then
+			SCREENMAN:SystemMessage("Couldn't find the extra stage song!");
+		end;
+	end;
+end;
 return Def.ActorFrame{
 	
 		Def.Sprite{
@@ -249,10 +275,20 @@ return Def.ActorFrame{
 		LoadFont("bebas/_bebas neue bold 90px")..{	
 			InitCommand=cmd(uppercase,true;x,_screen.cx;y,_screen.cy-171;zoom,0.45;maxwidth,(_screen.w/0.9);skewx,-0.1);
 			CurrentSongChangedMessageCommand=function(self)
-			local song = GAMESTATE:GetCurrentSong()
+				local song = GAMESTATE:GetCurrentSong()
 				if song then
 					self:settext(song:GetDisplayFullTitle());
-					self:finishtweening();self:diffusealpha(0);
+					self:finishtweening();
+					
+					self:diffusealpha(0);
+					if isExtraStage then
+						if extraStageSong == song:GetMainTitle() then
+							self:diffuseshift():effectcolor1(Color("Red")):effectcolor2(Color("White")):effectperiod(1);
+						else
+							self:effectcolor1(Color("White"))
+							--self:diffusebottomedge(color("1,1,1,0"))
+						end;
+					end;
 					self:x(_screen.cx+75);self:sleep(0.25);self:decelerate(0.75);self:x(_screen.cx);self:diffusealpha(1);
 				else
 					self:stoptweening();self:linear(0.25);self:diffusealpha(0);

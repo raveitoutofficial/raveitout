@@ -503,7 +503,7 @@ else
 				};
 				--For the combo judgement only
 				Def.Sprite{
-					InitCommand=cmd(y,SCREEN_CENTER_Y+20;draworder,999);
+					InitCommand=cmd(y,SCREEN_CENTER_Y-116;draworder,999;zoom,.8);
 					OptionsMenuChangedMessageCommand=function(self,params)
 						if params.Player == pn then
 							if params.Menu == "JudgmentType" then
@@ -564,14 +564,20 @@ else
 						end;
 					end;
 					OnCommand=function(self)
-						local arrow = "UpLeft";
-						local name = "Tap note";
-						if CurrentNoteSkin(pn) == "delta" then
-							name = "Ready Receptor";
-						elseif CurrentNoteSkin(pn) == "delta-note" or string.ends(CurrentNoteSkin(pn), "rhythm") then
-							arrow = "_UpLeft";
+						local arrow = "__RIO";
+						local name = "THUMB";
+						local highlightedNoteSkin = CurrentNoteSkin(pn);
+						local path = NOTESKIN:GetPathForNoteSkin(arrow, name, highlightedNoteSkin);
+						--SCREENMAN:SystemMessage("1Noteskin="..highlightedNoteSkin..",Path="..path);
+						if not path then
+							arrow = "UpLeft"; name = "Tap Note";
+							if highlightedNoteSkin == "delta" then
+								name = "Ready Receptor";
+							elseif highlightedNoteSkin == "delta-note" or string.ends(highlightedNoteSkin, "rhythm") then
+								arrow = "_UpLeft";
+							end
+							path = NOTESKIN:GetPathForNoteSkin(arrow, name, highlightedNoteSkin);
 						end
-						local path = NOTESKIN:GetPathForNoteSkin(arrow, name, CurrentNoteSkin(pn));
 						
 						self:Load(path);
 						self:croptop(0);
@@ -582,15 +588,19 @@ else
 						if params.Player == pn then
 							if params.Selection < OPTIONSLIST_NUMNOTESKINS then
 								local highlightedNoteSkin = OPTIONSLIST_NOTESKINS[params.Selection+1];
-								local arrow = "UpLeft";
-								local name = "Tap note";
-								if highlightedNoteSkin == "delta" then
-									name = "Ready Receptor";
-								elseif highlightedNoteSkin == "delta-note" or string.ends(highlightedNoteSkin, "rhythm") then
-									arrow = "_UpLeft";
+								local arrow = "__RIO";
+								local name = "THUMB";
+								local path = NOTESKIN:GetPathForNoteSkin("__RIO", "THUMB", highlightedNoteSkin);
+								--SCREENMAN:SystemMessage("2Noteskin="..highlightedNoteSkin..",Path="..path);
+								if not path then
+									arrow = "UpLeft"; name = "Tap Note";
+									if highlightedNoteSkin == "delta" then
+										name = "Ready Receptor";
+									elseif highlightedNoteSkin == "delta-note" or string.ends(highlightedNoteSkin, "rhythm") then
+										arrow = "_UpLeft";
+									end
+									path = NOTESKIN:GetPathForNoteSkin(arrow, name, highlightedNoteSkin);
 								end
-								local path = NOTESKIN:GetPathForNoteSkin(arrow, name, highlightedNoteSkin);
-								
 								self:Load(path);
 								self:croptop(0);
 								self:cropright(0);

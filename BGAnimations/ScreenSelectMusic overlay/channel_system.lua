@@ -148,7 +148,7 @@ local function inputs(event)
 	if event.type == "InputEventType_Release" then return end
 	
 	if button == "Center" or button == "Start" then
-		SCREENMAN:SystemMessage(scroller:get_info_at_focus_pos());
+		--SCREENMAN:SystemMessage(scroller:get_info_at_focus_pos());
 		SCREENMAN:set_input_redirected(PLAYER_1, false);
 		SCREENMAN:set_input_redirected(PLAYER_2, false);
 		MESSAGEMAN:Broadcast("StartSelectingSong");
@@ -193,7 +193,8 @@ local function inputs(event)
 		button_history[3] = button_history[4]
 		button_history[4] = button
 		if button_history[1] == "UpLeft" and button_history[2] == "UpRight" and button_history[3] == "UpLeft" and button_history[4] == "UpRight" then
-			SCREENMAN:AddNewScreenToTop("ScreenSelectSort");
+			--Disable for Storm 2019 since it's not ready yet
+			--SCREENMAN:AddNewScreenToTop("ScreenSelectSort");
 			--[[if musicwheel:ChangeSort('SortOrder_BPM') then
 				--SCREENMAN:SystemMessage("SortChanged")
 				MESSAGEMAN:Broadcast("SortChanged")

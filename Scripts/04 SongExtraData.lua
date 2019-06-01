@@ -11,7 +11,7 @@ local SongTypeToHearts = {
 	shortcut = 1,
 	remix = 3,
 	fullsong = 4,
-	marathon = 6
+	musictrain = 6
 }
 MAX_SECONDS_FOR_SHORTCUT = 95
 
@@ -25,7 +25,7 @@ local function SongTypeFallback(song)
 	elseif song:IsLong() then
 		return SongTypeToHearts.fullsong
 	elseif song:IsMarathon() then
-		return SongTypeToHearts.marathon
+		return SongTypeToHearts.musictrain
 	else
 		return SongTypeToHearts.arcade
 	end

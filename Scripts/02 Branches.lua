@@ -186,13 +186,18 @@ Branch = {
 		if GAMESTATE:IsCourseMode() then
 			return "ScreenProfileSave"
 		else
-			--It's broken don't touch it
-			if false then
+			if UnlockedOMES_RIO() then
+				--Set stage break to 1. Gotta get that full combo!
+				setenv("BreakCombo",1);
+				setenv("IsOMES_RIO",true)
+				
+				assert(OMES_SONG,"Hey genius, you need to define an OMES_SONG.")
 				local s = SONGMAN:FindSong(OMES_SONG);
 				if not s then
 					SCREENMAN:SystemMessage("The OMES song was not found, giving up.");
 					return "ScreenProfileSaveSummary";
 				end;
+				
 				--Use same StepsType as the last played song.
 				if GAMESTATE:GetNumSidesJoined() > 1 then
 					local p1steps = GAMESTATE:GetCurrentSteps(PLAYER_1)
@@ -204,19 +209,21 @@ Branch = {
 						GAMESTATE:SetCurrentSong(s);
 						GAMESTATE:SetCurrentSteps(PLAYER_1,s:GetOneSteps(p1steps:GetStepsType(),p1difficulty))
 						GAMESTATE:SetCurrentSteps(PLAYER_2,s:GetOneSteps(p2steps:GetStepsType(),p2difficulty))
-						return "ScreenGameplay";
+						return "ScreenStageInformation";
 					end;
 					SCREENMAN:SystemMessage("There was no available difficulties for the OMES.")
 					return "ScreenProfileSaveSummary"
 				else
 					local steps = GAMESTATE:GetCurrentSteps(GAMESTATE:GetMasterPlayerNumber())
-					local difficulty = (steps:GetDifficulty() and steps:GetDifficulty() ~= 5) or 4
+					local difficulty = (steps:GetDifficulty() ~= 'Difficulty_Edit') and steps:GetDifficulty() or 'Difficulty_Challenge'
+					--local difficulty = steps:GetDifficulty();
+					--assert(difficulty,"No steps???")
 					if s:HasStepsTypeAndDifficulty(steps:GetStepsType(),difficulty) then
 						GAMESTATE:SetCurrentSong(s);
-						GAMESTATE:SetCurrentSteps(PLAYER_1,s:GetOneSteps(steps:GetStepsType(),difficulty))
-						return "ScreenGameplay";
+						GAMESTATE:SetCurrentSteps(GAMESTATE:GetMasterPlayerNumber(),s:GetOneSteps(steps:GetStepsType(),difficulty))
+						return "ScreenStageInformation";
 					end;
-					SCREENMAN:SystemMessage("There was no available difficulties for the OMES.")
+					SCREENMAN:SystemMessage("The OMES did not have "..steps:GetStepsType()..","..steps:GetDifficulty().." and the game cannot continue.")
 					return "ScreenProfileSaveSummary"
 				end;
 			else
