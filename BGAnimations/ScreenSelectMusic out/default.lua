@@ -22,9 +22,6 @@ return Def.ActorFrame{
 		OnCommand=cmd(FullScreen;diffuse,Color("Black");diffusealpha,0);
 		Name="Quad";
 		PlayCommand=function(self)
-			if GAMESTATE:IsCourseMode() then
-				setenv("BreakCombo",GetExtraData(GAMESTATE:GetCurrentCourse(), "LimitBreak", true));
-			end;
 			
 			--AutoSetStyle is already a thing, WTF is this even doing?
 			--[[if GAMESTATE:GetNumSidesJoined() == 2 and (GAMESTATE:GetCurrentSteps(PLAYER_1):GetStepsType() == "StepsType_Pump_Routine" or GAMESTATE:GetCurrentSteps(PLAYER_2):GetStepsType() == "StepsType_Pump_Routine") then

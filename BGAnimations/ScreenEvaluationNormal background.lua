@@ -8,7 +8,9 @@ return Def.ActorFrame{
 		OnCommand=cmd(stoptweening;playcommand,"Banner";);
 		BannerCommand=function(self)
 			if GAMESTATE:IsCourseMode() then
-				self:Load(GAMESTATE:GetCurrentCourse():GetBannerPath());
+				if GAMESTATE:GetCurrentCourse():HasBackground() then
+					self:Load(GAMESTATE:GetCurrentCourse():GetBackgroundPath());
+				end;
 			else
 				local p = GetSongBackground(true)
 				if p then

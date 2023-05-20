@@ -1,6 +1,31 @@
+--[[
+MIT License
+
+Copyright (c) 2013-2019 Daniel Joshua Guzek
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+]]
+
 local path =  "UserPrefs/" .. THEME:GetThemeDisplayName() .. "/"
 
 -- Hook called during profile load
+-- This will NOT get called for the machine profile!!
 function LoadProfileCustom(profile, dir, isEdit)
 
 	local PrefPath =  dir .. path
@@ -53,8 +78,8 @@ function LoadProfileCustom(profile, dir, isEdit)
 				setenv("profile_icon_"..pns,profileIcon);
 			else --None found, check if it's a built in profile icon in the ActiveModifiers table
 				--Will return nil if there isn't a profile icon, but if there was one we want to check that the icon hasn't been removed or renamed
-				if ActiveModifiers[pns]["ProfileIcon"] and FILEMAN:DoesFileExist(THEME:GetPathG("","USB_stuff/avatars").."/"..ActiveModifiers[pns]["ProfileIcon"]) then
-					setenv("profile_icon_"..pns,THEME:GetPathG("","USB_stuff/avatars").."/"..ActiveModifiers[pns]["ProfileIcon"]);
+				if ActiveModifiers[pns]["ProfileIcon"] and FILEMAN:DoesFileExist(THEME:GetPathG("ProfileBanner","avatars").."/"..ActiveModifiers[pns]["ProfileIcon"]) then
+					setenv("profile_icon_"..pns,THEME:GetPathG("ProfileBanner","avatars").."/"..ActiveModifiers[pns]["ProfileIcon"]);
 				else --Still none found, just pick a random one
 					setenv("profile_icon_"..pns,getRandomProfileIcon(pn));
 				end;

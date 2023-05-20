@@ -1,4 +1,5 @@
---SongExtraData
+--SongExtraData (Written by tertu, big thanks to him)
+
 local fand = RageFileUtil.CreateRageFile()
 local DataCache
 function ClearExtraDataCache()
@@ -8,12 +9,12 @@ ClearExtraDataCache()
 
 local SongTypeToHearts = {
 	arcade = 2,
+	special = 2,
 	shortcut = 1,
 	remix = 3,
 	fullsong = 4,
 	musictrain = 6
 }
-MAX_SECONDS_FOR_SHORTCUT = 95
 
 local function SongTypeTransform(_, data)
 	return SongTypeToHearts[string.lower(data)]
@@ -38,18 +39,27 @@ local function PreviewTransform(song, VideoName)
 			VideoName = song:GetSongDir().."/"..VideoName
 		elseif FILEMAN:DoesFileExist("/SongPreviews/"..VideoName) then
 			VideoName = "/SongPreviews/"..VideoName
+		elseif FILEMAN:DoesFileExist(VideoName) then
+			--It was a direct path, so don't change it
 		else
 			--this video doesn't appear to exist. Just return "" instead.
 			VideoName = ""
 		end
 	else
-		--nothing yet, maybe something eventually
+		--Nothing
 	end
 	return VideoName
 end
 
+--In case there was no PREVIEWVID tag or it was blank, search manually
+local function previewFallback(song)
+	if FILEMAN:DoesFileExist(song:GetSongDir()..song:GetTranslitMainTitle().."-preview.mp4") then
+		return song:GetSongDir()..song:GetTranslitMainTitle().."-preview.mp4"
+	end;
+end
+
 local SongItems = {
-	PreviewVid={source="PREVIEWVID", transform=PreviewTransform, fallback=""},
+	PreviewVid={source="PREVIEWVID", transform=PreviewTransform, fallback=previewFallback},
 	Hearts={source="SONGTYPE", transform=SongTypeTransform, fallback=SongTypeFallback}
 }
 

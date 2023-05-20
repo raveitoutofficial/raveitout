@@ -77,6 +77,9 @@ Put something in the description tag of the steps for it to show under that diff
 LEVEL:
 Songs at lv99 or more will show up as "??".
 
+FORCED NOTESKINS:
+Use the #NOTESKINS tag to force a noteskin for that chart. Multiple forced noteskins does not work currently.
+
 STEPS INFO:
 The top line is the chart author, which is the #CREDIT tag in your ssc.
 Put something in the #CHARTNAME tag for your steps if you want it to display something custom for the bottom line.

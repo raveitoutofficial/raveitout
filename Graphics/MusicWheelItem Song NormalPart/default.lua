@@ -5,6 +5,7 @@ local ftop = 1	--fadetop
 local ctop = 0.25	--croptop
 local alph = 0.5	--diffusealpha
 
+
 return Def.ActorFrame{
 
 	--Don't load a blank file you fucking mongoloid
@@ -36,6 +37,32 @@ return Def.ActorFrame{
 			end;
 		end;
 	};
+	Def.Quad{
+		--Check 99 init for variable declaration
+		Condition=MUSICWHEEL_SONG_NAMES;
+		InitCommand=cmd(setsize,scaw,25;y,scah/2+20;diffuse,color("0,0,0,.5");fadeleft,.1;faderight,.1);
+		--[[SetMessageCommand=function(self,param)
+			--self:visible(param.HasFocus == false)
+			if param.HasFocus ~= nil then
+				self:visible(not param.HasFocus);
+			end;
+		end;]]
+	};
+	LoadFont("facu/_zona pro bold 20px")..{
+		Condition=MUSICWHEEL_SONG_NAMES;
+		InitCommand=cmd(y,scah/2+18;maxwidth,scaw*.8);
+		SetMessageCommand=function(self,param)
+			local song = param.Song
+			--[[if param.HasFocus ~= nil then
+				self:visible(not param.HasFocus);
+			end;]]
+			if song then
+				self:settext(song:GetMainTitle());
+			end;
+		end;
+	};
+	
+
 
 
 

@@ -7,4 +7,7 @@ return Def.Quad{
 		if GAMESTATE:IsEventMode() or DoDebug then ResetLife(); end;
 	end;
 };]]
-return Def.ActorFrame{};
+return Def.ActorFrame{
+	--Lock input for 2 seconds so people don't accidentally skip the eval screen.
+	OnCommand=cmd(sleep,4);
+};

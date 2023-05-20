@@ -5,19 +5,7 @@ local t = Def.ActorFrame {
 };
 
 --HAS THIS GUY EVER HEARD OF METRICS???
-local stage =		GAMESTATE:GetCurrentStage()
---optionlist controls
-local OPLIST_WIDTH =		THEME:GetMetric("CustomRIO","OpQuadWidth")		--option list quad width
-local olania =		0.1			--optionlist animation time in
-local olanib =		0.2			--optionlist animation time out
-local olhei	=		SCREEN_HEIGHT*0.75	--optionlist quadheight
-local oltfad =		0.125		--optionlist top fade value (0..1)
-local olbfad =		0.5			--optionlist bottom fade value
-local ollfad =		0			--optionlist left  fade value
-local olrfad =		0			--optionlist right fade value
-local OPLIST_splitAt = THEME:GetMetric("OptionsList","MaxItemsBeforeSplit")
---Start to shift the optionsList up at this row
-local OPLIST_ScrollAt = 16
+
 -- Chart info helpers
 local infy =		160					--Chart info Y axis position (both players, includes black quad alt)
 local infx =		0					--Chart info X DIFFERENCE FROM DISC
@@ -33,8 +21,6 @@ local wqwid =		_screen.cx			--
 local npsxz =	_screen.cx*0.5		--next/previous song X zoom
 local npsyz =	_screen.cy --*0.75	--next/previous song Y zoom
 --
---local css1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1);
---local css2 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2);
 local newranktext = "NEW CHALLENGER"	--text replacing #P1# when someone does a new record
 local bpmalt = 	_screen.cy+55			--Y value for BPM Display below banner
 
@@ -121,9 +107,9 @@ t[#t+1] = Def.ActorFrame {
 	
 	--TIME
 	LoadFont("monsterrat/_montserrat light 60px")..{
-			Text="TIME";
-			InitCommand=cmd(x,SCREEN_CENTER_X-25;y,SCREEN_BOTTOM-92;zoom,0.6;skewx,-0.2);
-		};
+		Text="TIME";
+		InitCommand=cmd(x,SCREEN_CENTER_X-25;y,SCREEN_BOTTOM-92;zoom,0.6;skewx,-0.2);
+	};
 
 	
 	--Current Group/Playlist
@@ -131,31 +117,29 @@ t[#t+1] = Def.ActorFrame {
 		InitCommand=cmd(x,SCREEN_LEFT;y,SCREEN_TOP+5;horizalign,left;vertalign,top;zoomx,1;cropbottom,0.3);
 	};
 	
-	LoadFont("monsterrat/_montserrat light 60px")..{	
+	LoadFont("monsterrat/_montserrat light 60px")..{
+		Text=THEME:GetString("ScreenSelectMusic","CURRENT SONGLIST");
 		InitCommand=cmd(horizalign,left;x,SCREEN_LEFT+18;y,SCREEN_TOP+10;zoom,0.185;skewx,-0.1);
-		CurrentSongChangedMessageCommand=function(self)
+		--Wat? Why would this ever change?
+		--[[CurrentSongChangedMessageCommand=function(self)
 		local song = GAMESTATE:GetCurrentSong();
 			if song then
 				self:uppercase(true);
 				self:settext("Current songlist");
 			end
-		end;
+		end;]]
 	};
 	
-	LoadFont("monsterrat/_montserrat semi bold 60px")..{	
-		InitCommand=cmd(horizalign,left;x,SCREEN_LEFT+16;y,SCREEN_TOP+30;zoom,0.6;skewx,-0.25);
-		CurrentSongChangedMessageCommand=function(self)
-		local song = GAMESTATE:GetCurrentSong();
-			if song then
-				self:uppercase(true);
-				cur_group = GAMESTATE:GetCurrentSong():GetGroupName();
-				self:settext(string.gsub(cur_group,"^%d%d? ?%- ?", ""));
-				--[[if string.find(cur_group,"Rave It Out") then
-					self:settext(string.sub(cur_group, 17, string.len(cur_group)-1));
-				else
-					self:settext(string.sub(cur_group, 4, string.len(cur_group)));
-				end;]]
-			end
+	LoadFont("monsterrat/_montserrat semi bold 60px")..{
+		InitCommand=cmd(horizalign,left;x,SCREEN_LEFT+16;y,SCREEN_TOP+30;zoom,0.6;skewx,-0.25;uppercase,true);
+		OnCommand=function(self)
+			--Maybe this is a bad idea. cur_group isn't set if the channel_system isn't loaded, so just set it manually.
+			--assert(getenv("cur_group"),"current group not set!");
+			if not getenv("cur_group") then setenv("cur_group",SCREENMAN:GetTopScreen():GetMusicWheel():GetSelectedSection()) end
+			self:settext(string.gsub(getenv("cur_group"),"^%d%d? ?%- ?", ""));
+		end;
+		StartSelectingSongMessageCommand=function(self)
+			self:playcommand("On");
 		end;
 	};
  };
@@ -163,36 +147,16 @@ t[#t+1] = Def.ActorFrame {
 t[#t+1] = LoadActor("arrow_shine");
 t[#t+1] = Def.ActorFrame{
 
-	--[[
-	LoadFont("Common normal")..{	--formatted stage display
+	
+	--[[LoadFont("Common normal")..{	--formatted stage display
 		InitCommand=cmd(xy,_screen.cx,_screen.cy-190;zoomx,0.75;zoomy,0.65);
-		OnCommand=function(self)
-			local stageNum=GAMESTATE:GetCurrentStageIndex()
-			if stageNum < 10 then stg = "0"..stageNum+1 else stg = stageNum+1 end;
-			
-			if DoDebug then curstage = "DevMode - Stage: "..stg
-			elseif GAMESTATE:IsEventMode() then curstage = "Event Mode - "..stageNum.."th Stage"
-			elseif 		stage == "Stage_1st"		then curstage = "1st Stage"
-			elseif	stage == "Stage_2nd"		then curstage = "2nd Stage"
-			elseif	stage == "Stage_3rd"		then curstage = "3rd Stage"
-			elseif	stage == "Stage_4th"		then curstage = "4th Stage"
-			elseif	stage == "Stage_5th"		then curstage = "5th Stage"
-			elseif	stage == "Stage_Next"		then curstage = "Next Stage"
-			elseif	stage == "Stage_Final"		then curstage = "Final Stage"
-			elseif	stage == "Stage_Extra1"		then curstage = "Extra Stage"
-			elseif	stage == "Stage_Extra2"		then curstage = "Encore Stage"
-			elseif	stage == "Stage_Nonstop"	then curstage = "Nonstop Stage"
-			elseif	stage == "Stage_Oni"		then curstage = "Oni Stage"
-			elseif	stage == "Stage_Endless"	then curstage = "Endless"
-			elseif	stage == "Stage_Event"		then curstage = "Event Mode"
-			elseif	stage == "Stage_Demo"		then curstage = "Demo"
-			else	curstage = stageNum.."th Stage"
-			end;
-			self:settext(curstage);
-		end;
-	};
-	--]]
-
+		Text=ToEnumShortString(GAMESTATE:GetCurrentStage()).." Stage";
+	};]]
+	--[[LoadFont("monsterrat/_montserrat semi bold 60px")..{
+		InitCommand=cmd(horizalign,right;x,SCREEN_RIGHT-16;y,SCREEN_TOP+23;zoom,0.6;skewx,-0.25;);
+		Text=string.upper(ToEnumShortString(GAMESTATE:GetCurrentStage()).." Stage");
+	};]]
+	
 	--Left side background
 	Def.ActorFrame{
 		InitCommand=cmd(x,SCREEN_LEFT;y,_screen.cy+110;vertalign,middle,horizalign,right);
@@ -207,9 +171,10 @@ t[#t+1] = Def.ActorFrame{
 			--InitCommand=cmd(diffuse,color("0,0,0,"..bqalph);xy,0,SCREEN_CENTER_Y;horizalign,right;setsize,bqwid*2,bqalt+50;);
 		};
 		LoadFont("bebas/_bebas neue bold 90px")..{
-			Text="NOT PRESENT";
-			InitCommand=cmd(visible,not GAMESTATE:IsHumanPlayer(PLAYER_1);x,-_screen.cx*0.7;y,-infy;zoom,0.3;skewx,-0.2);
-			PlayerJoinedMessageCommand=cmd(visible,not GAMESTATE:IsHumanPlayer(PLAYER_1));
+			Text=THEME:GetString("ScreenSelectMusic","NOT PRESENT");
+			Condition=not GAMESTATE:IsHumanPlayer(PLAYER_1);
+			InitCommand=cmd(x,-_screen.cx*0.7;y,-infy;zoom,0.3;skewx,-0.2);
+			--PlayerJoinedMessageCommand=cmd(visible,not GAMESTATE:IsHumanPlayer(PLAYER_1));
 		};
 	};
 	--Right side background
@@ -226,9 +191,10 @@ t[#t+1] = Def.ActorFrame{
 			--InitCommand=cmd(diffuse,color("0,0,0,"..bqalph);xy,0,SCREEN_CENTER_Y;horizalign,right;setsize,bqwid*2,bqalt+50;);
 		};
 		LoadFont("bebas/_bebas neue bold 90px")..{
-			Text="NOT PRESENT";
-			InitCommand=cmd(visible,not GAMESTATE:IsHumanPlayer(PLAYER_2);x,_screen.cx*0.7;y,-infy;zoom,0.3;skewx,-0.2);
-			PlayerJoinedMessageCommand=cmd(visible,not GAMESTATE:IsHumanPlayer(PLAYER_2));
+			Condition=not GAMESTATE:IsHumanPlayer(PLAYER_2);
+			Text=THEME:GetString("ScreenSelectMusic","NOT PRESENT");
+			InitCommand=cmd(x,_screen.cx*0.7;y,-infy;zoom,0.3;skewx,-0.2);
+			--PlayerJoinedMessageCommand=cmd(visible,not GAMESTATE:IsHumanPlayer(PLAYER_2));
 		};
 	};
 	Def.Quad{		--White for Chart info P1 EFFECT JOINED
@@ -253,31 +219,33 @@ t[#t+1] = Def.ActorFrame{
 	};
 };
 
+
 t[#t+1] = Def.ActorFrame{			
 	LoadActor("judge_back")..{		--This is my big surprise secret remodel lmfao -Gio
-			InitCommand=cmd(zoom,0.35;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y-124;diffusealpha,0);
+			InitCommand=cmd(zoom,0.35;x,SCREEN_CENTER_X;y,THEME:GetMetric("ScreenSelectMusic","StepsInfoY");diffusealpha,0);
 			SongChosenMessageCommand=cmd(linear,0.1;diffusealpha,1);
 			SongUnchosenMessageCommand=cmd(linear,0.1;diffusealpha,0);
 	};
 	LoadFont("facu/_zona pro bold 40px")..{
 		Text="STEPS INFO";
-		InitCommand=cmd(zoom,0.35;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y-125;diffusealpha,0);
+		InitCommand=cmd(zoom,0.35;x,SCREEN_CENTER_X;y,THEME:GetMetric("ScreenSelectMusic","StepsInfoY")-1;diffusealpha,0);
 		SongChosenMessageCommand=cmd(linear,0.1;diffusealpha,1);
 		SongUnchosenMessageCommand=cmd(linear,0.1;diffusealpha,0);
 	};
 	
 	LoadActor("tab-speed")..{		--Fancy, eh?
-			InitCommand=cmd(zoom,0.35;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y-70;diffusealpha,0);
+			InitCommand=cmd(zoom,0.35;x,SCREEN_CENTER_X;y,THEME:GetMetric("ScreenSelectMusic","SpeedInfoY");diffusealpha,0);
 			SongChosenMessageCommand=cmd(linear,0.1;diffusealpha,1);
 			SongUnchosenMessageCommand=cmd(linear,0.1;diffusealpha,0);
 	};
 	LoadActor("tab-score")..{		--I hope people like it!
-			InitCommand=cmd(zoom,0.35;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;diffusealpha,0);
+			InitCommand=cmd(zoom,0.35;x,SCREEN_CENTER_X;y,THEME:GetMetric("ScreenSelectMusic","ScoreInfoY");diffusealpha,0);
 			SongChosenMessageCommand=cmd(linear,0.1;diffusealpha,1);
 			SongUnchosenMessageCommand=cmd(linear,0.1;diffusealpha,0);
 	};
 }
 
+--This is what has the steps info, speed, score, etc
 for pn in ivalues(GAMESTATE:GetEnabledPlayers()) do
 	t[#t+1] = LoadActor("DifficultySelectObjects", pn, infx, infy);
 end;
@@ -319,325 +287,33 @@ else
 		};
 	}
 	--Don't load if not used.
-	if THEME:GetMetric("ScreenSelectMusic","UseCustomOptionsList") then
-		t[#t+1] = LoadActor("CustomOptionsList");
-	elseif THEME:GetMetric("ScreenSelectMusic","UseOptionsList") then
-		local function CurrentNoteSkin(p)
-			local state = GAMESTATE:GetPlayerState(p)
-			local mods = state:GetPlayerOptionsArray( 'ModsLevel_Preferred' )
-			local skins = NOTESKIN:GetNoteSkinNames()
-
-			for i = 1, #mods do
-				for j = 1, #skins do
-					if string.lower( mods[i] ) == string.lower( skins[j] ) then
-					   return skins[j];
-					end
-				end
-			end
-		end
-		--OpList
-		for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
-			--This keeps the name of the current OptionsList because OptionsListLeft and OptionsListRight does not know what list this is otherwise
-			local currentOpList
-			--The amount of rows in the current optionsList menu.
-			local numRows
-			--This gets a handle on the optionsList Actor so it can be adjusted.
-			local optionsListActor
-			--If player 1, move towards left. If player 2, move towards right.
-			local moveTowards = (pn == PLAYER_1) and SCREEN_LEFT+OPLIST_WIDTH/2 or SCREEN_RIGHT-OPLIST_WIDTH/2
-			--The offscreen position.
-			local startPosition = (pn==PLAYER_1) and moveTowards-OPLIST_WIDTH or moveTowards+OPLIST_WIDTH
-			t[#t+1] = Def.ActorFrame{
-				InitCommand=cmd(x,startPosition);
-				OnCommand=function(self)
-					--Named OptionsListP1 or OptionsListP2
-					optionsListActor = SCREENMAN:GetTopScreen():GetChild("OptionsList"..pname(pn))
-					--assert(optionsListActor,"No actor!")
-				end;
-				CodeMessageCommand = function(self, params)
-					if params.Name == 'OptionList' then
-						SCREENMAN:GetTopScreen():OpenOptionsList(params.PlayerNumber)
-					end;
-				end;
-				OptionsListOpenedMessageCommand=function(self,params)
-					if params.Player == pn then
-						setenv("currentplayer",pn);
-						self:decelerate(olania);
-						self:x(moveTowards);
-					end
-				end;
-				OptionsListClosedMessageCommand=function(self,params)
-					if params.Player == pn then
-						self:stoptweening();
-						self:accelerate(olanib);
-						self:x(startPosition);
-					end;
-				end;
-				Def.Quad{			--Fondo difuminado
-					InitCommand=cmd(draworder,998;diffuse,0,0,0,0.75;y,_screen.cy;zoomto,OPLIST_WIDTH,olhei;fadetop,oltfad;fadebottom,olbfad);
-				};
-				LoadFont("bebas/_bebas neue bold 90px")..{	--Texto "OPTION LIST"
-					Text="OPTION LIST";
-					InitCommand=cmd(draworder,999;y,_screen.cy-(olhei/2.25);vertalign,bottom;zoom,0.35;);
-				};
-				
-				LoadFont("Common Normal")..{
-					--Text="Hello World!";
-					InitCommand=cmd(draworder,999;y,_screen.cy-(olhei/2.25)+10;vertalign,top;zoom,.5;wrapwidthpixels,350);
-					OptionsListOpenedMessageCommand=function(self,params)
-						if params.Player == pn then
-							currentOpList = "SongMenu"
-							--This batshit code finds the value of [ScreenOptionsMaster] SongMenu,1
-							self:settext(THEME:GetString("OptionExplanations",string.gsub(THEME:GetMetric("ScreenOptionsMaster",THEME:GetMetric("OptionsList","TopMenu")..",1"):split(";")[1],"name,","")))
-						end;
-					end;
-					AdjustCommand=function(self,params)
-						--SCREENMAN:SystemMessage(currentOpList..", "..params.Selection.." "..THEME:GetMetric("ScreenOptionsMaster",currentOpList..","..params.Selection+1))
-						if params.Player == pn then
-							if currentOpList == "SongMenu" or currentOpList == "System" then
-								
-								if params.Selection+1 <= numRows then
-									local itemName = string.gsub(THEME:GetMetric("ScreenOptionsMaster",currentOpList..","..params.Selection+1):split(";")[1],"name,","")
-									self:settext(THEME:GetString("OptionExplanations",itemName))
-								else
-									self:settext("Exit.");
-								end;
-							elseif currentOpList == "NoteSkins" then
-								local curRow;
-								--This global var is exported by OptionRowAvailableNoteskins()
-								if OPLIST_splitAt < OPTIONSLIST_NUMNOTESKINS then
-									curRow = math.floor((params.Selection)/2)+1
-								else
-									curRow = params.Selection+1
-								end;
-								--SCREENMAN:SystemMessage(curRow)
-								if curRow>OPLIST_ScrollAt then
-									optionsListActor:stoptweening():linear(.2):y((SCREEN_CENTER_Y-100)+THEME:GetMetric("OptionsList","ItemsSpacingY")*(OPLIST_ScrollAt-curRow))
-								else
-									optionsListActor:stoptweening():linear(.2):y(SCREEN_CENTER_Y-100)
-								end;
-							end;
-						end;
-						--SCREENMAN:SystemMessage(itemName)
-					end;
-					OptionsListRightMessageCommand=function(self,params)
-						self:playcommand("Adjust",params);
-					end;
-					OptionsListLeftMessageCommand=function(self,params)
-						self:playcommand("Adjust",params);
-					end;
-					
-					OptionsListStartMessageCommand=function(self,params)
-						if params.Player == pn then
-							if currentOpList == "NoteSkins" then
-								local curRow;
-								--This global var is exported by OptionRowAvailableNoteskins()
-								if OPLIST_splitAt < OPTIONSLIST_NUMNOTESKINS then
-									curRow = math.floor((OPTIONSLIST_NUMNOTESKINS)/2)+1
-								else
-									curRow = OPTIONSLIST_NUMNOTESKINS+1
-								end;
-								--SCREENMAN:SystemMessage(curRow)
-								if curRow>OPLIST_ScrollAt then
-									optionsListActor:stoptweening():linear(.2):y((SCREEN_CENTER_Y-100)+THEME:GetMetric("OptionsList","ItemsSpacingY")*(OPLIST_ScrollAt-curRow))
-								else
-									optionsListActor:stoptweening():linear(.2):y(SCREEN_CENTER_Y-100)
-								end;
-							end;
-						end;
-					end;
-					OptionsMenuChangedMessageCommand=function(self,params)
-						--SCREENMAN:SystemMessage("MenuChanged: Menu="..params.Menu);
-						if params.Player == pn then
-							currentOpList=params.Menu
-							optionsListActor:y(SCREEN_CENTER_Y-100) --Reset the positioning
-							if params.Menu ~= "SongMenu" and params.Menu ~= "System" then
-								self:settext(THEME:GetString("OptionExplanations",params.Menu))
-							else
-								--SCREENMAN:SystemMessage(params.Size);
-								numRows = tonumber(THEME:GetMetric("ScreenOptionsMaster",currentOpList))
-							end;
-						end;
-					end;
-				};
-				LoadFont("Common Normal")..{
-					Text="Current Velocity:";
-					InitCommand=cmd(draworder,999;y,_screen.cy-(olhei/2.25)+35;vertalign,top;zoom,.5;wrapwidthpixels,350;diffusebottomedge,Color("HoloBlue");visible,false);
-					OnCommand=function(self,params)
-						self:playcommand("UpdateText",{Player=pn});
-					end;
-					UpdateTextCommand=function(self,params)
-						if params.Player == pn then
-							if GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod() then
-								self:settext("Current Velocity: "..GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod());
-							else
-								self:settext("Current Velocity: None");
-							end;
-						end;
-					end;
-					SpeedModChangedMessageCommand=function(self,params)
-						if params.Player == pn and currentOpList == "SpeedMods" then
-							self:playcommand("UpdateText",params);
-						end;
-					end;
-					AdjustCommand=function(self,params)
-						if currentOpList == "SongMenu" then
-							if params.Selection == 5 then
-								self:playcommand("UpdateText",params);
-								self:visible(true);
-							else
-								self:visible(false);
-							end;
-						end;
-					end;
-					OptionsListRightMessageCommand=function(self,params)
-						if params.Player == pn then
-							self:playcommand("Adjust",params);
-						end;
-					end;
-					OptionsListLeftMessageCommand=function(self,params)
-						if params.Player == pn then
-							self:playcommand("Adjust",params);
-						end;
-					end;
-				};
-				--For the combo judgement only
-				Def.Sprite{
-					InitCommand=cmd(y,SCREEN_CENTER_Y-116;draworder,999;zoom,.8);
-					OptionsMenuChangedMessageCommand=function(self,params)
-						if params.Player == pn then
-							if params.Menu == "JudgmentType" then
-								if ActiveModifiers[pname(pn)]["JudgmentGraphic"] ~= "None" then
-									self:Load(THEME:GetPathG("Judgment", ActiveModifiers[pname(pn)]["JudgmentGraphic"])):SetAllStateDelays(1);
-								end;
-								self:stoptweening():visible(true)--[[:diffusealpha(0):linear(.2):diffusealpha(1)]];
-							else
-								self:visible(false)
-							end;
-						end;
-					end;
-					AdjustCommand=function(self,params)
-						if params.Player == pn and currentOpList == "JudgmentType" then
-							if params.Selection == #OptionRowJudgmentGraphic().Choices then
-								self:Load(THEME:GetPathG("Judgment", ActiveModifiers[pname(pn)]["JudgmentGraphic"])):SetAllStateDelays(1);
-							elseif OptionRowJudgmentGraphic().judgementFileNames[params.Selection+1] ~= "None" then
-								self:Load(THEME:GetPathG("Judgment", OptionRowJudgmentGraphic().judgementFileNames[params.Selection+1])):SetAllStateDelays(1);
-							else
-								--SCREENMAN:SystemMessage(params.Selection..", "..#OptionRowJudgmentGraphic().Choices)
-								self:Load(nil);
-							end;
-						end;
-					end;
-					OptionsListRightMessageCommand=function(self, params)
-						self:playcommand("Adjust",params);
-					end;
-					OptionsListLeftMessageCommand=function(self,params)
-						self:playcommand("Adjust", params);
-					end;
-				
-				};
-				--Using an ActorFrame here causes draworder issues.
-				LoadActor("optionIcon")..{
-					InitCommand=cmd(draworder,100;zoomy,0.34;zoomx,0.425;diffusealpha,.75;y,_screen.cy-(olhei/2.25)+40;draworder,998);
-					OptionsMenuChangedMessageCommand=function(self,params)
-						--SCREENMAN:SystemMessage("MenuChanged: Menu="..params.Menu);
-						if params.Player == pn then
-							if params.Menu == "NoteSkins" then
-								self:stoptweening():linear(.3):diffusealpha(1);
-							else
-								self:diffusealpha(0);
-							end;
-						end;
-					end;
-				};
-		
-				Def.Sprite{
-					InitCommand=cmd(x,1;y,_screen.cy-(olhei/2.25)+40;draworder,999);
-					OptionsMenuChangedMessageCommand=function(self,params)
-						if params.Player == pn then
-							if params.Menu == "NoteSkins" then
-								self:playcommand("On")
-								self:stoptweening():linear(.3):diffusealpha(1);
-							else
-								self:diffusealpha(0);
-							end;
-						end;
-					end;
-					OnCommand=function(self)
-						local arrow = "__RIO";
-						local name = "THUMB";
-						local highlightedNoteSkin = CurrentNoteSkin(pn);
-						local path = NOTESKIN:GetPathForNoteSkin(arrow, name, highlightedNoteSkin);
-						--SCREENMAN:SystemMessage("1Noteskin="..highlightedNoteSkin..",Path="..path);
-						if not path then
-							arrow = "UpLeft"; name = "Tap Note";
-							if highlightedNoteSkin == "delta" then
-								name = "Ready Receptor";
-							elseif highlightedNoteSkin == "delta-note" or string.ends(highlightedNoteSkin, "rhythm") then
-								arrow = "_UpLeft";
-							end
-							path = NOTESKIN:GetPathForNoteSkin(arrow, name, highlightedNoteSkin);
-						end
-						
-						self:Load(path);
-						self:croptop(0);
-						self:cropright(0);
-						self:zoom(0.35);
-					end;
-					AdjustCommand=function(self,params)
-						if params.Player == pn then
-							if params.Selection < OPTIONSLIST_NUMNOTESKINS then
-								local highlightedNoteSkin = OPTIONSLIST_NOTESKINS[params.Selection+1];
-								local arrow = "__RIO";
-								local name = "THUMB";
-								local path = NOTESKIN:GetPathForNoteSkin("__RIO", "THUMB", highlightedNoteSkin);
-								--SCREENMAN:SystemMessage("2Noteskin="..highlightedNoteSkin..",Path="..path);
-								if not path then
-									arrow = "UpLeft"; name = "Tap Note";
-									if highlightedNoteSkin == "delta" then
-										name = "Ready Receptor";
-									elseif highlightedNoteSkin == "delta-note" or string.ends(highlightedNoteSkin, "rhythm") then
-										arrow = "_UpLeft";
-									end
-									path = NOTESKIN:GetPathForNoteSkin(arrow, name, highlightedNoteSkin);
-								end
-								self:Load(path);
-								self:croptop(0);
-								self:cropright(0);
-								self:zoom(0.35);
-							else
-								self:playcommand("On");
-							end;
-						end;
-					end;
-					OptionsListRightMessageCommand=function(self,params)
-						self:playcommand("Adjust",params);
-					end;
-					OptionsListLeftMessageCommand=function(self,params)
-						self:playcommand("Adjust",params);
-					end;
-				};
-			};
-		end;
+	if THEME:GetMetric("ScreenSelectMusic","UseOptionsList") then
+		t[#t+1] = LoadActor("OptionsList");
 	end;
 end;
  
 t[#t+1] = LoadActor("code_detector.lua")..{};
 --t[#t+1] = LoadActor("PlayerMods")..{};
-t[#t+1] = LoadActor("GenreSounds.lua")..{};
+--t[#t+1] = LoadActor("GenreSounds.lua")..{};
 if getenv("PlayMode") == "Arcade" or getenv("PlayMode") == "Pro" then 
+	
 	if GetSmallestNumHeartsLeftForAnyHumanPlayer() > 1 then
 		t[#t+1] = LoadActor("channel_system")..{};
 	else
-		assert(SONGMAN:DoesSongGroupExist(RIO_FOLDER_NAMES["SnapTracksFolder"]),"You are missing the snap tracks folder from SYSTEM_PARAMETERS.lua which is required. The game cannot continue.");
-		local folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["SnapTracksFolder"]);
-		local randomSong = folder[math.random(1,#folder)]
-		GAMESTATE:SetCurrentSong(randomSong);
-		GAMESTATE:SetPreferredSong(randomSong);
+		if SONGMAN:DoesSongGroupExist(RIO_FOLDER_NAMES["SnapTracksFolder"]) then
+			--assert(SONGMAN:DoesSongGroupExist(RIO_FOLDER_NAMES["SnapTracksFolder"]),"You are missing the snap tracks folder from SYSTEM_PARAMETERS.lua which is required. The game cannot continue.");
+			local folder = SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["SnapTracksFolder"]);
+			local randomSong = folder[math.random(1,#folder)]
+			GAMESTATE:SetCurrentSong(randomSong);
+			GAMESTATE:SetPreferredSong(randomSong);
+		else
+			lua.ReportScriptError("You are missing the snap tracks folder from SYSTEM_PARAMETERS.lua which is required. The game will continue, but there will be glitches.");
+			t[#t+1] = LoadActor("channel_system")..{};
+		end;
 	end;
 end;
 
-t[#t+1] = LoadActor(THEME:GetPathG("","USB_stuff"))..{};
+t[#t+1] = LoadActor(THEME:GetPathB("","ProfileBanner"))..{};
 
 t[#t+1] = LoadActor("ready")..{		-- 1 PLAYER JOINED READY
 	InitCommand=cmd(visible,false;horizalign,center;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoom,2;);
@@ -666,7 +342,7 @@ if getenv("PlayMode") == "Easy" then
 			InitCommand=cmd(x,SCREEN_WIDTH/4;y,SCREEN_CENTER_Y+150);
 			--PLAYER 1
 			LoadActor("DifficultyList/background_orb")..{
-				InitCommand=cmd(horizalign,center;zoom,0.7;);
+				InitCommand=cmd(horizalign,center;zoom,0.5;);
 				OffCommand=function(self,param)
 					self:linear(0.3);
 					self:Load(THEME:GetPathG("","_white"));
@@ -691,7 +367,7 @@ if getenv("PlayMode") == "Easy" then
 			InitCommand=cmd(x,SCREEN_WIDTH*.75;y,SCREEN_CENTER_Y+150);
 			--PLAYER 2
 			LoadActor("DifficultyList/background_orb")..{
-				InitCommand=cmd(horizalign,center;zoom,0.7;);
+				InitCommand=cmd(horizalign,center;zoom,0.5;);
 				OffCommand=function(self,param)
 					self:linear(0.3);
 					self:Load(THEME:GetPathG("","_white"));
@@ -719,21 +395,6 @@ t[#t+1] = LoadActor("new_song") ..{
 	InitCommand=cmd(zoom,0.1;visible,false;x,SCREEN_CENTER_X+200;y,SCREEN_CENTER_Y-150;);
 	CurrentSongChangedMessageCommand=function(self)
 		if PROFILEMAN:IsSongNew(GAMESTATE:GetCurrentSong()) then self:visible(true); else self:visible(false); end;
-	end;
-};
-
-
-t[#t+1] = LoadActor("_CommandWindow") ..{
-
-	InitCommand=cmd(draworder,999;x,SCREEN_CENTER_Y;y,0;visible,false;setevn,"CW_Active","false");
-
-	OptionsListOpenedMessageCommand = function(self, params)
-		self:visible(GAMESTATE:IsHumanPlayer(PLAYER_1));
-		setenv("CW_Active","true");
-	end;
-	OptionsListClosedMessageCommand = function(self, params)
-		self:visible(false);
-		setenv("CW_Active","false") ;
 	end;
 };
 

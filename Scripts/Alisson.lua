@@ -16,14 +16,15 @@ function getcurstage()
 	return gfxNames[GAMESTATE:GetCurrentStage()]
 end
 
-function GetBGAPreviewPath(_)
+--Please stop using this, it's depreciated and GetSongExtraData should be used instead..
+--[[function GetBGAPreviewPath(_)
 	--just ignore the tag parameter
 	local song = GAMESTATE:GetCurrentSong()
 	if song then
 		return GetSongExtraData(song, "PreviewVid")
 	end
 	return ""
-end
+end]]
 
 --[[
 original code by Alisson, for reference
@@ -87,6 +88,8 @@ function IsRoutineMasterPlayer(p)
 	return true
 end
 
+
+--Is this function even used?
 function GetCourseDescription(file,tag)
 if FILEMAN:DoesFileExist(file) then
 	local readfile = File.Read( file )
@@ -110,13 +113,13 @@ function EasyOrArcade()
 end;
 
 
-function ResetPreferences()
+--[[function ResetPreferences()
 	PREFSMAN:SetPreference("AllowW1",'AllowW1_Never');
 	WriteGamePrefToFile("DefaultFail","Off");
 	GAMESTATE:ApplyGameCommand( "mod,3x,rio,FailOff;", PLAYER_1 );
 	GAMESTATE:ApplyGameCommand( "mod,3x,rio,FailOff;", PLAYER_2 );
 	--SCREENMAN:SystemMessage("Preferences setted to default values.");
-end
+end]]
 
 -- Depreciated, use PIU_HEARTS_SYSTEM instead.
 --[[function GetNumlifeLeft()

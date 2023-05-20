@@ -11,6 +11,7 @@ local TapNoteScorePoints = {
 	TapNoteScore_None =	0;
 	TapNoteScore_HitMine =	-1000;
 	TapNoteScore_AvoidMine = 0;
+	TapNoteScore_Bonus = 0;
 };
 
 local ComboTapNoteScorePoints = {
@@ -25,6 +26,7 @@ local ComboTapNoteScorePoints = {
 	TapNoteScore_None =	0;
 	TapNoteScore_HitMine =	-1000;
 	TapNoteScore_AvoidMine = 0;
+	TapNoteScore_Bonus = 0;
 
 };
 
@@ -37,6 +39,7 @@ local TapNoteScorePointsMultiplier = {
 	TapNoteScore_W5 				= { 1,1,1  ,1,1,1,1,1,1,1 }; -- No Bonus
 	TapNoteScore_Miss 				= { 1,1,1  ,1,1,1,1,1,1,1 }; -- No Bonus
 	TapNoteScore_CheckpointMiss 	= { 1,1,1  ,1,1,1,1,1,1,1 }; -- No Bonus
+	TapNoteScore_Bonus 	= { 1,1,1  ,1,1,1,1,1,1,1 }; -- No Bonus
 
 }
 local PlayerScores = {
@@ -54,7 +57,8 @@ local TapNoteType = {
 	TapNoteType_Lift = "TapNoteType_Lift",
 	TapNoteType_Attack = "TapNoteType_Attack",
 	TapNoteType_AutoKeysound = "TapNoteType_AutoKeysound",
-	TapNoteType_Fake = "TapNoteType_Fake"
+	TapNoteType_Fake = "TapNoteType_Fake";
+	TapNoteType_Bonus = "TapNoteType_Bonus";
 };
 
 function boolToString(b)

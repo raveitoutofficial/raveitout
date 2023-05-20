@@ -63,6 +63,7 @@ function for things that can't be managed by the unlock system.
 	--Name, unlock type, requirement, parameters
 	["SANGVIS FERRI","ChartAuthor", 10, "Accelerator"],
 	["Team 404", "ChartAuthor", 20, "Accelerator"],
+	["Anti-Rain Team", "ChartAuthor", 30, "Accelerator"],
 	["Dance Beginner", "Level", 5],
 	["Dance Trainee", "Level", 10],
 	["Dance Pro", "Level", 20],
@@ -76,8 +77,8 @@ function for things that can't be managed by the unlock system.
 	["Straight Gangsta", "RanksInGroup", 5, "Hip-Hop"],
 	["Dale!", "Artist", 3, "Pitbull"],
 	["Smooth Criminal", "Artist", 999, "Michael Jackson"], --Replace with however many Michael Jackson songs we have I guess
-	["RIO Needs More K-Pop", "SongsPlayedInGroup", 3, "K-Pop"],
-	["Thank You For Playing!", "SongRank", 1, "World Go Boom (USoP 2011)"],
+	["RIO Needs More K-Pop", "SongsPlayedInGroup", 2, "K-Pop"],
+	["Thank You For Playing!", "SongRank", 1, SONGMAN:FindSong(OMES_SONG)],
 	["It's the MF'n D.O.Double-G", "SongsPlayed", 420],
 	["What the fuck?", "SongRank", 2, "Loca People"],
 	["AAAAYYYY SEXY LADY", "SongRank", 2, "Gangnam Style"]

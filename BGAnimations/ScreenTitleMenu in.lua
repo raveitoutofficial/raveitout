@@ -1,4 +1,1 @@
-
-return Def.Quad{
-
-};
+return Def.ActorFrame{};

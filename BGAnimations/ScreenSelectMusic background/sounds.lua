@@ -78,22 +78,5 @@ return Def.ActorFrame{
 		OffCommand=cmd(play);
 	};
 
-	-- CODEBOX/OPTIONLIST
-	LoadActor(THEME:GetPathS("","Codebox Move"))..{
-		OptionsListOpenedMessageCommand=cmd(play);
-		OptionsListRightMessageCommand=cmd(play);
-		OptionsListLeftMessageCommand=cmd(play);
-		OptionsListQuickChangeMessageCommand=cmd(play);
-	};
-	LoadActor(THEME:GetPathS("","Codebox Select"))..{
-		OptionsListStartMessageCommand=cmd(play);
-		OptionsListResetMessageCommand=cmd(play);	
-	};
-	LoadActor(THEME:GetPathS("","Codebox Enter"))..{
-		OptionsListPopMessageCommand=cmd(play);
-		OptionsListPushMessageCommand=cmd(play);
-	};
-	LoadActor(THEME:GetPathS("","Codebox Close"))..{
-		OptionsListClosedMessageCommand=cmd(play);	
-	};
+	--OptionsList sounds are in OptionsList.lua.
 };

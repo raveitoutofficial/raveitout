@@ -1,26 +1,20 @@
 local EasterEggs = PREFSMAN:GetPreference("EasterEggs");
 local master_player = GAMESTATE:GetMasterPlayerNumber();
 
-local curstage = GAMESTATE:GetCurrentStage()
+local stage = GAMESTATE:GetCurrentStage();
 
-	local gfxNames = {
-		Stage_Extra1=	"ScreenGameplay stage extra1";
-		Stage_Extra2=	"ScreenGameplay stage extra1";
-		Stage_Demo=	"ScreenGameplay stage Demo";
-		Stage_Event="ScreenGameplay stage event";
-		Stage_1st=	"ScreenGameplay stage 1";
-		Stage_2nd=	"ScreenGameplay stage 2";
-		Stage_3rd=	"ScreenGameplay stage 3";
-		Stage_4th=	"ScreenGameplay stage 4";
-		Stage_5th=	"ScreenGameplay stage 5";
-		Stage_6th=	"ScreenGameplay stage 6";
-		StageFinal=	"ScreenGameplay stage final";
-	};
+local numStages = 1;
+--Courses are always out of 100000000
+if not GAMESTATE:IsCourseMode() then
+	if GAMESTATE:GetCurrentSong():IsLong() then
+		numStages = 2;
+	elseif GAMESTATE:GetCurrentSong():IsMarathon() then
+		numStages = 3;
+	end;
+end;
 
-	local stage = gfxNames[curstage];
-
-
-local stagemaxscore = 100000000*GAMESTATE:GetNumStagesForCurrentSongAndStepsOrCourse()
+local stagemaxscore = 100000000*numStages -- GAMESTATE:GetNumStagesForCurrentSongAndStepsOrCourse() returns 3 no matter what... Must be broken
+--SCREENMAN:SystemMessage(GAMESTATE:GetCurrentCourse():GetEstimatedNumStages());
 
 
 if GAMESTATE:IsCourseMode() then
@@ -47,6 +41,26 @@ local t = Def.ActorFrame{
 		
 		LoadActor("new_elements");
 		LoadActor("score_system");
+		
+		LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
+			Condition=DoDebug;
+			InitCommand=cmd(xy,SCREEN_CENTER_X,SCREEN_CENTER_Y;);
+			BeatCrossedMessageCommand=cmd(
+				settext,"Beat: "..math.round(GAMESTATE:GetSongBeat())..
+				"\nBPS: "..string.format("%.03f",GAMESTATE:GetSongBPS())..
+				"\nSeconds: "..string.format("%.03f",GAMESTATE:GetCurMusicSeconds())..
+				"\nTotal: "..string.format(GAMESTATE:GetSongPercent(GAMESTATE:GetSongBeat()))
+				--"\nCalculated: "..string.format("%.03f",GAMESTATE:GetSongBeat()/GAMESTATE:GetSongBPS())
+			);
+		};
+		
+		--[[LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
+			Condition=DoDebug;
+			InitCommand=cmd(Center);
+			ComboChangedMessageCommand=function(self)
+				self:settext(string.format("%.02f",STATSMAN:GetCurStageStats():GetPlayerStageStats(master_player):GetCurrentLife()*100).."%")
+			end;
+		};]]
 		
 		--[[LoadFont("monsterrat/_montserrat light 60px")..{	--percentage scoring P2
 			InitCommand=cmd(visible,IsP2On;zoom,0.3;x,notefxp2;y,SCREEN_BOTTOM-30;skewx,-0.25);
@@ -87,9 +101,10 @@ local t = Def.ActorFrame{
 		LoadActor("song meter")..{};
 		
 		LoadActor("demoplay")..{
+			Condition=(stage=="Stage_Demo");
 			InitCommand=cmd(x,notefxp1;y,SCREEN_BOTTOM-70;zoom,0.5;playcommand,"Set");
 			OnCommand=function(self)
-				if stage == "ScreenGameplay stage Demo" then
+				if stage == "Stage_Demo" then
 					GAMESTATE:ApplyGameCommand("stopmusic");
 				else
 					self:visible(false);
@@ -107,11 +122,8 @@ local t = Def.ActorFrame{
 		};
 		
 		LoadActor("demoplay")..{
-			InitCommand=cmd(x,notefxp2;y,SCREEN_BOTTOM-70;zoom,0.5;playcommand,"Set");
-			OnCommand=function(self)
-				if stage ~= "ScreenGameplay stage Demo" then self:visible(false); end
-			end;
-			
+			Condition=(stage=="Stage_Demo");
+			InitCommand=cmd(x,notefxp2;y,SCREEN_BOTTOM-70;zoom,0.5;playcommand,"Set");			
 			SetCommand=function(self)
 				self:linear(0.2);
 				self:diffusealpha(1);
@@ -123,69 +135,29 @@ local t = Def.ActorFrame{
 		};
 
 	};
-	
 
-
-	--[[Def.ActorFrame {
-		InitCommand=cmd(x,notefxp2;y,SCREEN_CENTER_Y;visible,GAMESTATE:IsSideJoined(PLAYER_2));
-			ComboChangedMessageCommand=function (self, params)
-				local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2);
-	
-				if stats:GetCurrentCombo() == 420 and EasterEggs then
-					MESSAGEMAN:Broadcast("WeedP2");
-				end
-			end;
-
-			LoadActor(THEME:GetPathG("","WeedCombo/explosion")) .. {
-				InitCommand=cmd(diffusealpha,0;blend,'BlendMode_Add';hide_if,not EasterEggs);
-				WeedP2MessageCommand=cmd(rotationz,0;zoom,2;diffusealpha,0.5;linear,0.5;rotationz,90;zoom,1.75;diffusealpha,0);
-			};
-			LoadActor(THEME:GetPathG("","WeedCombo/explosion")) .. {
-				InitCommand=cmd(diffusealpha,0;blend,'BlendMode_Add';hide_if,not EasterEggs);
-				WeedP2MessageCommand=cmd(rotationz,0;zoom,2;diffusealpha,0.5;linear,0.5;rotationz,-90;zoom,2.5;diffusealpha,0);
-			};
-	};]]
-	
-	
-	-- Player 2
-	--[[LoadFont("facu/_zona pro bold 20px")..{
-		InitCommand=cmd(player,PLAYER_2;x,THEME:GetMetric("ScreenGameplay","PlayerP2OnePlayerOneSideX");y,SCREEN_BOTTOM-46;horizalign,'HorizAlign_Center');
-		OnCommand=function(self, param)
-		p2stype = GAMESTATE:GetCurrentSteps(PLAYER_2):GetStepsType();
-		if p2stype ~= "StepsType_Pump_Single" and GAMESTATE:GetNumSidesJoined() == 1 or PREFSMAN:GetPreference("Center1Player") then
-			self:x(_screen.cx);
-		end
-			self:settext("Score: ".."0000");
-			self:zoom(0.7);
-			self:skewx(-0.25);
-			self:diffusealpha(0.9);
-		end;
-		RIOScoreChangedMessageCommand=function(self,params)
-			if params.Player == PLAYER_2 then
-				if params.Score > 0 then
-					self:settext("Score: "..params.Score);
-				else
-					self:settext("Score: ".."0000");
-				end;
-			end;
-		end;
-		OffCommand=function(self, param)
-			--STATSMAN:GetCurStageStats():GetPlayerStageStats( PLAYER_2 ):SetScore( getScores()[PLAYER_2] );
-		end;
-	};]]
-
-	LoadActor("MenuOptions");	
+	--LoadActor("MenuOptions");	
 };
 
 local competitionMode = (ActiveModifiers["P1"]["CompetitionMode"] and ActiveModifiers["P2"]["CompetitionMode"]) and not CenterGameplayWidgets()
 
-for pn in ivalues(GAMESTATE:GetHumanPlayers()) do	
+for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+	--We don't really support P3/P4 yet, as cool as it would be
+	if pn == "PlayerNumber_P3" or pn == "PlayerNumber_P4" then
+		break
+	end;
+
 	local notefxp =	THEME:GetMetric("ScreenGameplay","Player"..pname(pn).."OnePlayerOneSideX")	--Note field X position P1/P2 (pname evaluates to P1/P2 so it would be doing ScreenGameplay PlayerP1OnePlayerOneSideX)
 	local style = ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType())
 	if (style == "OnePlayerOneSide" and PREFSMAN:GetPreference("Center1Player")) or style == "OnePlayerTwoSides" then
 		notefxp = SCREEN_CENTER_X;
 	end;
-	local steps = GAMESTATE:GetCurrentSteps(pn):GetStepsType();
+	local steps;
+	if GAMESTATE:IsCourseMode() then
+		steps = GAMESTATE:GetCurrentTrail(pn):GetStepsType();
+	else
+		steps = GAMESTATE:GetCurrentSteps(pn):GetStepsType();
+	end;
 	
 	--Percentage thing
 	t[#t+1] = Def.ActorFrame{
@@ -216,11 +188,10 @@ for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 				InitCommand=cmd(zoomx,0.8;zoomy,0.7;playcommand,"ComboChangedMessage";y,SCREEN_BOTTOM-28;);
 				ComboChangedMessageCommand=function(self,param)
 					local State = GAMESTATE:GetPlayerState(pn);
-					local PlayerType = State:GetPlayerController();
+					--local PlayerType = State:GetPlayerController();
 					local css = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn);
-					local curmaxscore =	stagemaxscore
 					local score =		css:GetScore()				--score :v
-					local rawaccuracy =	(score/curmaxscore)*100		--Player accuracy RAW number
+					local rawaccuracy =	(score/stagemaxscore)*100		--Player accuracy RAW number
 					--rawaccuracy = getenv("P1_accuracy");
 					local maxzoomx = 0.8;
 					local multiplier = (maxzoomx/100)*rawaccuracy
@@ -245,66 +216,95 @@ for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 						end;
 					end;
 
-					if stepsp2 == "StepsType_Pump_Routine" and GAMESTATE:GetMasterPlayerNumber() ~= pn then
+					if steps == "StepsType_Pump_Routine" and GAMESTATE:GetMasterPlayerNumber() ~= pn then
 						self:visible(false);
 					end;
 				end;
 			};
 		};
-		LoadFont("monsterrat/_montserrat light 60px")..{	--percentage scoring P1
-			InitCommand=cmd(zoom,0.3;y,SCREEN_BOTTOM-30;skewx,-0.25);
+		Def.BitmapText{	--percentage scoring
+			--If steps are not routine or this is the master player (if playing routine)
+			--The first conditional has to be false for it to check the second one.
+			Condition=(steps ~= "StepsType_Pump_Routine" or GAMESTATE:GetMasterPlayerNumber() == pn);
+			Font="monsterrat/_montserrat light 60px";
+			InitCommand=cmd(zoom,0.3;y,SCREEN_BOTTOM-30;skewx,-0.25;);
+			--[[OnCommand=function(self)
+				self:Load("RollingNumbersPercent");
+			end;]]
 			ComboChangedMessageCommand=function(self,param)
 			--LifeChangedMessageCommand=function(self,param)
 				-- percentage scoring stuff:
 				local State = GAMESTATE:GetPlayerState(pn);
-				local PlayerType = State:GetPlayerController();				
+				--local PlayerType = State:GetPlayerController();				
 				local css = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn);
 				local curmaxscore =	stagemaxscore
 				local score =		css:GetScore()				--score :v
 				local rawaccuracy =	(score/curmaxscore)*100		--Player accuracy RAW number
 				--"%.3f" thanks CH32, se cambia el numero para mas decimales
-				local accuracy =		tonumber(string.format("%.02f",rawaccuracy)) or 0;		--Player accuracy formatted number
+				local accuracy =		string.format("%.02f",rawaccuracy) or "0.00";		--Player accuracy formatted number
 				
 				--accuracy = getenv("P1_accuracy") or 0;
 				
-				if steps == "StepsType_Pump_Routine" and GAMESTATE:GetMasterPlayerNumber() ~= pn then
-					self:settext("");
+				if rawaccuracy <= 0 then
+					self:settext("0.00%");
 				else
-					if accuracy == 0 then
-						self:settext("0.00%");
-					else
-						self:settext(accuracy.."%");
-					end;
+					self:settext(accuracy.."%");
 				end;
 				-- sets the accuracy (ugly workaround) -ROAD24
-				setenv(pname(pn).."_accuracy",accuracy);
+				setenv(pname(pn).."_accuracy",rawaccuracy);
 			end;
 				
 		};
+		LoadFont("monsterrat/_montserrat light 60px")..{	--percentage scoring (debug display)
+			Condition=DoDebug;
+			InitCommand=cmd(zoom,0.3;y,SCREEN_BOTTOM-60;skewx,-0.25);
+			ComboChangedMessageCommand=function(self,param)
+			--LifeChangedMessageCommand=function(self,param)
+				-- percentage scoring stuff:
+				local State = GAMESTATE:GetPlayerState(pn);
+				--local PlayerType = State:GetPlayerController();				
+				local css = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn);
+				local curmaxscore =	stagemaxscore
+				local score =		css:GetScore()				--score :v
+				--local rawaccuracy =	(score/curmaxscore)*100		--Player accuracy RAW number
+				--"%.3f" thanks CH32, se cambia el numero para mas decimales
+				--local accuracy =		tonumber(string.format("%.02f",rawaccuracy)) or 0;		--Player accuracy formatted number
+				
+				--accuracy = getenv("P1_accuracy") or 0;
+				
+				self:settext(score.."/"..stagemaxscore);
+			end;
+				
+		};
+		--Weedcombo
 		Def.ActorFrame {
+			Condition=EasterEggs;
 			InitCommand=cmd(y,SCREEN_CENTER_Y;);
-				ComboChangedMessageCommand=function (self, params)
-					local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn);
-		
-					if stats:GetCurrentCombo() == 420 and EasterEggs then
-						MESSAGEMAN:Broadcast("Weed"..pname(pn));
-					end
-				end;
+			ComboChangedMessageCommand=function (self, params)
+				local stats = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn);
+	
+				if stats:GetCurrentCombo() == 420 then
+					--MESSAGEMAN:Broadcast("Weed"..pname(pn));
+					self:playcommand("Weed");
+				end
+			end;
 
-				LoadActor(THEME:GetPathG("","WeedCombo/explosion")) .. {
-					InitCommand=cmd(diffusealpha,0;blend,'BlendMode_Add';hide_if,not EasterEggs);
-					WeedP1MessageCommand=cmd(rotationz,0;zoom,2;diffusealpha,0.5;linear,0.5;rotationz,90;zoom,1.75;diffusealpha,0);
-				};
-				LoadActor(THEME:GetPathG("","WeedCombo/explosion")) .. {
-					InitCommand=cmd(diffusealpha,0;blend,'BlendMode_Add';hide_if,not EasterEggs);
-					WeedP1MessageCommand=cmd(rotationz,0;zoom,2;diffusealpha,0.5;linear,0.5;rotationz,-90;zoom,2.5;diffusealpha,0);
-				};
+			LoadActor(THEME:GetPathG("","WeedCombo/explosion")) .. {
+				--Name="Weed1";
+				InitCommand=cmd(diffusealpha,0;blend,'BlendMode_Add';);
+				WeedCommand=cmd(rotationz,0;zoom,2;diffusealpha,0.5;linear,0.5;rotationz,90;zoom,1.75;diffusealpha,0);
+			};
+			LoadActor(THEME:GetPathG("","WeedCombo/explosion")) .. {
+				--Name="Weed2";
+				InitCommand=cmd(diffusealpha,0;blend,'BlendMode_Add';);
+				WeedCommand=cmd(rotationz,0;zoom,2;diffusealpha,0.5;linear,0.5;rotationz,-90;zoom,2.5;diffusealpha,0);
+			};
 
 
 		};
 		-- Player 1
 		LoadFont("facu/_zona pro bold 20px")..{
-			InitCommand=cmd(player,pn;y,SCREEN_BOTTOM-46;horizalign,'HorizAlign_Center');
+			InitCommand=cmd(y,SCREEN_BOTTOM-46;horizalign,'HorizAlign_Center');
 			OnCommand=function(self, param)
 				self:settext("Score: ".."0000");
 				self:zoom(0.7);
@@ -322,10 +322,16 @@ for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 				end;
 
 			end;
-			OffCommand=function(self, param)
-				--STATSMAN:GetCurStageStats():GetPlayerStageStats( PLAYER_1 ):SetScore( getScores()[PLAYER_1] );
-			end;
 		};
+		--[[Def.RollingNumbers{
+			Font="facu/_zona pro bold 20px";
+			InitCommand=cmd(y,SCREEN_BOTTOM-46;horizalign,'HorizAlign_Left';Load,"RollingNumbersScore");
+			RIOScoreChangedMessageCommand=function(self,params)
+				if params.Player == pn then
+					self:targetnumber(params.Score);
+				end;
+			end;
+		};]]
 	};
 	
 	--The judgement stats above the note receptors
@@ -337,5 +343,11 @@ for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 end;
 
 t[#t+1] = LoadActor("playerFailed");
+
+if stage=="Stage_Demo" then
+	t[#t+1] = LoadActor(THEME:GetPathG("ScreenAttract", "cardInserted"))..{
+		InitCommand=cmd(Center);
+	};
+end;
 
 return t;

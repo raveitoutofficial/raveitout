@@ -1,20 +1,4 @@
-	local curstage = GAMESTATE:GetCurrentStage();
-
-	local gfxNames = {
-		Stage_Extra1=	"ScreenGameplay stage extra1";
-		Stage_Extra2=	"ScreenGameplay stage extra1";
-		Stage_Demo=	"ScreenGameplay stage Demo";
-		Stage_Event="ScreenGameplay stage event";
-		Stage_1st=	"ScreenGameplay stage 1";
-		Stage_2nd=	"ScreenGameplay stage 2";
-		Stage_3rd=	"ScreenGameplay stage 3";
-		Stage_4th=	"ScreenGameplay stage 4";
-		Stage_5th=	"ScreenGameplay stage 5";
-		Stage_6th=	"ScreenGameplay stage 6";
-		StageFinal=	"ScreenGameplay stage final";
-	};
-
-	local stage = gfxNames[curstage];
+local stage = GAMESTATE:GetCurrentStage();
 
 if GAMESTATE:IsCourseMode() then
 	song = GAMESTATE:GetCurrentCourse(); -- Get current Course xD
@@ -48,6 +32,7 @@ local spawid =		320			--spacebar graphic width
 
 --Cortes usual dumb shit lol
 local cfsepx = 35		--cortes fix screen edge separation
+
 function GetOpositePlayer(pn)	--Obtiene el jugador "opuesto" by ROAD24
 	if pn == PLAYER_1 then
 		return PLAYER_2;
@@ -55,6 +40,7 @@ function GetOpositePlayer(pn)	--Obtiene el jugador "opuesto" by ROAD24
 		return PLAYER_1;
 	end;
 end;
+
 function GetBreakCombo()		-- by ROAD24 and NeobeatIKK
 	-- El combo en el que haremos break, la idea de aqui es poder variarlo
 	-- aun durante la ejecucion del programa, pero por el momento es fijo
@@ -66,14 +52,7 @@ function GetBreakCombo()		-- by ROAD24 and NeobeatIKK
 	end;
 	return tonumber(Combo);
 end;
-function IsBreakOn()			--Is StageBreak On? by ROAD24
-	if getenv("StageBreak") == nil then
-		lua.Warn("No se asigno valor para el break usando valor por defecto");
-		setenv("StageBreak",true);
-		return true;
-	end
-	return getenv("StageBreak");
-end;
+
 -- Cambios -- ROAD24
 local iOldCombo = 0;
 -- Aqui se pueden tomar varias decisiones referentes al comportamiento del gameplay
@@ -124,12 +103,16 @@ local t = Def.ActorFrame{
 		OffCommand=EndScreen;
 	};
 }
---yeah this isn't really good code
-activeModP1 = ActiveModifiers["P1"]["BGAMode"]
-activeModP2 = ActiveModifiers["P2"]["BGAMode"]
+--[[
+yeah this isn't really good code
+To be honest I kind of hate this feature -Accelerator
+]]
+local activeModP1 = ActiveModifiers["P1"]["BGAMode"]
+local activeModP2 = ActiveModifiers["P2"]["BGAMode"]
 if activeModP1 == "Black" or activeModP2 == "Black" then
 	t[#t+1] = Def.Quad{InitCommand=cmd(setsize,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color("Black");Center)};
-elseif activeModP1 == "Off" or activeModP2 == "Off" or (ReadPrefFromFile("StreamSafeEnabled") == "true" and has_value(STREAM_UNSAFE_VIDEO, GAMESTATE:GetCurrentSong():GetDisplayFullTitle())) then
+--or (ReadPrefFromFile("StreamSafeEnabled") == "true" and has_value(STREAM_UNSAFE_VIDEO, GAMESTATE:GetCurrentSong():GetDisplayFullTitle()))
+elseif activeModP1 == "Off" or activeModP2 == "Off" or false then
 	local BGAOffcolors = {
 		["Special"] = "#F3CE71",
 		["Pro"] = "#F3718D",
@@ -176,6 +159,11 @@ end;
 --Hide elements if we're on the OMES
 if not getenv("IsOMES_RIO") then
 	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+		
+		if pn == "PlayerNumber_P3" or pn == "PlayerNumber_P4" then
+			break
+		end;
+		
 		local negativeOffset = (pn == PLAYER_1) and -1 or 1;
 		local barposX = (pn == PLAYER_1) and 25*PREFSMAN:GetPreference("DisplayAspectRatio") or SCREEN_RIGHT-(25*PREFSMAN:GetPreference("DisplayAspectRatio"));
 		--setenv("BarPosX",barposX);
@@ -187,22 +175,28 @@ if not getenv("IsOMES_RIO") then
 			InitCommand=cmd(xy,barposX+negativeOffset*100,50);
 			OnCommand=cmd(sleep,1.5;accelerate,0.25;x,barposX);
 		};
+		if ActiveModifiers[pname(pn)]["TargetScore"] then
+			t[#t+1] = LoadActor("TargetScoreV2",pn);
+		end;
+		
 	end;
 end;
 --/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 t[#t+1] = Def.ActorFrame{		--Limit break by ROAD24 and NeobeatIKK
 	--el modo "Perfectionist" hace que el jugador instantaneamente falle si obtiene algo igual o menor a un W3 (un Good) -NeobeatIKK
 	ComboChangedMessageCommand=function(self,params)
-		local css1 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1);
-		local css2 = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_2);
-		local p1w1 = css1:GetTapNoteScores("TapNoteScore_W1");local p1w2 = css1:GetTapNoteScores("TapNoteScore_W2");local p1w3 = css1:GetTapNoteScores("TapNoteScore_W3");local p1w4 = css1:GetTapNoteScores("TapNoteScore_W4");local p1w5 = css1:GetTapNoteScores("TapNoteScore_W5");local p1ms = css1:GetTapNoteScores("TapNoteScore_Miss");local p1cm = css1:GetTapNoteScores("TapNoteScore_CheckpointMiss");local p1hm = css1:GetTapNoteScores("TapNoteScore_HitMine");
-		local p2w1 = css2:GetTapNoteScores("TapNoteScore_W1");local p2w2 = css2:GetTapNoteScores("TapNoteScore_W2");local p2w3 = css2:GetTapNoteScores("TapNoteScore_W3");local p2w4 = css2:GetTapNoteScores("TapNoteScore_W4");local p2w5 = css2:GetTapNoteScores("TapNoteScore_W5");local p2ms = css2:GetTapNoteScores("TapNoteScore_Miss");local p2cm = css2:GetTapNoteScores("TapNoteScore_CheckpointMiss");local p2hm = css2:GetTapNoteScores("TapNoteScore_HitMine");
 		local GTS = SCREENMAN:GetTopScreen();
-		local PlayerStageStats = params.PlayerStageStats;
-		local bFailed = PlayerStageStats:GetCurrentMissCombo() >= GetBreakCombo();
+		local pss = params.PlayerStageStats;
+		
+		local bFailed = pss:GetFailed(); --True if forced failed or the lifebar is empty.
+		if pss:GetCurrentMissCombo() >= GetBreakCombo() then
+			pss:FailPlayer();
+			bFailed = true;
+		end;
+		
 		local OpositePlayer = GetOpositePlayer(params.Player);
 		local OpositeStats = STATSMAN:GetCurStageStats():GetPlayerStageStats(OpositePlayer);
-		local bOpositePlayerFailed = OpositeStats:GetCurrentMissCombo() >= GetBreakCombo();
+		local bOpositePlayerFailed = OpositeStats:GetFailed();
 		--Shit code
 		for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 			if PerfectionistMode[pn] then
@@ -216,71 +210,70 @@ t[#t+1] = Def.ActorFrame{		--Limit break by ROAD24 and NeobeatIKK
 				local ms = css:GetTapNoteScores("TapNoteScore_Miss");
 				local cm = css:GetTapNoteScores("TapNoteScore_CheckpointMiss");
 				local hm = css:GetTapNoteScores("TapNoteScore_HitMine");
-				if w3 >= 1 or w4 >= 1 or w5 >= 1 or ms >= 1 or cm >= 1 then								-- Only W1s (AKA RAVINs / Marvelouses)
-					--GTS:PostScreenMessage("SM_BeginFailed",0);
-					if GAMESTATE:GetCurrentStage() == "Stage_1st" and Enjoy1stStagePMode == true then
-						return nil
-					else
-						--SCREENMAN:SystemMessage("Player "..pn.." failed");
-						css:FailPlayer();
-						if GAMESTATE:IsSideJoined(OppositePlayer) and STATSMAN:GetCurStageStats():GetPlayerStageStats(OppositePlayer):GetFailed() then
-							setenv("StageFailed",true);
-							GTS:PostScreenMessage("SM_BeginFailed",0);
-						elseif not GAMESTATE:IsSideJoined(OppositePlayer) then
-							setenv("StageFailed",true);
-							GTS:PostScreenMessage("SM_BeginFailed",0);
-						end;
+				if w3 >= 1 or w4 >= 1 or w5 >= 1 or ms >= 1 or cm >= 1 then -- Only W1s (AKA RAVINs / Marvelouses)
+					--SCREENMAN:SystemMessage("Player "..pn.." failed");
+					css:FailPlayer();
+					if GAMESTATE:IsSideJoined(OppositePlayer) and bOpositePlayerFailed then
+						setenv("StageFailed",true);
+						GTS:PostScreenMessage("SM_BeginFailed",0);
+					elseif not GAMESTATE:IsSideJoined(OppositePlayer) then
+
+						setenv("StageFailed",true);
+						GTS:PostScreenMessage("SM_BeginFailed",0);
 					end;
 				end;
 			end;
 		end;
 		
-		if IsBreakOn() then			-- Si no esta activado el break no tiene caso revisar todo lo demas
-			if THEME:GetMetric("CustomRIO","GamePlayMenu") == false then
-				if GAMESTATE:IsPlayerEnabled( OpositePlayer ) then
-					bFailed = bFailed and bOpositePlayerFailed;
-				end;
-				if bFailed then
-					GTS:PostScreenMessage("SM_BeginFailed",0);
-					if GAMESTATE:GetCurrentStage() == "Stage_1st" and Enjoy1stStage == true then
-						return nil
-					else				-- No creo que haya problema en forzar el fail de ambos players, ya que el break requiere que ambos deben alcanzar el combo miss -NeobeatIKK
-						PSS1:FailPlayer();
-						PSS2:FailPlayer();
-						setenv("StageFailed",true);
-					end;
-				end;
-			end;
+		if GAMESTATE:IsPlayerEnabled( OpositePlayer ) then
+			bFailed = bFailed and bOpositePlayerFailed;
 		end;
-	end;
-	JudgmentMessageCommand=function(self,params)
-	--if not IsComoSeLlameModeEnabled then	--activar cuando este el modo listo
-		if 	params.TapNoteScore == 'TapNoteScore_HitMine' then
-				local Combo = getenv("BreakCombo");
-				-- Disminuyo el combo
-				setenv("BreakCombo",Combo-1);
-				--SCREENMAN:SystemMessage("BreakCombo: "..GetBreakCombo());
+		--If both players failed.
+		if bFailed then
+			GTS:PostScreenMessage("SM_BeginFailed",0);
+			setenv("StageFailed",true);
 		end;
-	--end;
 	end;
 	LoadFont("Common Normal")..{	--Stage break + value, message
 		InitCommand=cmd(x,_screen.cx;y,SCREEN_BOTTOM-30;zoom,0.5);
 		OnCommand=function(self)
-			if PerfectionistMode[PLAYER_1] and PerfectionistMode[PLAYER_2] then		--don't do shit if Perfectionist Mode is activated
-				return false
+			--don't do shit if Perfectionist Mode is activated, don't show if it's the demo stage.
+			if (PerfectionistMode[PLAYER_1] and PerfectionistMode[PLAYER_2]) or stage == "Stage_Demo" then
+				self:visible(false)
+				return
 			end;
-			-- TODO: Add a GetBreakCombo
 			self:settext("Limit Break: "..GetBreakCombo());
-			if stage == "ScreenGameplay stage Demo" then self:settext(""); else self:settext("Limit Break: "..GetBreakCombo()); end;
-			p1stype = GAMESTATE:GetCurrentSteps(PLAYER_1):GetStepsType();
-			p2stype = GAMESTATE:GetCurrentSteps(PLAYER_2):GetStepsType();
+			--[[local p1stype;
+			local p2stype;
+			if GAMESTATE:GetPlayMode() == 'PlayMode_Regular' then
+				p1stype = GAMESTATE:GetCurrentSteps(PLAYER_1):GetStepsType();
+				p2stype = GAMESTATE:GetCurrentSteps(PLAYER_2):GetStepsType();
+			else
+				p1stype = GAMESTATE:GetCurrentTrail(PLAYER_1):GetStepsType();
+				p2stype = GAMESTATE:GetCurrentTrail(PLAYER_2):GetStepsType();
+			end;
 			if p1stype ~= "StepsType_Pump_Single" or p2stype ~= "StepsType_Pump_Single" or PREFSMAN:GetPreference("Center1Player") then
+				self:y(SCREEN_BOTTOM-60);
+			end;]]
+			if CenterGameplayWidgets() then
 				self:y(SCREEN_BOTTOM-60);
 			end;
 		end;
-		LifeChangedMessageCommand=function(self)	--ya que las effortbar reaccionan tan bien al limit break entonces pensé "porqué no actualizarlas de igual forma?" xD -NeobeatIKK
-			self:playcommand("On");
+		--[[LifeChangedMessageCommand=function(self)	--ya que las effortbar reaccionan tan bien al limit break entonces pensé "porqué no actualizarlas de igual forma?" xD -NeobeatIKK
+			self:settext("Limit Break: "..GetBreakCombo());
+		end;]]
+		JudgmentMessageCommand=function(self,params)
+			--if not IsComoSeLlameModeEnabled then	--activar cuando este el modo listo
+			if params.TapNoteScore == 'TapNoteScore_HitMine' then
+				local Combo = getenv("BreakCombo");
+				-- Disminuyo el combo
+				setenv("BreakCombo",Combo-1);
+				--SCREENMAN:SystemMessage("BreakCombo: "..GetBreakCombo());
+				self:settext("Limit Break: "..Combo);
+			end;
+		--end;
 		end;
+		
 	};
 };
 
@@ -312,34 +305,6 @@ t[#t+1] = Def.ActorFrame{		--Limit break by ROAD24 and NeobeatIKK
 				end;
 			end;
 		};
-		Def.Actor{		-- Write SpeedMod to Profile (PLAYER_2) by NeobeatIKK
-			OnCommand=function(self)
-				if IsP2On then
-					if prfnam2 ~= "" then
-						local GPS2 = GAMESTATE:GetPlayerState(PLAYER_2);
-						if GPS2:GetCurrentPlayerOptions():XMod() ~= nil then		--si XMod no da nil
-							speedmod = GPS2:GetCurrentPlayerOptions():XMod().."X"
-							modtype = "X"
-						end;
-						if GPS2:GetCurrentPlayerOptions():CMod() ~= nil then		--si CMod no da nil
-							speedmod = "C"..GPS2:GetCurrentPlayerOptions():CMod()
-							modtype = "C"
-						end;
-						if GPS2:GetCurrentPlayerOptions():MMod() ~= nil then		--si Mmod no da nil
-							speedmod = "M"..GPS2:GetCurrentPlayerOptions():MMod()
-							modtype = "M"
-						end;
-						local profilep = PROFILEMAN:GetProfileDir("ProfileSlot_Player2")
-						local songpath = GAMESTATE:GetCurrentSong():GetSongDir()
-					--	local usescard = PROFILEMAN:ProfileWasLoadedFromMemoryCard(PLAYER_1) --bool --breaks on load
-					--	File.Write(profilep.."/RIO_SongData/"..songpath.."LastSpeedModUsed.txt","SpeedMod="..speedmod..";\nSModType="..modtype..";");	--works
-					--	File.Write(profilep.."/RIO_SongData/"..songpath.."LastSpeedModTypeUsed.txt",modtype);	--Write SpeedModType				--works
-						File.Write(profilep.."/RIO_SongData/"..songpath.."LastSpeedModUsed.txt",speedmod);		--Write SpeedMod				--works
-					end;
-				end;
-			end;
-		};
-	};
 
 ]]
 
@@ -356,10 +321,6 @@ if DoDebug then
 		LoadFont(DebugFont)..{		-- Current Song Path, for Disabled song dev.
 			InitCommand=cmd(xy,_screen.cx,SCREEN_TOP+40;zoom,0.5);
 			OnCommand=cmd(settext,"Song path: \""..GAMESTATE:GetCurrentSong():GetSongDir().."\"";);
-		};
-		LoadFont(DebugFont)..{		-- CORTES FIX MSG
-			InitCommand=cmd(xy,_screen.cx,SCREEN_TOP+10;zoom,0.5);
-			OnCommand=cmd(visible,CortesWideFix;settext,"\[Using Cortes Widescreen patch\]");
 		};
 		LoadFont(DebugFont)..{		-- PerfectionistMode status
 			InitCommand=cmd(x,_screen.cx;y,SCREEN_BOTTOM-80;zoom,0.5);
@@ -392,16 +353,43 @@ if DoDebug then
 				self:settext("Miss count: "..PSS1:GetCurrentMissCombo());
 			end;
 		};
+
 		LoadFont(DebugFont)..{		-- Miss combo P2
 			InitCommand=cmd(visible,IsP2On;xy,SCREEN_RIGHT-5,SCREEN_TOP+10;zoom,0.5;horizalign,right;);
 			ComboChangedMessageCommand=function(self)
 				self:settext("Miss count: "..PSS2:GetCurrentMissCombo());
 			end;
 		};
+		--stages
+		LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
+			InitCommand=cmd(xy,SCREEN_RIGHT-5,SCREEN_TOP+15;zoom,0.5;horizalign,right;);
+			OnCommand=function(self) --Current stage value changes if you do InitCommand.
+				self:settext("Current Stage: "..GAMESTATE:GetCurrentStage());
+			end;
+		};
+		LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
+			InitCommand=cmd(xy,SCREEN_RIGHT-5,SCREEN_TOP+30;zoom,0.5;horizalign,right;);
+			Text="Number of stages: "..PREFSMAN:GetPreference("SongsPerPlay");
+		};
+		LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
+			InitCommand=cmd(xy,SCREEN_RIGHT-5,SCREEN_TOP+45;zoom,0.5;horizalign,right;);
+			Text="Smallest Num stages: "..GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer();
+		};
+		LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
+			InitCommand=cmd(xy,SCREEN_RIGHT-5,SCREEN_TOP+60;zoom,0.5;horizalign,right;);
+			Text="Num stages left P1: "..GAMESTATE:GetNumStagesLeft(PLAYER_1);
+		};
+		LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
+			InitCommand=cmd(xy,SCREEN_RIGHT-5,SCREEN_TOP+75;zoom,0.5;horizalign,right;);
+			Text="Num stages left P2: "..GAMESTATE:GetNumStagesLeft(PLAYER_2);
+		};
+		LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
+			InitCommand=cmd(xy,SCREEN_RIGHT-5,SCREEN_TOP+90;zoom,0.5;horizalign,right;);
+			Text="Final stage for any player? "..boolToString(GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer()==1);
+		};
+		
 		LoadFont(DebugFont)..{		-- MODs "rio" P1
 			InitCommand=cmd(visible,IsP1On;xy,SCREEN_LEFT+5,_screen.cy;zoom,0.5;horizalign,left);
-			--OnCommand=cmd(settext,GAMESTATE:GetPlayerState(PLAYER_1):GetPlayerOptionsString("Stage"));			--works
-			--OnCommand=cmd(settext,GAMESTATE:GetPlayerState(PLAYER_1):GetPlayerOptionsString("ModsLevel_Stage"));	--works
 			OnCommand=function(self)
 				local GPS = GAMESTATE:GetPlayerState(PLAYER_1)
 				local modstage = GPS:GetPlayerOptionsString("Stage")	--String
@@ -414,35 +402,7 @@ if DoDebug then
 					msg = srch.."\" is not here, GTFO"
 				end;
 				self:settext("Looking for: \""..srch.."\"\nFound it?: \""..msg.."\nCurrent mods: "..modstage);
-			end;	--]]
-			--[[
-				OnCommand=function(self)
-			--	self:settext(string.find("FUCKING RIO SUCKS BALLS YO","RIO"));		--returns "9"
-				self:settext(string.match("FUCKINGRIOSUCKSBALLSYO","RIO"));			--returns "RIO"
-			end;	--]]
-		};
-		LoadFont(DebugFont)..{		-- MODs "rio" P2
-			InitCommand=cmd(visible,IsP2On;xy,SCREEN_RIGHT-5,_screen.cy;zoom,0.5;horizalign,right);
-			--OnCommand=cmd(settext,GAMESTATE:GetPlayerState(PLAYER_2):GetPlayerOptionsString("Stage"));			--works
-			--OnCommand=cmd(settext,GAMESTATE:GetPlayerState(PLAYER_2):GetPlayerOptionsString("ModsLevel_Stage"));	--works
-			OnCommand=function(self)
-				local GPS = GAMESTATE:GetPlayerState(PLAYER_2)
-				local modstage = GPS:GetPlayerOptionsString("Stage")	--String
-							--	local modstage = GPS:GetPlayerOptionsArray("Stage")	--array
-			--	local srch = ", rio"									--Search
-				local srch = "rio"										--Search (safe)
-				if string.match(modstage,srch) == srch then
-					msg = srch.."\" was found"
-				else
-					msg = srch.."\" is not here, GTFO"
-				end;
-				self:settext("Looking for: \""..srch.."\"\nFound it?: \""..msg.."\nCurrent mods: "..modstage);
-			end;	--]]
-			--[[
-				OnCommand=function(self)
-			--	self:settext(string.find("FUCKING RIO SUCKS BALLS YO","RIO"));		--returns "9"
-				self:settext(string.match("FUCKINGRIOSUCKSBALLSYO","RIO"));			--returns "RIO"
-			end;	--]]
+			end;
 		};
 		LoadFont(DebugFont)..{		-- finding speedmod P1 by NeobeatIKK
 			InitCommand=cmd(visible,IsP1On;xy,SCREEN_LEFT+10,_screen.cy+100;zoom,0.5;horizalign,left);

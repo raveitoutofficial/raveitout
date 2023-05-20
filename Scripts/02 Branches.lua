@@ -20,7 +20,11 @@ function SelectMusicOrCourse()
 	if IsNetSMOnline() then
 		return "ScreenNetSelectMusic"
 	elseif GAMESTATE:IsCourseMode() then
-		return "ScreenSelectCourse"
+		if getenv("PlayMode") == "Special" then
+			return "ScreenQuestMode"
+		else
+			return "ScreenSelectCourseCustom"
+		end;
 	else
 		if getenv("PlayMode") == "Easy" then
 			return "ScreenSelectEasy"
@@ -29,6 +33,27 @@ function SelectMusicOrCourse()
 		end
 	end
 end
+
+function JumpToCredits()
+	local song = SONGMAN:FindSong(OMES_SONG)
+	if song then
+		GAMESTATE:SetCurrentSong(song);
+		GAMESTATE:SetCurrentPlayMode("PlayMode_Regular");
+		GAMESTATE:SetCurrentStyle("Single");
+		local steps = song:GetOneSteps('StepsType_Pump_Single', 0);
+		GAMESTATE:SetCurrentSteps('PlayerNumber_P1',steps);
+		GAMESTATE:ApplyGameCommand('mod,failoff',PLAYER_1);
+		local can, reason = GAMESTATE:CanSafelyEnterGameplay()
+		if can then
+			return "ScreenGameplayBlank";
+		else
+			SCREENMAN:SystemMessage("Can't play credits! "..reason);
+		end;
+	else
+		SCREENMAN:SystemMessage("Can't play credits! OMES_SONG is missing. Check SYSTEM_PARAMETERS.lua.");
+	end;
+	return "ScreenTitleMenu";
+end;
 
 -- functions used for Routine mode
 function IsRoutine()
@@ -107,6 +132,7 @@ Branch = {
 
 		--return CHARMAN:GetAllCharacters() ~= nil and "ScreenSelectCharacter" or "ScreenGameInformation"
 	end,
+	--This function isn't used, AfterProfileLoad is used
 	AfterSelectProfile = function()
 		if ( THEME:GetMetric("Common","AutoSetStyle") == true ) then
 			-- use SelectStyle in online...
@@ -116,8 +142,21 @@ Branch = {
 		end
 	end,
 	AfterProfileLoad = function()
+		for pn in ivalues(GAMESTATE:GetEnabledPlayers()) do
+			--ProfileFromMemoryCardIsNew checks if it's a memory card internally so no need to check additionally
+			if PROFILEMAN:ProfileFromMemoryCardIsNew(pn) then
+				return "ScreenNewProfileCustom"
+			else
+				--If it's an RFID scanned (local) profile
+				if PROFILEMAN:IsPersistentProfile(pn) and PROFILEMAN:GetProfile(pn):GetTotalNumSongsPlayed() == 0 then
+					return "ScreenNewProfileCustom"
+				end;
+			end;
+		end;
 		return "ScreenSelectPlayMode"
 	end,
+	
+	--I'm not sure this is even used?
 	AfterProfileSave = function()
 		-- Might be a little too broken? -- Midiman
 		if GAMESTATE:IsEventMode() then
@@ -273,8 +312,14 @@ Branch = {
 		return IsNetConnected() and "ScreenTitleMenu" or "ScreenTitleMenu"
 	end,
  	AfterSaveSummary = function()
+
+		--Check for high scores for people without USB or local profiles so they can enter a high score name.
+		--[[for pn in ivalues(GAMESTATE:GetEnabledPlayers()) do
+			--Trace("Running high score check.")
+			if not PROFILEMAN:IsPersistentProfile(pn) and PlayerAchievedAnyHighScores(pn) then
+				return "ScreenEnterRankingName"
+			end;
+		end;]]
 		return "ScreenGameOver"
---		[[ Enable when Finished ]]
--- 		return GAMESTATE:AnyPlayerHasRankingFeats() and "ScreenNameEntryTraditional" or "ScreenGameOver"
 	end,
 }

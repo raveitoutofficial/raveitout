@@ -13,10 +13,50 @@ Failed - Failed.
 EXTRA STAGE:
 Get 90% or more accuracy for a bonus heart.
 
+OVERTIME STAGE:
+AKA the One More Extra Stage or Encore Extra Stage in other games.
+Get 95% or more accuracy on an extra stage with a glowing red title.
+This extra stage is defined in extra1.crs in the song folder, just like regular StepMania.
+The Overtime stage is defined in Scripts/config.lua for now.
+
+Mode purposes:
+Beginner Mode: 
+- Easy songs, all below lv10. Only 3 difficulties per song
+
+Standard Mode:
+- Regular play. No W1 judgment.
+- 3 Stages normally. Depends on your hearts and if extra hearts is enabled in the operator menu.
+- If extra hearts is enabled, you can get up to two bonus hearts.
+- Refer to EXTRA STAGE & OVERTIME STAGE
+
+Pro Mode:
+- W1 judgment. No differences aside from that.
+- EXTRA STAGE & OVERTIME STAGE still obtainable.
+
+Special Mode:
+- Used to be called Mod Mode
+- Play unique charts in a folder, such as WinDEU Hates You and UKSRT stuff.
+- Currently removed in favor of Mission Mode.
+
+Rave Mode:
+- Was never implemented, so you can ignore this. Rave songs are available during normal gameplay.
+- Pick one song and play it.
+ - Song is a remix from the original song list.
+ - Song is a full version (5+ minutes)
+- Any song that is passed becomes unlocked for Arcade mode.
+ - Full version and cut version are both unlocked.
+
+Mixtape Mode:
+- Play courses. Hurr.
+- Removed because the code was impossible to maintain.
+
+Mission Mode:
+- Like DJMax Respect's mission mode. Exactly the same, in fact.
+- Unique quest mode exclusive charts and songs are in this mode, because they don't
+  meet the criteria for being in RIO normally.
+- Unlock cool titles for beating this mode, I guess?
 
 EASTER EGGS:
-Hey, don't spoil yourself! You should play the game and find out for yourself...
-Alright, alright, I'll tell you anyway.
 Within 4 days before or after valentines day: Hearts in background
 December: snowflakes in background, christmas hats.
 Weed combo: 420 combos.

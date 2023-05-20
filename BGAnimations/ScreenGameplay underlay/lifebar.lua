@@ -14,8 +14,9 @@ local namesp =		10			--additional name spacing
 local lfbpsy =	175 --life bar position Y			--local lfbpsy =	200			--life bar position Y
 local PSS1 =		STATSMAN:GetCurStageStats():GetPlayerStageStats(player)
 
+local isProLifebar = (getenv("Lifebar") == "Pro")
 --This is the width and height of the lifebar graphic. Simple right? So don't fuck it up
-LIFEBAR_WIDTH, LIFEBAR_HEIGHT = 320,26;
+local LIFEBAR_WIDTH, LIFEBAR_HEIGHT = 320,26;
 
 local t = Def.ActorFrame{
 		--lifebar black border
@@ -29,14 +30,19 @@ local t = Def.ActorFrame{
 		
 		LoadActor("spacebarInner")..{		--lifebar mask
 			InitCommand=cmd(MaskSource;zoomtowidth,LIFEBAR_WIDTH;zoomtoheight,LIFEBAR_HEIGHT);
-			OnCommand=cmd(bounce;effectmagnitude,0,andiff,0;effectclock,"bgm";effecttiming,1,0,0,0;);
+			OnCommand=cmd(bounce;effectmagnitude,0,andiff,0;effectclock,"bgm";effecttiming,1,0,0,0;cropleft,isProLifebar and .5 or 1);
 			LifeChangedMessageCommand=function(self)
 				self:stoptweening();
 				self:bounceend(vittim);
-				if ((PSS1:GetCurrentMissCombo()/GetBreakCombo())-1) >= 0 or PSS1:GetFailed() then
-					self:cropleft(0);
+				if isProLifebar then
+					self:cropleft(PSS1:GetCurrentLife())
 				else
-					self:cropleft(math.abs((PSS1:GetCurrentMissCombo()/GetBreakCombo())-1));
+					if ((PSS1:GetCurrentMissCombo()/GetBreakCombo())-1) >= 0 or PSS1:GetFailed() then
+						self:cropleft(0);
+					else
+						self:cropleft(math.abs((PSS1:GetCurrentMissCombo()/GetBreakCombo())-1));
+					end;
+				
 				end;
 			end;
 		};
@@ -46,15 +52,24 @@ local t = Def.ActorFrame{
 		LoadActor("tip")..{
 			--We IIDX now
 			InitCommand=cmd(zoomx,1.5;valign,0.4;rotationz,90;glowshift;effectclock,"beat";diffuseramp;effectcolor1,color(".8,.8,.8,1");effectcolor2,color("1,1,1,1"));
+			OnCommand=function(self)
+				if isProLifebar then
+					self:x(.5*LIFEBAR_WIDTH-LIFEBAR_WIDTH/2)
+				end;
+			end;
 			LifeChangedMessageCommand=function(self)
 				self:stoptweening();
 				self:bounceend(vittim);
-				if ((PSS1:GetCurrentMissCombo()/GetBreakCombo())-1) >= 0 or PSS1:GetFailed() then
-					self:x(-LIFEBAR_WIDTH/2):glow(color("0,0,0,1"));
+				if isProLifebar then
+					self:x((PSS1:GetCurrentLife()*LIFEBAR_WIDTH)-LIFEBAR_WIDTH/2)
 				else
-					--So how the life calculation works is that full life is zero, and empty life is 1
-					--(PSS1:GetCurrentMissCombo()/GetBreakCombo()) is the command that gives you the (reversed) life percentage
-					self:x(LIFEBAR_WIDTH/2-(PSS1:GetCurrentMissCombo()/GetBreakCombo()*LIFEBAR_WIDTH));
+					if ((PSS1:GetCurrentMissCombo()/GetBreakCombo())-1) >= 0 or PSS1:GetFailed() then
+						self:x(-LIFEBAR_WIDTH/2):glow(color("0,0,0,1"));
+					else
+						--So how the life calculation works is that full life is zero, and empty life is 1
+						--(PSS1:GetCurrentMissCombo()/GetBreakCombo()) is the command that gives you the (reversed) life percentage
+						self:x(LIFEBAR_WIDTH/2-(PSS1:GetCurrentMissCombo()/GetBreakCombo()*LIFEBAR_WIDTH));
+					end;
 				end;
 			end;
 		};
@@ -65,7 +80,7 @@ local t = Def.ActorFrame{
 					if player == PLAYER_1 then
 						self:settext("PLAYER 1");
 					else
-						self:settext("PLAYER_2");
+						self:settext("PLAYER 2");
 					end;
 				else
 					self:settext(PROFILEMAN:GetPlayerName(player));
@@ -76,6 +91,19 @@ local t = Def.ActorFrame{
 				self:settext(PSS1:GetCurrentMissCombo()/GetBreakCombo());
 			end;]]
 		};
+		LoadFont("Common normal")..{
+			Condition=DoDebug;
+			InitCommand=cmd(x,LIFEBAR_WIDTH/2-10;horizalign,right;zoom,debgz1);
+			LifeChangedMessageCommand=function(self)
+				--string.format("%.02f",rawaccuracy)
+				if isProLifebar then
+					self:settext("Life: "..string.format("%.02f",PSS1:GetCurrentLife()*100).."%");
+				else
+					self:settext("Life: "..string.format("%.02f",100-PSS1:GetCurrentMissCombo()/GetBreakCombo()*100).."%");
+				end;
+			end;
+		
+		}
 	};
 
 return t;

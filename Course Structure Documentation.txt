@@ -1,0 +1,16 @@
+Mixtapes mode in RIO is the course mode.
+
+Edit RIO_COURSE_FOLDERS in Scripts/01 SYSTEM_PARAMETERS.lua to add your own course folder.
+
+Add a banner.png to your folder for the folder banner.
+
+As for course tags:
+
+COURSE: The name of the course
+BANNER: The jacket of the course
+SCRIPTER: Who made this course, a replacement for the song artist shown during gameplay and selection.
+DESCRIPTION: If you want a description for your course. Used as a replacement for the text shown during the song information screen before gameplay.
+
+Refer to https://github.com/stepmania/stepmania/wiki/Courses for other stuff.
+
+If you are looking for information on Special Mode please refer to Scripts/09 QuestMode.lua for information on how to add new missions.

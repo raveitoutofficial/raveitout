@@ -1,34 +1,18 @@
-	local curstage = GAMESTATE:GetCurrentStage();
-
-	local gfxNames = {
-		Stage_Extra1=	"ScreenGameplay stage extra1";
-		Stage_Extra2=	"ScreenGameplay stage extra1";
-		Stage_Demo=	"ScreenGameplay stage Demo";
-		Stage_Event="ScreenGameplay stage event";
-		Stage_1st=	"ScreenGameplay stage 1";
-		Stage_2nd=	"ScreenGameplay stage 2";
-		Stage_3rd=	"ScreenGameplay stage 3";
-		Stage_4th=	"ScreenGameplay stage 4";
-		Stage_5th=	"ScreenGameplay stage 5";
-		Stage_6th=	"ScreenGameplay stage 6";
-		StageFinal=	"ScreenGameplay stage final";
-	};
-
-	local stage = gfxNames[curstage];
 local style = GAMESTATE:GetCurrentStyle()		--get style
 local ptbrotz = 0		--protiming bar rotationz
 
 local c;
 local player = Var "Player";
-local function ShowProtiming()
-if stage == "ScreenGameplay stage Demo" then
-    return false
-  else
-    return GetUserPrefB("UserPrefProtiming" .. ToEnumShortString(player));
-  end
-end;
+
+
+--[[local function ShowProtiming()
+	if GAMESTATE:GetCurrentStage() == "Stage_Demo" then
+		return false
+	else
+		return GetUserPrefB("UserPrefProtiming" .. ToEnumShortString(player));
+	end
+end;]]
 local bShowProtiming = (ActiveModifiers[pname(player)]["DetailedPrecision"] == "ProTiming");
-local graphset = bShowProtiming;		--graph setting
 local ProtimingWidth = 480*0.4;	--default is "240"
 local function MakeAverage( t )
 	local sum = 0;
@@ -95,17 +79,38 @@ else
 end
 
 local ptsepax = 0;
-local ptinfdy = 30		--protiming information difference Y axis
+local ptinfdy = 0		--protiming information difference Y axis
 local ptbposy = 27		--protiming bar position Y axis
 
 local t = Def.ActorFrame {};
 local judgmentToLoad = ActiveModifiers[pname(player)]["JudgmentGraphic"];
+
+--FastSlow handling
+local fastSlowToLoad = nil; --Yes I'm declaring it as nil
+if (ActiveModifiers[pname(player)]["DetailedPrecision"] == "EarlyLate" and PREFSMAN:GetPreference("AllowW1") == "AllowW1_Everywhere") then
+	--Initialize env
+	setenv("NumFasts"..pname(player),0)
+	setenv("NumSlows"..pname(player),0)
+	--I can't be bothered to create FS graphics for all of them so just default to S2
+	--This code is imperfect since it assumes FS is always doubleres but we don't have any non doubleres judgments yet
+	fastSlowToLoad = THEME:GetPathG("FastSlow",judgmentToLoad.." 2x1 (doubleres).png")
+end;
+
 t[#t+1] = Def.ActorFrame {
 	LoadActor(THEME:GetPathG("Judgment",judgmentToLoad)) .. {
 		Name="Judgment";	--\nJudgmentOnCommand en metrics
 		InitCommand=cmd(pause;visible,false);	--	OnCommand=cmd();	--originalmente apuntaba a metrics, pero en metrics tambien estaba sin anim. PS: No tiene sentido tenerlo activado, JudgeCmds controlan la animacion.
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
+	--Fast/Slow display
+	Def.Sprite{
+		Condition=fastSlowToLoad;
+		Texture=fastSlowToLoad;
+		Name="Bias";
+		InitCommand=cmd(visible,false;animate,false;xy,25,-30);
+	};
+	
+	
 	--ProTiming Information (Text and Numbers)
 	LoadFont("Combo Numbers") .. {
 		Name="ProtimingDisplay";
@@ -222,38 +227,54 @@ t[#t+1] = Def.ActorFrame {
 		
 		self:playcommand("Reset");
 
-	--	c.Judgment:visible(not bShowProtiming);	--Original
-		c.Judgment:visible(true);				--Forced for ProTiming Display
+		c.Judgment:visible(not bShowProtiming); --No need to show it for ProTiming.
 		c.Judgment:setstate(iFrame);
 		--Yep, this right here is what sets the animation.
 		JudgeCmds[param.TapNoteScore](c.Judgment);
 		
-	--	c.ProtimingDisplay:visible(bShowProtiming);					--Original
-		c.ProtimingDisplay:visible(false);							--disable by Cortes request
+		if fastSlowToLoad then
+			---XXX: don't hardcode this
+			if param.TapNoteScore ~= 'TapNoteScore_W1' and
+				param.TapNoteScore ~= 'TapNoteScore_Miss' then
+				local late = fTapNoteOffset and (fTapNoteOffset > 0);
+				c.Bias:visible(true);
+				c.Bias:setstate( late and 1 or 0 );
+				c.Bias:finishtweening():diffusealpha(1):zoom(.8):decelerate(0.15):zoom(1):sleep(0.25):accelerate(.5):diffusealpha(0);
+				--Comboanijudge(c.Bias)
+				
+				--I don't know if this causes lag or not
+				if late then
+					setenv("NumSlows"..pname(player),getenv("NumSlows"..pname(player))+1)
+				else
+					setenv("NumFasts"..pname(player),getenv("NumFasts"..pname(player))+1)
+				end;
+			else
+				c.Bias:visible(false);
+			end
+		end;
+		
+		--TODO: Redo all this ProTiming shit eventually since it's annoying and nobody uses it
+		
+		--Don't process it if we don't need to.
+		if not bShowProtiming then return end;
+		
+		c.ProtimingDisplay:visible(bShowProtiming);							--disable by Cortes request
 		c.ProtimingDisplay:settextf("%i",fTapNoteOffset * 1000);	--Milisecond delay number
 		ProtimingCmds[param.TapNoteScore](c.ProtimingDisplay);		--Milisecond animation
 		
-	--	c.ProtimingAverage:visible(bShowProtiming);					--Original
-		c.ProtimingAverage:visible(false);						--disable by Cortes request
+		c.ProtimingAverage:visible(bShowProtiming);						--disable by Cortes request
 		c.ProtimingAverage:settextf("%.2f%%",clamp(100 - MakeAverage( tTotalJudgments ) * 1000 ,0,100));	--Percentage display
 		AverageCmds['Pulse'](c.ProtimingAverage);
 		
---		c.TextDisplay:visible(bShowProtiming);		--"Milisecond" text display
-		c.TextDisplay:visible(false);				--disable by Cortes request
+		c.TextDisplay:visible(bShowProtiming);				--disable by Cortes request
 		TextCmds['Pulse'](c.TextDisplay);			--"Milisecond" anim cmds
 		
-	--	c.ProtimingGraphBG:visible( bShowProtiming );			--self explanatory start		--default
-		c.ProtimingGraphBG:visible( graphset );						--
-	--	c.ProtimingGraphUnderlay:visible( bShowProtiming );		--		--default
-		c.ProtimingGraphUnderlay:visible( graphset );				--
-	--	c.ProtimingGraphWindowW3:visible( bShowProtiming );		--		--default
-		c.ProtimingGraphWindowW3:visible( graphset );				--
-	--	c.ProtimingGraphWindowW2:visible( bShowProtiming );		--		--default
-		c.ProtimingGraphWindowW2:visible( graphset );				--
-	--	c.ProtimingGraphWindowW1:visible( bShowProtiming );		--		--default
-		c.ProtimingGraphWindowW1:visible( graphset );				--
-	--	c.ProtimingGraphFill:visible( bShowProtiming );			--		--default
-		c.ProtimingGraphFill:visible( graphset );					--self explanatory end
+		c.ProtimingGraphBG:visible( bShowProtiming );						--
+		c.ProtimingGraphUnderlay:visible( bShowProtiming );				--
+		c.ProtimingGraphWindowW3:visible( bShowProtiming );				--
+		c.ProtimingGraphWindowW2:visible( bShowProtiming );				--
+		c.ProtimingGraphWindowW1:visible( bShowProtiming );				--
+		c.ProtimingGraphFill:visible( bShowProtiming );					--
 		c.ProtimingGraphFill:finishtweening();
 		c.ProtimingGraphFill:decelerate(1/60);
 		c.ProtimingGraphFill:zoomtowidth( clamp(
@@ -263,8 +284,7 @@ t[#t+1] = Def.ActorFrame {
 				0,(ProtimingWidth-4)/2),
 			-(ProtimingWidth-4)/2,(ProtimingWidth-4)/2)
 		);
-	--	c.ProtimingGraphAverage:visible( bShowProtiming );		--barra damasco precision estimada		--default
-		c.ProtimingGraphAverage:visible( graphset );				--barra damasco precision estimada		--forced on
+		c.ProtimingGraphAverage:visible( bShowProtiming );				--barra damasco precision estimada		--forced on
 		c.ProtimingGraphAverage:zoomtowidth( clamp(
 				scale(
 				MakeAverage( tTotalJudgments ),
@@ -272,8 +292,7 @@ t[#t+1] = Def.ActorFrame {
 				0,ProtimingWidth-4),
 			0,ProtimingWidth-4)
 		);
-	--	c.ProtimingGraphCenter:visible( bShowProtiming );		--la linea del centro	--default
-		c.ProtimingGraphCenter:visible( graphset );					--la linea del centro	--forced on
+		c.ProtimingGraphCenter:visible( bShowProtiming );					--la linea del centro	--forced on
 		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphBG);
 		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphUnderlay);
 		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphWindowW3);

@@ -1,6 +1,6 @@
 local t = Def.ActorFrame{}	
 local playmode = getenv("PlayMode");
-if playmode == "Special" then
+if playmode == "Special" or playmode == "Mixtapes" then
 	playmode = "Pro"
 end;
 if not playmode then

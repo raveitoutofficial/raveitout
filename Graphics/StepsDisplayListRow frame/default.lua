@@ -1,5 +1,6 @@
 local t =	Def.ActorFrame {};
 local sString;
+local customx = -12 --The x offset of the orbs.
 
 local function has_value (tab, val)
     for index, value in ipairs(tab) do
@@ -24,22 +25,17 @@ local danceToRIOColors = {
 }
 
 t[#t+1] = Def.ActorFrame{
-	--InitCommand=cmd(draworder,190);
-	OnCommand=function(self)
-		if GAMESTATE:IsCourseMode() then
-			self:visible(false);
-		end
-	end;
 	CurrentSongChangedMessageCommand=function(self)
 		if GAMESTATE:GetCurrentSong() then self:visible(true); else self:visible(false); end;
 	end;
 	LoadActor("_icon")..{
-		InitCommand=cmd(visible,true;zoom,0.55;addy,2;animate,false);--draworder,140;);
+		InitCommand=cmd(zoom,0.55;addy,2;animate,false);
 		SetMessageCommand=function(self,param)
-			customx = -12
-			self:x(customx);
+			--self:x(customx);
 			if isPumpMode then
 				if param.StepsType then
+					--short for "short string".
+					--TODO: Using localization values for this is absurd, remove it
 					sString = THEME:GetString("StepsDisplay StepsType",ToEnumShortString(param.StepsType));
 					if sString == "Single" then
 						if param.Steps:GetDescription() == "DANGER!" then
@@ -59,6 +55,7 @@ t[#t+1] = Def.ActorFrame{
 						self:x(customx+2.2);	
 					else
 						self:setstate(5);
+						self:x(customx+3.2);
 					end;
 				end;
 			else
@@ -71,13 +68,13 @@ t[#t+1] = Def.ActorFrame{
 		end;
 	};
 	LoadFont("monsterrat/_montserrat semi bold 60px")..{
-		InitCommand=cmd(zoom,0.45;skewx,-0.15;x,-9.5;y,0.5);--draworder,150;);
+		InitCommand=cmd(zoom,0.45;skewx,-0.15;x,-9.5;y,0.5);
 		SetMessageCommand=function(self,param)
 			local meter = param.Meter;
 			if meter >= 99 then
-				--self:settextf("%s","99+");
 				self:settext("??");
 			else
+				--Format with 2 integers, so 6 -> 06
 				self:settextf("%02d",meter);
 			end;
 		end;
@@ -85,14 +82,11 @@ t[#t+1] = Def.ActorFrame{
 
 	-- NEW LABEL
 	LoadActor("new")..{
-		InitCommand=cmd(zoom,0.4;x,-8;y,-17);--draworder,151;);
+		InitCommand=cmd(zoom,0.4;x,-8;y,-17);
 		SetMessageCommand=function(self,param)
-			profile = PROFILEMAN:GetMachineProfile();
-			scorelist = profile:GetHighScoreList(GAMESTATE:GetCurrentSong(),param.Steps);
-			scores = scorelist:GetHighScores();
-			topscore = scores[1];
-			
-			if #scores < 1 then
+			local scorelist = PROFILEMAN:GetMachineProfile():GetHighScoreList(GAMESTATE:GetCurrentSong(),param.Steps);
+			--If the number of high scores is less than one, this chart is new.
+			if #scorelist:GetHighScores() < 1 then
 				self:visible(true);
 			else
 				self:visible(false);
@@ -101,51 +95,32 @@ t[#t+1] = Def.ActorFrame{
 		end;
 	};
 
-	-- NEW LABEL
+	-- DANGER LABEL
 	LoadActor("danger")..{
-		InitCommand=cmd(zoom,0.5;x,-8;y,22);--draworder,151;);
+		InitCommand=cmd(zoom,0.5;x,-8;y,22);
 		OnCommand=cmd(diffuseshift; effectoffset,1; effectperiod, 0.5; effectcolor1, 1,1,0,1; effectcolor2, 1,1,1,1;);
 		SetMessageCommand=function(self,param)
-			profile = PROFILEMAN:GetMachineProfile();
-			scorelist = profile:GetHighScoreList(GAMESTATE:GetCurrentSong(),param.Steps);
-			scores = scorelist:GetHighScores();
-			topscore = scores[1];
-			
-			local descrp = param.Steps:GetDescription();
-
-			if descrp == "DANGER!" then
+			if param.Steps:GetDescription() == "DANGER!" then
 				self:visible(true);
 			else
 				self:visible(false);
 			end;
-		
 		end;
 	};
 	
 	-- DESC LABEL	
 	LoadFont("venacti/_venacti_outline 26px bold diffuse")..{
 		Text="";
-		InitCommand=cmd(zoom,0.4; maxwidth,120;skewx,-0.05;x,-8;y,22);--draworder,151;);
+		InitCommand=cmd(zoom,0.4; maxwidth,120;skewx,-0.05;x,-8;y,22);
 		SetMessageCommand=function(self,param)
 
 			local descrp = param.Steps:GetDescription();
-			-- always check if for nil
-			local steps = GAMESTATE:GetCurrentSteps(GAMESTATE:GetMasterPlayerNumber());
-			if not steps then return end;
-			local label = ""
-			
 			--Check for "DANGER!" before checking blacklist
-			if descrp == "DANGER!" then
-				label = ""
-			--If string in description is in the STEPMAKER_NAMES_BLACKLIST table
-			elseif has_value(STEPMAKER_NAMES_BLACKLIST, descrp) then
-				--Do nothing, string is already empty.
-				--label = ""
+			if descrp == "DANGER!" or has_value(STEPMAKER_NAMES_BLACKLIST, descrp) then
+				self:settext("");
 			else
-				label = descrp;
+				self:settext(descrp);
 			end
-			
-			self:settext(label);
 			
 		end;
 	};

@@ -1,4 +1,3 @@
---DoDebug = THEME:GetMetric("CustomRIO","DevMode")
 DoDebug = false;
 --[[FIXED FONTS]]
 DebugFont =		"Common normal"
@@ -70,20 +69,12 @@ Comboanicombo = cmd(finishtweening;--[[skewx,skc;]]x,ixc;y,iyc;diffusealpha,iac;
 				  decelerate,cbot1;x,xof1c;diffusealpha,aot1c;
 				  accelerate,cbot2;x,xof2c;diffusealpha,aot2c;);
 
---Cortes has a weird bug regarding how his setup returns Widescreen values, this is part
---of a workaround for him (and anyone having the same problem) to use. -NeobeatIKK
-if FILEMAN:DoesFileExist(THEME:GetCurrentThemeDirectory().."corteswidefix.patch") then
-	CortesWideFix = true
-else
-	CortesWideFix = false
-end
-
 --[[FUNCTIONS]]
 
 --This is honestly only ever called in ScreenOptionsCustomizeProfile so it's kind of useless
 function getProfileIcons()
 	--This junk is copypasted from Delta NEX Rebirth (which was copypasted from Simply Love), so it still uses the backgrounds variable
-    local fullPath = THEME:GetPathG("","USB_stuff/avatars")
+    local fullPath = THEME:GetPathG("ProfileBanner","avatars")
     local files = FILEMAN:GetDirListing(fullPath.."/")
     local backgrounds = {}
     --local backgroundsLength=0 --Fucking lua
@@ -100,10 +91,10 @@ function getRandomProfileIcon(pn)
 	if pn == PLAYER_2 then
 		math.randomseed(Hour()*3600+Second());
 	end;
-	--return THEME:GetPathG("","USB_stuff/avatars/"..string.format("%03i",tostring(math.random(40))));
+	--return THEME:GetPathG("ProfileBanner","avatars/"..string.format("%03i",tostring(math.random(40))));
 	
 	--This junk is copypasted from Delta NEX Rebirth (which was copypasted from Simply Love), so it still uses the backgrounds variable
-    local fullPath = THEME:GetPathG("","USB_stuff/avatars")
+    local fullPath = THEME:GetPathG("ProfileBanner","avatars")
     local files = FILEMAN:GetDirListing(fullPath.."/")
     local backgrounds = {}
     local backgroundsLength=0 --Fucking lua
@@ -116,7 +107,7 @@ function getRandomProfileIcon(pn)
    
 	if backgroundsLength > 0 then
 		local bg = backgrounds[math.random(backgroundsLength)]
-		return THEME:GetPathG("","USB_stuff/avatars/"..bg);
+		return THEME:GetPathG("ProfileBanner","avatars/"..bg);
 	end;
 	
 	assert(false,"No backgrounds found!");
@@ -142,12 +133,29 @@ end;
 
 --Get available choices for ScreenSelectPlayMode
 --TODO: Is ReadPrefFromFile slow? Need to check
-function getPlayModeChoices()
-	if ReadPrefFromFile("SpecialModeEnabled") == "true" then
-		return "Easy,Arcade,Pro,Special"
-	else
-		return "Easy,Arcade,Pro";
+local function isMixtapesAvailable()
+	if ReadPrefFromFile("MixtapeModeEnabled") == "true" then
+		return ",Mixtapes"
 	end;
+	
+	return "";
+end;
+
+local function isSpecialAvailable()
+	if ReadPrefFromFile("SpecialModeEnabled") == "true" then
+		for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+			if PROFILEMAN:IsPersistentProfile(pn) then
+				return ",Special"
+			end;
+		end;
+	end;
+	
+	return "";
+end;
+
+--This will be changed eventually, it's not a function for no reason
+function getPlayModeChoices()
+	return "Easy,Arcade,Pro"..isMixtapesAvailable()..isSpecialAvailable();
 end;
 
 --Take a wild guess as to what this does
@@ -164,21 +172,27 @@ end
 
 --Called from ScreenSelectPlayMode to pick a random group and the GroupWheel to show available groups
 function getAvailableGroups()
+	if RIO_FOLDER_NAMES['PREDEFINED_GROUP_LIST'] ~= false then return RIO_FOLDER_NAMES['PREDEFINED_GROUP_LIST'] end;
+	
 	local groups = SONGMAN:GetSongGroupNames();
-
+	
 	if not DoDebug then
 		--Remove easy and special folder from the group select
+		--I'm pretty sure this doesn't work since when you remove a group, the index is shifted down and removing k removes the wrong group?
 		for k,v in pairs(groups) do
 			if v == RIO_FOLDER_NAMES["EasyFolder"] then
 				table.remove(groups, k)
-			elseif v == RIO_FOLDER_NAMES["SpecialFolder"] then
-				table.remove(groups, k)
+			--elseif v == RIO_FOLDER_NAMES["SpecialFolder"] then
+			--	table.remove(groups, k)
 			--Never display the internal group folder
-			elseif v == "Internal" then
+			elseif v == "Internal" or v == "Missions" then
 				table.remove(groups, k)
 			--TODO: This should be done on startup.
+			--Remove groups that only have 1 song, usually means 'info' folder and nothing else
 			elseif (#SONGMAN:GetSongsInGroup(v))-1 < 1 then
 				table.remove(groups, k)
+			else
+				Trace(v);
 			end;
 		end
 	end;
@@ -259,14 +273,6 @@ function getNumberOfElements(t)
 	return count;
 end
 
-function setScores(PlayerScores)
-	setenv("PlayerScores",PlayerScores);
-end;
-
-function getScores()
-	return getenv("PlayerScores");
-end;
-
 function soundext(filename)
 	if FILEMAN:DoesFileExist(filename..".wav") then
 		file_path = filename..".wav";
@@ -332,6 +338,18 @@ function GetOptionsListMapping(name)
 	return map[sGame] or map["default"]
 end
 
+--Override the default for our theme since we use left & right instead of up & down
+function SelectProfileHorizontalKeys()
+	local sGame = string.lower(GAMESTATE:GetCurrentGame():GetName())
+	if sGame == "pump" then
+		return "MenuLeft,MenuRight,Start,Back,Center,DownLeft,DownRight"
+	elseif sGame == "dance" then
+		return "Start,Back,Left,Right,MenuLeft,MenuRight"
+	else
+		return "Left,Right,Start,Back"
+	end
+end
+
 function GetSongBackground(return_nil_on_fail)
 	local song = GAMESTATE:GetCurrentSong();
 	if not song then
@@ -342,7 +360,7 @@ function GetSongBackground(return_nil_on_fail)
 		end
 	end
 	if song then
-		local path = split("/",GAMESTATE:GetCurrentSong():GetSongDir())
+		local path = split("/",song:GetSongDir())
 		path = path[#path-1];
 		--SCREENMAN:SystemMessage(song:GetSongDir())
 		if IsUsingWideScreen() then
@@ -376,7 +394,15 @@ end;
 
 
 function getLargeJacket()
-	local songdir  = GAMESTATE:GetCurrentSong():GetSongDir()
+	local song = GAMESTATE:GetCurrentSong();
+	if not song then
+		local trail = GAMESTATE:GetCurrentTrail(GAMESTATE:GetMasterPlayerNumber())
+		local e = trail:GetTrailEntries()
+		if #e > 0 then
+			song = e[1]:GetSong()
+		end
+	end
+	local songdir  = song:GetSongDir()
 	local path = split("/",songdir)
 	path = "/SongJacketsLarge/"..path[#path-1];
 	--SCREENMAN:SystemMessage(path)
@@ -388,10 +414,12 @@ function getLargeJacket()
 		return path..".jpeg"
 	elseif FILEMAN:DoesFileExist(songdir.."largejk.png") then
 		return songdir.."largejk.png"
-	elseif GAMESTATE:GetCurrentSong():HasJacket() then
-		return GAMESTATE:GetCurrentSong():GetJacketPath()
+	elseif song:HasJacket() then
+		return song:GetJacketPath()
 	else
 		--self:LoadFromSongBanner(GAMESTATE:GetCurrentSong())
+		--So apparently I had song:GetBannerPath() here before and it wasn't breaking
+		--Because song was accidentally being made global in msg.lua. Oops.
 		return song:GetBannerPath()
 	end;
 end;
@@ -443,14 +471,27 @@ end
 --returns whether the current style is not 1 player/1 side unless Center1Player is on.
 --so called because it is used to determine if various gameplay UI elements should be centered
 function CenterGameplayWidgets()
-	if not PREFSMAN:GetPreference("Center1Player") then
+	return Center1Player();
+	--[[if not PREFSMAN:GetPreference("Center1Player") then
 		if GAMESTATE then
 			local style = GAMESTATE:GetCurrentStyle()
-			if style and style:GetStyleType() ~= 'StyleType_OnePlayerOneSide' then
+			if style and style:GetStyleType() == 'StyleType_OnePlayerOneSide' then
 				return false
 			end
 		end
 	end
 	--safe bet
-	return true
+	return true]]
+end
+
+function PlayerAchievedAnyHighScores(pn)
+	--Trace("Checking stages played, "..STATSMAN:GetStagesPlayed().." stages played.")
+	for i=1, STATSMAN:GetStagesPlayed() do --You'd think this should 0 indexed becuase it's C++, but GetPlayedStageStats() takes "stages ago" as the parameter and I guess 0 ago is not actually the current stage
+		if STATSMAN:GetPlayedStageStats(i):GetPlayerStageStats(pn):GetMachineHighScoreIndex() == 0 then
+			return true
+		end
+	end
+	--Trace("No high scores...");
+	--lua.Flush();
+	return false;
 end

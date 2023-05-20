@@ -20,13 +20,14 @@ function DoesMemcardProfileExist(player)
 	return FILEMAN:DoesFileExist(GetMemcardProfileDir(player).."Stats.xml");
 end;
 
+--This is never even used and should be removed because it doesn't work
 function LoadMemcardProfileData(player)
 	local filePath = GetMemcardProfileDir(player).."rioStats.ini"
 	if FILEMAN:DoesFileExist(filePath) then
 		local file = RageFileUtil.CreateRageFile();
 		file:Open(filePath,1) --Access type: Read
 		local s = file:Read();
-		s = s:split("\n")
+		s = split("\n",s)
 		profileCache = {};
 		for line in ivalues(s) do
 			--Warn(trimStr(s[k]));

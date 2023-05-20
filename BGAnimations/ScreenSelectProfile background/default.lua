@@ -36,31 +36,34 @@ local t = Def.ActorFrame {
 
 
 --MSG INFO
-t[#t+1] = Def.ActorFrame {
-	LoadActor("help_info/txt_box")..{
-		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_BOTTOM-50;zoomx,0.9;zoomy,0.65);
-	};
-	
-	Def.Sprite{
-		Texture="help_info/messages";
-		InitCommand=cmd(animate,false;diffusealpha,0;x,SCREEN_CENTER_X;y,SCREEN_BOTTOM-50;zoom,0.6;);
-		OnCommand=cmd(playcommand,"Animate");
-		AnimateCommand=function(self)
-			self:linear(0.2);
-			self:diffusealpha(1);
-			self:sleep(2);
-			self:linear(0.2)
-			self:diffusealpha(0);
-			local nextState = self:GetState()+1;
-			if nextState == self:GetNumStates() then
-				self:setstate(0);
-			else
-				self:setstate(nextState);
+--Only display help when the help is relevant. Aka no "press left and right to select a profile" when there are no profiles to select.
+if PROFILEMAN:GetNumLocalProfiles() > 0 and not USING_RFID then
+	t[#t+1] = Def.ActorFrame {
+		LoadActor("help_info/txt_box")..{
+			InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_BOTTOM-50;zoomx,0.9;zoomy,0.65);
+		};
+		
+		Def.Sprite{
+			Texture="help_info/messages";
+			InitCommand=cmd(animate,false;diffusealpha,0;x,SCREEN_CENTER_X;y,SCREEN_BOTTOM-50;zoom,0.6;);
+			OnCommand=cmd(playcommand,"Animate");
+			AnimateCommand=function(self)
+				self:linear(0.2);
+				self:diffusealpha(1);
+				self:sleep(2);
+				self:linear(0.2)
+				self:diffusealpha(0);
+				local nextState = self:GetState()+1;
+				if nextState == self:GetNumStates() then
+					self:setstate(0);
+				else
+					self:setstate(nextState);
+				end;
+				self:queuecommand("Animate");
 			end;
-			self:queuecommand("Animate");
-		end;
+		};
 	};
-};
+end;
 
 t[#t+1] = 	Def.ActorFrame{
 
@@ -72,23 +75,35 @@ t[#t+1] = 	Def.ActorFrame{
 		InitCommand=cmd(uppercase,true;horizalign,left;x,SCREEN_LEFT+18;y,SCREEN_TOP+10;zoom,0.185;skewx,-0.1);
 		OnCommand=function(self)
 			self:uppercase(true);
-			self:settext(THEME:GetString("ScreenSelectProfile","SELECT A LOCAL PROFILE OR"));
+			if USING_RFID then
+				self:settext(THEME:GetString("ScreenSelectProfile","INSERT YOUR USB FLASH DRIVE OR"));
+			else
+				self:settext(THEME:GetString("ScreenSelectProfile","SELECT A LOCAL PROFILE OR"));
+			end;
 		end;
 	};
 	
 	LoadFont("monsterrat/_montserrat semi bold 60px")..{	
-		InitCommand=cmd(uppercase,true;horizalign,left;x,SCREEN_LEFT+16;y,SCREEN_TOP+30;zoom,0.6;skewx,-0.255);
+		InitCommand=cmd(uppercase,true;horizalign,left;xy,16,30;zoom,0.6;skewx,-0.255;maxwidth,700*GetScreenAspectRatio());
 		OnCommand=function(self)
 			self:uppercase(true);
-			self:settext(THEME:GetString("ScreenSelectProfile","INSERT YOUR USB FLASH DRIVE"));
+			if USING_RFID then
+				self:settext(THEME:GetString("ScreenSelectProfile","SCAN YOUR RAVE IT OUT PASS"));
+			else
+				self:settext(THEME:GetString("ScreenSelectProfile","INSERT YOUR USB FLASH DRIVE"));
+			end;
 		end;
 	};
 	
+	--[[Def.Quad{
+		InitCommand=cmd(xy,SCREEN_CENTER_X,THEME:GetMetric("ScreenSelectProfile","TimerY");diffuse,Color.Red;setsize,200,20);
+	};]]
 	--TIME
 	LoadFont("monsterrat/_montserrat light 60px")..{
-			Text="TIME";
-			InitCommand=cmd(x,THEME:GetMetric("ScreenSelectProfile","TimerX")-100;y,THEME:GetMetric("ScreenSelectProfile","TimerY")+15;zoom,0.6;skewx,-0.2);
-		};
+		Text="TIME";
+		Condition=PREFSMAN:GetPreference("MenuTimer");
+		InitCommand=cmd(x,THEME:GetMetric("ScreenSelectProfile","TimerX")-90;y,THEME:GetMetric("ScreenSelectProfile","TimerY");zoom,0.675;skewx,-0.25;);
+	};
 		
 
 };

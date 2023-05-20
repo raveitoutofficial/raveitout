@@ -26,49 +26,6 @@ function trimStr(s)
    return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
---From https://stackoverflow.com/a/19263313
---This does not work with periods for some mysterious reason
---Usage: "something here":split(",")
-function string:split( inSplitPattern, outResults )
-  if not outResults then
-    outResults = { }
-  end
-  local theStart = 1
-  local theSplitStart, theSplitEnd = string.find( self, inSplitPattern, theStart )
-  while theSplitStart do
-    table.insert( outResults, string.sub( self, theStart, theSplitStart-1 ) )
-    theStart = theSplitEnd + 1
-    theSplitStart, theSplitEnd = string.find( self, inSplitPattern, theStart )
-  end
-  table.insert( outResults, string.sub( self, theStart ) )
-  return outResults
-end
-
-function split( delimiter, text )
-	local list = {}
-	local pos = 1
-	while 1 do
-		local first,last = string.find( text, delimiter, pos )
-		if first then
-			table.insert( list, string.sub(text, pos, first-1) )
-			pos = last+1
-		else
-			table.insert( list, string.sub(text, pos) )
-			break
-		end
-	end
-	return list
-end
---[[
-function split2(str, sep)
-   local result = {}
-   local regex = ("([^%s]+)"):format(sep)
-   for each in str:gmatch(regex) do
-      table.insert(result, each)
-   end
-   return result
-end]]
-
 --gsub ignore case
 function gisub(s, pat, repl, n)
     pat = string.gsub(pat, '(%a)', 
@@ -91,6 +48,22 @@ function strArrayToString(a)
 	end
 	return s;
 end
+
+
+--https://stackoverflow.com/a/27028488
+function dumpTable(o)
+   if type(o) == 'table' then
+      local s = '{ '
+      for k,v in pairs(o) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. dump(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(o)
+   end
+end
+
 
 --Because GetCurrentGame returns lowercase, but StepsType wants uppercase.
 function firstToUpper(str)

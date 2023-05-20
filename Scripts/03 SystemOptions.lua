@@ -88,7 +88,7 @@ end;
 ]]
 
 --By Accelerator
---[[
+
 function MixtapeModeConfig()
 	local t = {
 		Name = "MixtapeModeConfig";
@@ -120,7 +120,7 @@ function MixtapeModeConfig()
 	};
 	setmetatable( t, t );
 	return t;
-end;]]
+end;
 
 --By Accelerator, same as above
 function SpecialModeConfig()
@@ -155,6 +155,7 @@ function SpecialModeConfig()
 	return t;
 end;
 
+--The functionality was removed, this doesn't do anything.
 function StreamSafeConfig()
 	local t = {
 		Name = "StreamSafeConfig";
@@ -181,6 +182,38 @@ function StreamSafeConfig()
 				WritePrefToFile("StreamSafeEnabled","true");
 			else
 				WritePrefToFile("StreamSafeEnabled","false");
+			end;
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end;
+
+function SongNameConfig()
+	local t = {
+		Name = "SongNameConfig";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		--False exports on screen exit
+		ExportOnChange = false;
+		Choices = {"Off", "On"};
+		
+		-- Used internally, this will set the selection on the screen when it is loaded.
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("ShowSongNames") == "false" then
+				list[1] = true;
+			else
+				list[2] = true;
+			end;
+		end;
+		
+		
+		SaveSelections = function(self, list, pn)
+			if list[2] then
+				WritePrefToFile("ShowSongNames","true");
+			else
+				WritePrefToFile("ShowSongNames","false");
 			end;
 		end;
 	};
@@ -222,6 +255,100 @@ function HeartsPerPlayConfig()
 					end
 				end
 			end
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end;
+
+function SaveTypeConfig()
+	local t = {
+		Name = "SaveType";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		--False exports on screen exit
+		ExportOnChange = false;
+		Choices = {"USB and Local","USB and RFID"};
+		
+		-- Used internally, this will set the selection on the screen when it is loaded.
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("SaveType") == "RFID" then
+				list[2] = true
+			else
+				list[1] = true
+			end;
+		end;
+		
+		SaveSelections = function(self, list, pn)
+			if list[2] then
+				WritePrefToFile("SaveType","RFID");
+			else
+				WritePrefToFile("SaveType","USB");
+			end;
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end;
+
+function USBSongConfig()
+	local t = {
+		Name = "AllowUSBSongs";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = {"Disabled", "Enabled"};
+		LoadSelections = function(self, list, pn)
+			if PREFSMAN:GetPreference("CustomSongsEnable") == true then
+				list[2] = true;
+			else
+				list[1] = true;
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			if list[1] then
+				PREFSMAN:SetPreference("CustomSongsEnable",false);
+			else
+				PREFSMAN:SetPreference("CustomSongsEnable",true);
+			end;
+			PREFSMAN:SavePreferences();
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end;
+
+function CustomSongsMaxSeconds()
+	local t = {
+		Name = "CustomSongsMaxSeconds";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = {"60", "90", "120 (default)","150","180","210","240","270","300"};
+		LoadSelections = function(self, list, pn)
+			local c = PREFSMAN:GetPreference("CustomSongsMaxSeconds")
+			if c%30 == 0 and (c-30)/30 < #self.Choices then
+				list[(c-30)/30] = true
+				return;
+			end;
+			--If we got here, no choice was found
+			lua.ReportScriptError("Song seconds was set to "..c.." which isn't a valid choice.")
+			list[3] = true
+		end;
+		SaveSelections = function(self, list, pn)
+			local found = false
+			for i=1, #list do
+				if list[i] then
+					PREFSMAN:SetPreference("CustomSongsMaxSeconds",30+30*i);
+					PREFSMAN:SavePreferences();
+					return;
+				end;
+			end;
+			--If we got here, nothing was found
+			--lua.ReportScriptError("No choice found!");
 		end;
 	};
 	setmetatable( t, t );

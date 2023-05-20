@@ -1,33 +1,49 @@
 local isWheelCustom = ...
 local shine_index = 0;
-local streamSafeMode = (ReadPrefFromFile("StreamSafeEnabled") == "true");
+--local streamSafeMode = (ReadPrefFromFile("StreamSafeEnabled") == "true");
+local streamSafeMode = false;
 
---GAMESTATE:SetCurrentSong(SONGMAN:FindSong("3y3s"))
+
+--This is a global variable so other screens can check it
 extraStageSong = nil;
 local isExtraStage = IsExtraStagePIU()
 if isExtraStage then
-	local sDir = GAMESTATE:GetCurrentSong():GetSongDir()
-	local arr = split("/",sDir)
-	--SCREENMAN:SystemMessage(strArrayToString(arr));
-	sDir = arr[2].."/"..arr[3].."/extra1.crs"
-	--SCREENMAN:SystemMessage(sDir);
-	--sDir = arr[1].."/"
-	if FILEMAN:DoesFileExist(sDir) then
-		local songName = split(":",GetTagValue(sDir,"SONG"))[1];
-		--SCREENMAN:SystemMessage(songName);
-		local songsInGroup = SONGMAN:GetSongsInGroup(arr[3])
-		for i,song in ipairs(songsInGroup) do
-			if song:GetMainTitle() == songName then
-				extraStageSong = song:GetMainTitle()
-				GAMESTATE:SetPreferredSong(song);
-				break
+	if USE_ES_SONG then
+		local song = SONGMAN:FindSong(ES_SONG)
+		if song then
+			extraStageSong = song
+			GAMESTATE:SetPreferredSong(song);
+		end;
+	else
+		local sDir = GAMESTATE:GetCurrentSong():GetSongDir()
+		local arr = split("/",sDir)
+		--SCREENMAN:SystemMessage(strArrayToString(arr));
+		sDir = arr[2].."/"..arr[3].."/extra1.crs"
+		--SCREENMAN:SystemMessage(sDir);
+		--sDir = arr[1].."/"
+		if FILEMAN:DoesFileExist(sDir) then
+			local songName = split(":",GetTagValue(sDir,"SONG"))[1];
+			--SCREENMAN:SystemMessage(songName);
+			local songsInGroup = SONGMAN:GetSongsInGroup(arr[3])
+			for i,song in ipairs(songsInGroup) do
+				if song:GetMainTitle() == songName then
+					extraStageSong = song
+					GAMESTATE:SetPreferredSong(song);
+					break
+				end;
 			end;
 		end;
-		if not extraStageSong then
-			SCREENMAN:SystemMessage("Couldn't find the extra stage song!");
-		end;
+	end;
+	if not extraStageSong then
+		SCREENMAN:SystemMessage("Couldn't find the extra stage song!");
 	end;
 end;
+
+--Test
+--[[extraStageSong = SONGMAN:FindSong("A")
+GAMESTATE:SetPreferredSong(extraStageSong)
+isExtraStage = true]]
+
 return Def.ActorFrame{
 	
 		Def.Sprite{
@@ -46,7 +62,7 @@ return Def.ActorFrame{
 			CurrentSongChangedMessageCommand=function(self)
 				self:stoptweening():diffusealpha(0);
 				if GAMESTATE:GetCurrentSong() then
-					if GAMESTATE:GetCurrentSong():GetPreviewVidPath() == nil then
+					if not GAMESTATE:GetCurrentSong():HasPreviewVid() then
 						self:sleep(.4):queuecommand("Load2");
 					end;
 				end;
@@ -75,29 +91,31 @@ return Def.ActorFrame{
 			InitCommand=cmd(x,_screen.cx;y,_screen.cy-30);
 			CurrentSongChangedMessageCommand=cmd(stoptweening;Load,nil;sleep,.4;queuecommand,"PlayVid2");
 			PlayVid2Command=function(self)
-				--self:Load(nil);
-				if streamSafeMode and has_value(STREAM_UNSAFE_AUDIO, GAMESTATE:GetCurrentSong():GetDisplayFullTitle() .. "||" .. GAMESTATE:GetCurrentSong():GetDisplayArtist()) then
+				if GAMESTATE:GetCurrentSong():HasPreviewVid() then
+					self:Load(GAMESTATE:GetCurrentSong():GetPreviewVidPath());
 					self:diffusealpha(0);
-					self:Load(nil);
-					return;
-				else
-					local song = GAMESTATE:GetCurrentSong()
-					path = GetBGAPreviewPath("PREVIEWVID");
-					--path = song:GetBannerPath();
-					self:Load(path);
-				end;
-				self:diffusealpha(0);
-				self:zoomto(384,232);
-				self:linear(0.2);
-				if path == "/Backgrounds/Title.mp4" then
-					self:diffusealpha(0.5);
-				else
+					self:zoomto(384,232);
+					self:linear(0.2);
+					--[[
+					This worked when we were reading the #PREVIEWVID directly,
+					but I think specifying /Backgrounds/Title.mp4 is not possible
+					when using the C++ function GetPreviewVidPath(). (Though I haven't tried it.)
+					Either way, no RIO simfiles ever had this in their tag so it was a mystery why
+					this was being checked in the first place.
+					Nor did we ever have a Backgrounds folder.
+					]]
+					--[[if GAMESTATE:GetCurrentSong():GetPreviewVidPath() == "/Backgrounds/Title.mp4" then
+						self:diffusealpha(0.5);
+					else
+						self:diffusealpha(1);
+					end]]
 					self:diffusealpha(1);
-				end
+				end;
 			end;
 		};
 		--TODO: Remove this when hiding songs works correctly!
-		Def.ActorFrame{
+		--[[Def.ActorFrame{
+			Condition=false;
 			InitCommand=cmd(x,_screen.cx;y,_screen.cy-30;visible,false);
 			CurrentSongChangedMessageCommand=function(self)
 				if streamSafeMode and has_value(STREAM_UNSAFE_AUDIO, GAMESTATE:GetCurrentSong():GetDisplayFullTitle() .. "||" .. GAMESTATE:GetCurrentSong():GetDisplayArtist()) then
@@ -123,7 +141,7 @@ return Def.ActorFrame{
 				Text=THEME:GetString("ScreenSelectMusic","StreamUnsafe");
 				InitCommand=cmd(wrapwidthpixels,300;);
 			};
-		};
+		};]]
 	
 		LoadActor("preview_songinfo")..{
 			InitCommand=cmd(horizalign,center;zoomto,385,75;x,_screen.cx;y,_screen.cy+50;diffusealpha,1);
@@ -134,10 +152,12 @@ return Def.ActorFrame{
 			InitCommand=cmd(Load,nil;diffusealpha,0;zoomto,70,70;horizalign,left;x,_screen.cx-190;y,_screen.cy+50);
 			CurrentSongChangedMessageCommand=function(self)
 				(cmd(stoptweening;Load,nil;diffusealpha,0;))(self);
-				if GAMESTATE:GetCurrentSong():HasJacket() then
-					self:Load(GAMESTATE:GetCurrentSong():GetJacketPath());
-				else
-					self:LoadFromSongBanner(GAMESTATE:GetCurrentSong());
+				if GAMESTATE:GetCurrentSong() then
+					if GAMESTATE:GetCurrentSong():HasJacket() then
+						self:Load(GAMESTATE:GetCurrentSong():GetJacketPath());
+					else
+						self:LoadFromSongBanner(GAMESTATE:GetCurrentSong());
+					end;
 				end;
 				--Change to zoomto,100,100 for big to small animation
 				(cmd(zoomto,30,30;linear,0.05;decelerate,0.25;diffusealpha,1;zoomto,70,70))(self);
@@ -155,6 +175,7 @@ return Def.ActorFrame{
 		LoadFont("monsterrat/_montserrat light 60px")..{
 			InitCommand=cmd(horizalign,left;uppercase,true;x,_screen.cx-67.5;y,_screen.cy+25.5);
 			CurrentSongChangedMessageCommand=function(self)
+				if not GAMESTATE:GetCurrentSong() then return end;
 				self:settext(GAMESTATE:GetCurrentSong():GetGenre());
 				(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.2;skewx,-0.2)) (self)
 			end;
@@ -173,6 +194,7 @@ return Def.ActorFrame{
 			OnCommand=cmd(playcommand,"YearTag");
 			CurrentSongChangedMessageCommand=cmd(playcommand,"YearTag");
 			YearTagCommand=function(self)
+				if not GAMESTATE:GetCurrentSong() then return end;
 				local origin = GAMESTATE:GetCurrentSong():GetOrigin()
 				if origin == "" then
 					origin = "????"
@@ -215,14 +237,14 @@ return Def.ActorFrame{
 					self:settext(speedvalue);
 					(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.2;)) (self)
 				else
-					self:stoptweening();self:linear(0.25);self:diffusealpha(0);
+					self:stoptweening():linear(0.25):diffusealpha(0);
 				end;
 			end;
 		};
 		
 		
 		--HEART
-		LoadActor(THEME:GetPathG("","USB_stuff/heart_foreground.png"))..{
+		LoadActor(THEME:GetPathB("","ProfileBanner/heart_foreground.png"))..{
 		InitCommand=cmd(x,_screen.cx-105;y,_screen.cy+85;zoom,0.6;);
 		OnCommand=cmd(playcommand,"Refresh";);
 		CurrentSongChangedMessageCommand=cmd(finishtweening;diffusealpha,0;sleep,0.01;queuecommand,"Refresh";);
@@ -259,8 +281,6 @@ return Def.ActorFrame{
 					end
 					self:settext( string.format("%.3i", num).."/"..string.format("%.3i", total) );
 					(cmd(finishtweening;zoomy,0;zoomx,0.5;decelerate,0.33;zoom,0.275;)) (self)
-				else
-					self:stoptweening();self:linear(0.25);self:diffusealpha(0);
 				end;
 			end;
 		};
@@ -282,7 +302,7 @@ return Def.ActorFrame{
 					
 					self:diffusealpha(0);
 					if isExtraStage then
-						if extraStageSong == song:GetMainTitle() then
+						if extraStageSong == song then
 							self:diffuseshift():effectcolor1(Color("Red")):effectcolor2(Color("White")):effectperiod(1);
 						else
 							self:effectcolor1(Color("White"))
@@ -294,7 +314,6 @@ return Def.ActorFrame{
 					self:stoptweening();self:linear(0.25);self:diffusealpha(0);
 				end;
 			end;
-
 		};
 		-- CURRENT SONG ARTIST
 		LoadFont("monsterrat/_montserrat semi bold 60px")..{	

@@ -11,7 +11,6 @@ function Setup()
 	--THEME:ReloadMetrics();
 	--redundante dejarlo aquí, dejar en theme default ScreenTitleMenu overlay o probar en ScreenOptions overlay
 	--PREFSMAN:SetPreference("Theme","RioTI"); --appearance op --ok [sólo al iniciar]
-	PREFSMAN:SetPreference("HideIncompleteCourses",true);
 	
 	PREFSMAN:SetPreference("SuperMeterPercentChangeCheckpointHit",0);
 	PREFSMAN:SetPreference("SuperMeterPercentChangeCheckpointMiss",0);
@@ -62,6 +61,7 @@ function Setup()
 	PREFSMAN:SetPreference("DelayedBack",false);	--not verified
 	PREFSMAN:SetPreference("MusicWheelSwitchSpeed",15);
 			--Appearance Options
+	PREFSMAN:SetPreference("DefaultModifiers","rio,2x");
 	PREFSMAN:SetPreference("Announcer",nil); 		--not verified
 	PREFSMAN:SetPreference("PercentageScoring",true);	--doesn't work?
 	PREFSMAN:SetPreference("RandomBackgroundMode","RandomBackgroundMode_RandomMovies");
@@ -69,29 +69,37 @@ function Setup()
 	PREFSMAN:SetPreference("ShowBeginnerHelper",false);
 	PREFSMAN:SetPreference("NumBackgrounds",5);
 	--PREFSMAN:SetPreference("UseUnlockSystem",THEME:GetMetric("CustomRIO","LockSongs"));	--Linked with metrics so we can execute debug from commandline.
-			--Graphic/Sound options
+	--Graphic/Sound options
 	PREFSMAN:SetPreference("SmoothLines",true);
 	PREFSMAN:SetPreference("CelShadeModels",false);
-			--UI Options
+	PREFSMAN:SetPreference("FastNoteRendering",true);
+	PREFSMAN:SetPreference("DisableUploadDir",true);
+	
+	--UI Options
 	PREFSMAN:SetPreference("ShowBanners",false);
 	PREFSMAN:SetPreference("ShowInstructions",false);
-	PREFSMAN:SetPreference("ShowNativeLanguage",true);
+	PREFSMAN:SetPreference("ShowNativeLanguage",false); --Other language characters don't display properly
 	PREFSMAN:SetPreference("ShowSongOptions","Yes"); --Only visible when in Debug mode
-			--Advanced Options
-	--AllowW1 gets overridden during mode select anyway.
-	--PREFSMAN:SetPreference("AllowW1","AllowW1_Everywhere");
-	PREFSMAN:SetPreference("HiddenSongs",false);
-	PREFSMAN:SetPreference("EasterEggs",true);
+
+	--Steps and music select related
+	PREFSMAN:SetPreference("HiddenSongs",true); --To hide Easy Mode and OMES songs.
 	PREFSMAN:SetPreference("AutogenSteps",false);
 	PREFSMAN:SetPreference("AutogenGroupCourses",false);
+	PREFSMAN:SetPreference("HideIncompleteCourses",true);
+	
+	--Lights related
+	PREFSMAN:SetPreference("BlinkGameplayButtonLightsOnNote",true);
+	PREFSMAN:SetPreference("LightsStepsDifficulty","medium,hard");
+	PREFSMAN:SetPreference("OITGStyleLights",true);
+	
 	PREFSMAN:SetPreference("FastLoad",false);
 	PREFSMAN:SetPreference("FastLoadAdditionalSongs",false);
-	PREFSMAN:SetPreference("FastNoteRendering",true);
+	
 	--FORCED OPERATOR CONFIG END
 
 	--Preferences.ini Exclusive START
-	PREFSMAN:SetPreference("FailOffForFirstStageEasy",true);	--TODO: Need verify
-	PREFSMAN:SetPreference("FailOffInBeginner",1);	--TODO: needs confirm if works
+	PREFSMAN:SetPreference("FailOffForFirstStageEasy",false);	--TODO: Need verify
+	PREFSMAN:SetPreference("FailOffInBeginner",false);	--TODO: needs confirm if works
 	--Preferences.ini Exclusive END
 
 	--no sirve, aun con esto aun hay que relanzar el programa para que disablesong tenga efecto.
@@ -104,12 +112,21 @@ function Setup()
 	ActiveModifiers = {
 		P1 = table.shallowcopy(PlayerDefaults),
 		P2 = table.shallowcopy(PlayerDefaults),
+		P3 = table.shallowcopy(PlayerDefaults),
+		P4 = table.shallowcopy(PlayerDefaults),
 		--MACHINE = table.shallowcopy(PlayerDefaults),
 		--Save values here if editing profile
 	}
 	PerfectionistMode = {
 		PlayerNumber_P1 = false,
-		PlayerNumber_P2 = false
+		PlayerNumber_P2 = false,
+		PlayerNumber_P3 = false,
+		PlayerNumber_P4 = false
 	};
-
+	
+	--It's global because musicwheel doesn't have a constructor and this needs to be loaded somewhere
+	MUSICWHEEL_SONG_NAMES = (ReadPrefFromFile("ShowSongNames") == "true");
+	
+	--Just in case? There's probably no need to make this global.
+	USING_RFID = (ReadPrefFromFile("SaveType") == "RFID");
 end

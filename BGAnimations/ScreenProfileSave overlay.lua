@@ -12,7 +12,7 @@ if IsExtraStagePIU() then
 	curstage = "Stage_Extra1"
 elseif GAMESTATE:GetCurrentStageIndex() > 3 then
 	curstage = Stage[4];
-elseif curstage == "Stage_Extra1" or curstage == "Stage_Final" then --It will say this if you use snap tracks, which we don't want because it's not actually the extra stage.
+elseif curstage == "Stage_Extra1" or curstage == "Stage_Final" or curstage == "Stage_Nonstop" then --It will say this if you use snap tracks, which we don't want because it's not actually the extra stage.
 	curstage = Stage[GAMESTATE:GetCurrentStageIndex()+1]
 end;
 --SCREENMAN:SystemMessage(curstage)
@@ -27,6 +27,7 @@ local delay_time = {
 	Stage_6th = 10;
 	Stage_Final = 9;
 	Stage_Extra1 = 9;
+	Stage_Nonstop = 8;
 };
 
 local NextStageSleepTime = delay_time[curstage];
@@ -41,11 +42,11 @@ if curstage == 'Stage_Event' then
 	sound = THEME:GetPathS("","nextstage_"..random_name)
 	NextStageSleepTime = delay_time[random_name];
 end;
+
 local UseNextStage = true;
 
-if GetSmallestNumHeartsLeftForAnyHumanPlayer() > 0 then
-	--pass, already true
-else
+--STATSMAN:GetCurStageStats():AllFailed() or GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() <= 0 or GetSmallestNumHeartsLeftForAnyHumanPlayer() <= 0
+if Branch.AfterProfileSave() ~= "ScreenSelectMusic" then
 	NextStageSleepTime = 0;
 	UseNextStage = false;
 end;
@@ -76,23 +77,42 @@ t[#t+1] = Def.Actor {
 	LoadCommand=function()
 		--Workaround for SaveProfileCustom not being called by SM
 		for player in ivalues(GAMESTATE:GetHumanPlayers()) do
+			--Will return "" if the player is using the machine profile.
 			local profileDir = PROFILEMAN:GetProfileDir(ProfileSlot[PlayerNumber:Reverse()[player]+1]);
-			SaveProfileCustom(PROFILEMAN:GetProfile(player),profileDir);
-			--If there are no stages left, save extra data needed for memory cards.
-			if NumHeartsLeft[player] < 1 then
-				if PROFILEMAN:ProfileWasLoadedFromMemoryCard(player) then
-					SaveMemcardProfileData(player);
+			--Don't save if it's the machine profile.
+			if profileDir ~= "" then
+				SaveProfileCustom(PROFILEMAN:GetProfile(player),profileDir);
+				
+				if getenv("PlayMode") == "Special" and (NumHeartsLeft[player] < 1 or GAMESTATE:IsEventMode()) then
+					QUESTMODE:SaveCurrentProgress(player);
 				end;
+			end;
+			
+			--If there are no stages left, save data needed for memory cards. StepMania is supposed to handle this but it's broken...
+			if NumHeartsLeft[player] < 1 or GAMESTATE:IsEventMode() then
+				if PROFILEMAN:ProfileWasLoadedFromMemoryCard(player) then
+					PROFILEMAN:SaveProfile(player);
+				end;
+			end;
+			
+			--Unjoining a player wipes their stats... So we can't unjoin them... Because we can't check high scores...
+			--[[if NumHeartsLeft[player] < 1 then
 				--Remove player manually because SM doesn't know when to do it because we're using hearts.
 				GAMESTATE:UnjoinPlayer(player)
-				--SCREENMAN:SystemMessage("Unjoined "..player)
-			end;
+			end;]]
 		end;
+		
+
 		SCREENMAN:GetTopScreen():Continue();
 	end;
 };
 
 if DoDebug then
+	t[#t+1] = LoadFont("Common Normal")..{
+		Text="Next screen: "..Branch.AfterProfileSave();
+		InitCommand=cmd(zoom,2;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+40);
+	};
+
 	t[#t+1] = LoadFont("Common Normal")..{	--percentage scoring P1
 		InitCommand=cmd(zoom,2;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
 		Text=curstage.." - Delay: "..NextStageSleepTime;

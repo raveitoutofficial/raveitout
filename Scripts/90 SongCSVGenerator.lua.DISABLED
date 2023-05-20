@@ -33,7 +33,7 @@ function nns(obj)
 end;
 
 function parseData()
-	local groupsToScan = {"81-Rave", "80-Full Tracks", "07-Rock", "06-Pop", "05-K-Pop", "04-Latin", "03-Hip Hop", "02-EDM", "01-Country"}
+	local groupsToScan = {"Temp"}
 	for j,group in ipairs(groupsToScan) do
 		--local group = "05-K-Pop"
 		local exportName = THEME:GetCurrentThemeDirectory().."Scripts/export/"..group..".csv"

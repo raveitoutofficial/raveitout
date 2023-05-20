@@ -12,9 +12,11 @@ function table.shallowcopy(orig)
     return copy
 end
 
---This defines the custom player options. PlayerDefaults is initialized from InitGame
---Use ActiveModifiers["P1"] or ActiveModifiers["P2"] to access options. ActiveModifiers
---is automatically set when the profile is loaded.
+--[[
+This defines the custom player options. PlayerDefaults is initialized from InitGame.lua
+Use ActiveModifiers["P1"] or ActiveModifiers["P2"] to access options. ActiveModifiers
+is automatically set when the profile is loaded.
+]]
 PlayerDefaults = {
 	DetailedPrecision = false, --Options: false, EarlyLate, ProTiming
 	ReverseGrade = false, --Like the PIU thing? Perfect is shown as bad
@@ -22,55 +24,60 @@ PlayerDefaults = {
 	BGAMode = "On", --Options: Black, Off, Dark, On
 	ProfileIcon = false, -- Technically not an OptionsList option, but it gets saved at ScreenProfileSave so it's here anyway. Don't set it to nil the SL-CustomProfiles code is retarded and won't iterate over it
 	JudgmentGraphic = "Season2", --Judgment graphic
-	CompetitionMode = false --Show score and HP in the middle to make things more exciting
+	CompetitionMode = false, --Show score and HP in the middle to make things more exciting
+	--[[
+	Like IIDX, Simply Love, etc.
+	Possible values: 70%, 80%, 90%, 95%, 100%, Player's Best, Machine Best
+	We use percentages, not grades for target score
+	because PIU/RIO grading is weird and you can't get an S if you miss a note.
+	]]
+	TargetScore = false,
 }
 
 --PerfectionistMode should NEVER be written to profile, so it's not in the PlayerDefaults table.
 PerfectionistMode = {
 	PlayerNumber_P1 = false,
-	PlayerNumber_P2 = false
+	PlayerNumber_P2 = false,
+	PlayerNumber_P3 = false,
+	PlayerNumber_P4 = false
 };
 
---Set tables so you can do ActiveModifiers["P1"] to get the table of custom player modifiers, ex ActiveModifiers["P1"]["JudgmentType"]
---No metatable because it was too hard to implement
---[[ActiveModifiers = {
-	P1 = table.shallowcopy(PlayerDefaults),
-	P2 = table.shallowcopy(PlayerDefaults),
-	MACHINE = table.shallowcopy(PlayerDefaults),
-}]]
+--Custom func that returns dict with keys instead of a list. Needed for noteskin filtering.
+local function custSplit(delimiter, text)
+	local list = {}
+	local pos = 1
+	while 1 do
+		local first,last = string.find(text, delimiter, pos)
+		if first then
+			list[string.sub(text, pos, first-1)]=true
+			pos = last+1
+		else
+			list[string.sub(text, pos)]=true
+			break
+		end
+	end
+	return list
+end
 
---Test
---[[local AM = { P1 = setmetatable({}, {JT = "Normal"})}
-local AM = {{"Test"}, {"Test2"}}
-local AM = { P1 = {JT = "Normal"}}
-ActiveModifiers = {
-	P1 = setmetatable({}, PlayerDefaults),
-	P2 = setmetatable({}, PlayerDefaults),
-	MACHINE = setmetatable({}, PlayerDefaults)
-}
-]]
-
---Requires string:split
 function OptionRowAvailableNoteskins()
-	local ns = NOTESKIN:GetNoteSkinNames();
-	local disallowedNS = THEME:GetMetric("Common","NoteSkinsToHide"):split(",");
-	for i = 1, #disallowedNS do
-		for k,v in pairs(ns) do
-			if v == disallowedNS[i] then
-				table.remove(ns, k)
-			end
+	--faster than table.remove by ~3.7x
+	--Thanks 2 tertu for telling me about it :^)
+	local disallowedNS = custSplit(',',THEME:GetMetric("Common","NoteSkinsToHide"));
+	local allowedNS = {}
+	for _,n in ipairs(NOTESKIN:GetNoteSkinNames()) do
+		if not disallowedNS[n] then
+			allowedNS[#allowedNS+1]=n
 		end;
 	end;
-	--Make this global so the OptionsList shit in SSM can access it.
-	OPTIONSLIST_NUMNOTESKINS = #ns
-	OPTIONSLIST_NOTESKINS = ns
+	--assert(#allowedNS > 0)
+	
 	local t = {
 		Name="NoteskinsCustom",
 		LayoutType = "ShowAllInRow",
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = false,
 		ExportOnChange = false,
-		Choices = ns,
+		Choices = allowedNS,
 		LoadSelections = function(self, list, pn)
 			--SCREENMAN:SystemMessage("Num items: "..#ns)
 			--This returns an instance of playerOptions, you need to set it back to the original
@@ -78,7 +85,7 @@ function OptionRowAvailableNoteskins()
 			local curNS = playerOptions:NoteSkin();
 			local found = false;
 			for i=1,#list do
-				if ns[i] == curNS then
+				if allowedNS[i] == curNS then
 					list[i] = true;
 					found = true;
 				end;
@@ -89,15 +96,15 @@ function OptionRowAvailableNoteskins()
 			end;
 		end,
 		SaveSelections = function(self, list, pn)
-			local pName = ToEnumShortString(pn)
+			--local pName = ToEnumShortString(pn)
 			--list[1] = true;
 			local found = false
 			for i=1,#list do
 				if not found then
 					if list[i] == true then
-						GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):NoteSkin(ns[i]);
+						GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):NoteSkin(allowedNS[i]);
 						found = true
-						--SCREENMAN:SystemMessage("NS set to "..ns[i]);
+						--SCREENMAN:SystemMessage("NS set to "..allowedNS[i]);
 					end
 				end
 			end
@@ -286,18 +293,62 @@ function OptionRowDetailedPrecision()
 	return t;
 end;
 
+function OptionRowTargetScore()
+	local t = {
+		Name = "UserPrefTargetScore";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = false;
+		ExportOnChange = true;
+		--Choices that get shown, not the actual choices.
+		Choices = {"None", "70%", "80%", "90%", "95%", "100%", "Player's Best", "Machine Best"};
+		--The actual choices that get saved and loaded. 17 and 18 are special values for code that I stole from Simply Love. But if you do anything other than that it will work as a percentage.
+		ChoiceValues = {false, .7, .8, .9, .95, 1, 18, 17};
+		
+		LoadSelections = function(self, list, pn)
+			local opt = ActiveModifiers[pname(pn)]["TargetScore"]
+			--A for loop might not be necessary here since opt is false if first choice is selected.
+			local found = false;
+			for i=1,#list do
+				if self.ChoiceValues[i] == opt then
+					list[i] = true;
+					found = true;
+				end;
+			end;
+			if not found then
+				list[1] = true;
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			for i=1,#list do
+				if list[i] == true then
+					ActiveModifiers[pname(pn)]["TargetScore"] = self.ChoiceValues[i];
+					break
+				end
+			end
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end;
+
 function OptionRowJudgmentGraphic()
-	--The true name of the graphic is stored in ActiveModifiers to make it easier to load.
-	local judgementNames = {"Season 1", "Season 2", "Zona", "Simply Love", "Mikado", "Ace", "Infinity", "Sushi Violation", "Sushi", "None"}
 	local t = {
 		Name="JudgmentType",
 		LayoutType = "ShowAllInRow",
 		SelectType = "SelectOne",
 		OneChoiceForAllPlayers = false,
 		ExportOnChange = false,
-		Choices = judgementNames,
-		--Embedded in the metatable because the ScreenSelectMusic needs to access it too
-		judgementFileNames = { "Season1", "Season2", "Zona", "Simply Love", "Mikado", "Ace", "Infinity", "SushiViolation", "Sushi", "None"},
+		
+		--[[
+			The Choices line is just the NAME of the choices. the judgementFileNames name is the
+			actual file name of the graphic.
+			Ex. With a file named "Judgment Ace 1x6 (doubleres).png", you can put whatever you want on the first line,
+			then "Ace" on the second line.
+		]]
+		Choices = 			 {"Season 1", "Season 2", "Zona", "Simply Love", "Mikado", "Ace", "None"},
+		judgementFileNames = {"Season1",  "Season2",  "Zona", "Simply Love", "Mikado", "Ace", "None"},
+		
 		LoadSelections = function(self, list, pn)
 			local found = false;
 			for i=1,#list do
@@ -310,17 +361,14 @@ function OptionRowJudgmentGraphic()
 				list[2] = true;
 				--Need to replace the setting in the modifiers table too
 				ActiveModifiers[pname(pn)]["JudgmentGraphic"] = self.judgementFileNames[2]
-				assert(found, "Should have defaulted to S2 judgement, but none was found")
+				lua.Warn("Should have defaulted to S2 judgement, but none was found")
 			end;
 		end,
 		SaveSelections = function(self, list, pn)
-			local found = false
 			for i=1,#list do
-				if not found then
-					if list[i] == true then
-						ActiveModifiers[pname(pn)]["JudgmentGraphic"] = self.judgementFileNames[i];
-						found = true
-					end
+				if list[i] == true then
+					ActiveModifiers[pname(pn)]["JudgmentGraphic"] = self.judgementFileNames[i];
+					break
 				end
 			end
 		end,
@@ -390,7 +438,10 @@ function adjustPlayerMMod(pn, amount)
 	--This returns an instance of playerOptions, you need to set it back to the original
 	local playerOptions = playerState:GetPlayerOptions("ModsLevel_Preferred")
 	--SCREENMAN:SystemMessage(PlayerState:GetPlayerOptionsString("ModsLevel_Current"));
-	assert(playerOptions:MMod(),"NO MMOD SET!!!!")
+	--assert(playerOptions:MMod(),"NO MMOD SET!!!!")
+	if not playerOptions:MMod() then
+		playerOptions:MMod(200)
+	end;
 	if amount+playerOptions:MMod() < 100 then
 		playerOptions:MMod(800);
 	elseif amount+playerOptions:MMod() > 1000 then
@@ -412,7 +463,7 @@ function SpeedMods2()
 		GoToFirstOnStart= false;
 		OneChoiceForAllPlayers = false;
 		ExportOnChange = false;
-		Choices = { "ON", "AV -100", "AV -10","AV +10", "AV +100"};
+		Choices = { "AV -100", "AV -10","AV +10", "AV +100"};
 		LoadSelections = function(self, list, pn)
 			if GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
 				list[1] = true
@@ -428,29 +479,13 @@ function SpeedMods2()
 			--SCREENMAN:SystemMessage("choice "..choice)
 			local speed;
 			if choice == 1 then
-				--If MMod isn't on, turn it on
-				if not GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
-					
-					local playerState = GAMESTATE:GetPlayerState(pn);
-					--This returns an instance of playerOptions, you need to set it back to the original
-					local playerOptions = playerState:GetPlayerOptions("ModsLevel_Preferred")
-					playerOptions:MMod(200)
-					GAMESTATE:GetPlayerState(pn):SetPlayerOptions('ModsLevel_Preferred', playerState:GetPlayerOptionsString("ModsLevel_Preferred"));
-					
-					--SCREENMAN:SystemMessage("New MMod: "..GAMESTATE:GetPlayerState(pn):GetCurrentPlayerOptions():MMod())
-				else --If MMod is on, turn it off.
-					GAMESTATE:ApplyGameCommand("mod,2x",pn);
-				end;
-			elseif GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred"):MMod() then
-				if choice == 2 then
-					speed = adjustPlayerMMod(pn, -100);
-				elseif choice == 3 then
-					speed = adjustPlayerMMod(pn, -10);
-				elseif choice == 4 then
-					speed = adjustPlayerMMod(pn, 10);
-				elseif choice == 5 then
-					speed = adjustPlayerMMod(pn, 100);
-				end;
+				speed = adjustPlayerMMod(pn, -100);
+			elseif choice == 2 then
+				speed = adjustPlayerMMod(pn, -10);
+			elseif choice == 3 then
+				speed = adjustPlayerMMod(pn, 10);
+			elseif choice == 4 then
+				speed = adjustPlayerMMod(pn, 100);
 			end;
 			--MESSAGEMAN:Broadcast("MModChanged", {Player=pn,Speed=speed});
 			MESSAGEMAN:Broadcast("SpeedModChanged",{Player=pn});

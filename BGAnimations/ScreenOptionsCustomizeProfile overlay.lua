@@ -94,7 +94,7 @@ for i,icon in ipairs(getProfileIcons()) do
 end;
 
 if #profileIconList > 0 then
-	menu_items[#menu_items+1] = {name= "avatar", get="ProfileIcon", set="ProfileIcon", item_type="customList", list=profileIconList}
+	menu_items[#menu_items+1] = {name= "avatar", get="ProfileIcon", set="ProfileIcon", item_type="customList", list=profileIconList, spritePath=THEME:GetPathG("ProfileBanner","avatars")}
 else
 	SCREENMAN:SystemMessage("WARNING: The profile icon directory appears to be empty.");
 end;
@@ -355,6 +355,16 @@ for i, item in ipairs(menu_items) do
 				SetCommand= function(self, param)
 					self:settext(param[1])
 				end,
+			};
+			Def.Sprite{
+				--Font= "Common Normal";
+				Condition=item.spritePath;
+				--Text=item.spritePath;
+				InitCommand=cmd(horizalign,left;addx,150;);
+				SetCommand=function(self,param)
+					self:Load(item.spritePath.."/"..param[1]..".jpg");
+					self:setsize(50,50);
+				end;
 			}
 		}
 		if item.item_type == "list" or item.item_type == "customList" then

@@ -6,7 +6,7 @@ function IsWindowed()
 	end;
 end;
 
---Stupid fucking hack because ScreenOptionsService doesn't have a transition
+--Stupid hack because ScreenOptionsService doesn't have a transition
 local timer = 0;
 local t = Def.ActorFrame{
 	OnCommand=cmd(sleep,3;queuecommand,"Timer");
@@ -19,6 +19,8 @@ local t = Def.ActorFrame{
 			if timer > 0 then
 				SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen");
 			end;
+		elseif params.Name == "Secret" or params.Name=="Secret2" then
+			SCREENMAN:SetNewScreen("ScreenGreetz");
 		else
 			SCREENMAN:SystemMessage("Unknown button: "..params.Name);
 		end;
@@ -44,15 +46,15 @@ local t = Def.ActorFrame{
 	};
 	LoadFont("Common Normal")..{
 		Text="StepMania build: "..ProductFamily().." "..ProductVersion();
-		InitCommand=cmd(xy,SCREEN_CENTER_X,60);
-		OnCommand=function(self)
+		InitCommand=cmd(xy,SCREEN_CENTER_X,60;maxwidth,SCREEN_WIDTH-50);
+		--[[OnCommand=function(self)
 			if ProductVersion() ~= "5.0.12" then
 				self:settext(self:GetText().." (Incompatible version?)");
 				self:diffuse(Color("Red"));
 			else
 				self:diffuse(Color("Green"));
 			end;
-		end;
+		end;]]
 	};
 	LoadFont("Common Normal")..{
 		Text="Game Mode: "..ToEnumShortString(GAMESTATE:GetCoinMode());
@@ -86,7 +88,7 @@ local t = Def.ActorFrame{
 	};
 	LoadFont("Common Normal")..{
 		Text="Profiles: "..PROFILEMAN:GetNumLocalProfiles().." ("..join(", ",PROFILEMAN:GetLocalProfileDisplayNames())..")";
-		InitCommand=cmd(xy,20,225;horizalign,left);
+		InitCommand=cmd(xy,20,225;horizalign,left;maxwidth,SCREEN_WIDTH-50);
 		OnCommand=function(self)
 			if PREFSMAN:GetPreference("MemoryCardProfiles") == true and PROFILEMAN:GetNumLocalProfiles() == 0 then
 				self:diffuse(Color("Green"));
@@ -125,24 +127,26 @@ local t = Def.ActorFrame{
 				self:diffuse(Color("Green"));
 			end;
 			self:settext(self:GetText().." | "..RIO_FOLDER_NAMES["EasyFolder"])
+			
+			if PREFSMAN:GetPreference("HiddenSongs") then
+				self:settext(self:GetText().." | Unlock system Ok!");
+			else
+				self:settext(self:GetText().." | Unlock system Off!");
+			end;
 		end;
 	};
 	LoadFont("Common Normal")..{
-		Text="Special Group: ";
+		Text="Full Songs Group: ";
 		InitCommand=cmd(xy,20,350;horizalign,left);
 		OnCommand=function(self)
-			if ReadPrefFromFile("SpecialModeEnabled") == "true" then
-				if SONGMAN:DoesSongGroupExist(RIO_FOLDER_NAMES["SpecialFolder"]) == false then
-					self:settext(self:GetText().." Missing!");
-					self:diffuse(Color("Red"));
-				else
-					self:settext(self:GetText().." Ok! | "..#SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["SpecialFolder"]).." songs");
-					self:diffuse(Color("Green"));
-				end;
-				self:settext(self:GetText().." | "..RIO_FOLDER_NAMES["SpecialFolder"])
+			if SONGMAN:DoesSongGroupExist(RIO_FOLDER_NAMES["FullTracksFolder"]) == false then
+				self:settext(self:GetText().." Missing!");
+				self:diffuse(Color("Red"));
 			else
-				self:settext(self:GetText().." Special mode is disabled.");
+				self:settext(self:GetText().." Ok! | "..#SONGMAN:GetSongsInGroup(RIO_FOLDER_NAMES["FullTracksFolder"]).." songs");
+				self:diffuse(Color("Green"));
 			end;
+			self:settext(self:GetText().." | "..RIO_FOLDER_NAMES["FullTracksFolder"])
 		end;
 	};
 	LoadFont("Common Normal")..{
